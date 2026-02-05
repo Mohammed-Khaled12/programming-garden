@@ -1,5 +1,5 @@
 ---
-title: Welcome Home 🏠
+title: Home
 ---
 # 🌱 My Engineering Notes
 
