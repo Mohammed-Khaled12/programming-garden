@@ -51,7 +51,7 @@ the vector.)
 
 # Vector VS Array
 
-```C++
+```c++
   - Vector
   ---> It Need A Standard Header To Work
   ---> Can Be Resized After Insertion Or Deletion Of Elements
@@ -101,7 +101,7 @@ See Class Array From Here [[CPP Basics]] C++ Hand-Written Legacy Notes Page 32 a
     
 - Safer, especially when dealing with **user input** or **dynamic vectors**.
 
-```C++
+```c++
 vector<int> v = {10, 20, 30};
 
 cout << v[0];      // 10
@@ -119,7 +119,7 @@ or using `.insert(iterator)` دور عليها قدام لما نحتاجها
 
 هو هو ال Access بس حط يساوي 
 
-```C++
+```c++
 vector<int> v = {10, 20, 30};
 
 v[1] = 500;      // Update index 1
@@ -264,7 +264,7 @@ int main()
 Instead of defining an iterator manually, let C++ do the work.
 Recommended for printing or simple access.
 
-```C++
+```c++
 vector<int> nums = {10, 20, 30};
 
 // "for every number x in nums"
@@ -278,7 +278,7 @@ for (int x : nums) {
 
 ## Traversing With Iterator
 
-```C++
+```c++
 #include <iostream>
 #include <vector>
 
@@ -319,7 +319,7 @@ int main()
 - `reverse(start, end) `--> بتقلب البيانات فعليا في الميموري مش بترتب
 - `count(start, end , value to count)` --> لو عايز تعرف رقم معين متكرر كام مرة جوه الفيكتور
 
-```C++
+```c++
 #include <iostream>
 #include <vector>
 #include <algorithm>
