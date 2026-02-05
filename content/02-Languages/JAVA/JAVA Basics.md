@@ -17,15 +17,19 @@ Java is available for most operating systems (Write once run anywhere).
 
 # How Java Works?
 
+```text
 Source Code(.Java file) --> Javac (Java Compiler) --> Byte Code (.class File) --> JVM 
-										 |                                         |
-										 |                                         > Interpreter Takes
-										 |                                             Byte Code And
-										 |                                             Transform it To
-										 |                                             Machine Code
-										 |
-										 |
-										   > Half-baked Code CPU and Windows Can't Understand it , But JVM Can and By This Way You Can Run Java Code On any Machine That Have JVM 
+                                         |                                         |
+                                         |                                         > Interpreter Takes
+                                         |                                           Byte Code And
+                                         |                                           Transform it To
+                                         |                                           Machine Code
+                                         |
+                                         |
+                                         > Half-baked Code CPU and Windows Can't Understand it, 
+                                           But JVM Can and By This Way You Can Run Java Code On 
+                                           any Machine That Have JVM 
+```
 
 ![[Screenshot 2025-11-25 173358.png]]
 
@@ -100,8 +104,9 @@ public class TEST
 }
 
 ```
-ملخص ازاي تعمل ادخال :
-1) استدعي مكتبه Scanner --> كده ;import java.util.Scanner
-2) اعمل Object منها --> ;Scanner in = new Scanner(System.in)
-3) علشان تدخل في متغير استخدم --> nextInt(), nextFloat() and So on 
-4)  لو هتقرا سترينج next() دي كلمه بدونة مسافات , nextLine() دي سطر كامل 
+### ملخص ازاي تعمل ادخال:
+
+- **1.** استدعي مكتبة `Scanner` ⬅️ كود: `import java.util.Scanner;`
+- **2.** اعمل `Object` منها ⬅️ `Scanner in = new Scanner(System.in);`
+- **3.** علشان تدخل في متغير استخدم ⬅️ `nextInt()`, `nextFloat()` and So on.
+- **4.** لو هتقرا سترينج `next()` دي كلمه بدون مسافات، `nextLine()` دي سطر كامل.

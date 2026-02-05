@@ -1,10 +1,10 @@
 # 🐙 Git & GitHub: The Deep Dive
 
 > [!INFO] Course Info
-> **Source:** Ahmed Samy (Git & GitHub - 6 Hours)
-> **Video:** [YouTube Link](https://youtu.be/Q6G-J54vgKc)
-> **Summary By:** Mohammed Khaled
-> Origin: [[Archive/Git-Flow Origin]]
+> * **Source:** Ahmed Samy (Git & GitHub - 6 Hours)
+> * **Video:** [YouTube Link](https://youtu.be/Q6G-J54vgKc)
+> * **Summary By:** Mohammed Khaled
+> * **Origin:** [[Archive/Git-Flow Origin]]
 
 ---
 

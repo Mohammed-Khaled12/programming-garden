@@ -32,7 +32,7 @@ catch (const char* msg) {
 
 You can catch specific types of errors (int, string, or objects).
 
-```C++
+```c++
 try {
     // ... code ...
 }
@@ -47,7 +47,7 @@ catch (...) {              // Catches ANY exception (The Safety Net)
 
 C++ provides a hierarchy of built-in exceptions (like `out_of_range` for Vectors).
 
-```C++
+```c++
 #include <vector>
 #include <stdexcept> // Important!
 
@@ -67,13 +67,3 @@ catch (const exception& e) {
 - Used heavily in: [[Input-Validation-Strategy]] (Throwing errors on bad input).
     
 - Vital for: [[CPP Dynamic Memory]] (Handling `bad_alloc` if RAM is full).
-    
-
-
-
-### 🧠 ربط النقط (Connecting the Dots):
-أول ما تخلص النوت دي، روح لنوت **`Input-Validation-Strategy`** وزود فيها ملحوظة:
-`💡 Advanced Tip: Instead of just printing errors, we can [[CPP-Exception-Handling|Throw Exceptions]] to handle them logically.`
-
-كده أنت بتربط "طريقة التفكير" بـ "أداة التنفيذ". 🚀
-```

@@ -13,7 +13,7 @@ Tags: #cpp #datetime #time #structs
 
 # Getting Current Time
 
-```C++
+```c++
 #pragma warning(disable : 4996)
 #include <ctime>
 #include <iostream>
@@ -31,7 +31,7 @@ int main()
 ```
 
 # Datetime Structure
-```C++
+```c++
 #pragma warning(disable : 4996)
 #include <ctime>
 #include <iostream>

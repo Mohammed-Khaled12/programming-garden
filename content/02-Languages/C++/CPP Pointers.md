@@ -13,7 +13,7 @@ Tags: #cpp #memory #pointers #low-level
 # Creating References
 
  هو انك تعمل اسم دلع او اسم تاني (Alias) لنفس المتغير 
- ```C++
+ ```c++
  int x = 10;
 int& a = x;  
 // اكس و رف الاتنين واحد و الاتنين ليهم نفس العنوان علشان هما بقوا حاجه واحده
@@ -39,7 +39,7 @@ Figure 9-1 illustrates how they might be arranged in memory and shows their addr
 
 ![[Pasted image 20260127141131.png]]
 
-```C++
+```c++
 #include <iostream>
 using namespace std;
 
@@ -59,7 +59,7 @@ int main()
 
 `Type* name = &Var`
 
-```C++
+```c++
 int *ptr;
 ```
 هنا عملت بوينتر اسمه ptr بس لسه مفيهوش قيمه , خلي بالك النوع اللي جنبه ده مش نوع البوينتر دي معناها ان البوينتر يقدر يشيل عنوان متغير من نوع int 
@@ -73,7 +73,7 @@ int *ptr;
 | **`*`** | **Declaration** | Declares a pointer variable (Part of type) | `int* p;`      | "I am a variable that holds an address" |
 | **`*`** | **Dereference** | Accesses/Modifies the value at the address | `*p = 10;`     | "Go to address and do something"        |
 
-```C++
+```c++
 #include <iostream>
 using namespace std;
 int main()
@@ -192,7 +192,7 @@ as array names.
 - 
 ![[Pasted image 20260127152140.png]]![[Pasted image 20260127152213.png]]![[Pasted image 20260127152302.png]]
 
-```C++
+```c++
 #include <iostream>
 using namespace std;
 
@@ -272,7 +272,7 @@ int main()
 
 ## Example
 
-```C++
+```c++
 #include <iostream>
 using namespace std;
 
@@ -311,7 +311,7 @@ access to the original argument, much like a reference parameter does.
 
 اننا نبعت للداله عنوان المتغير علشان لما الداله تغير فيه يتغير في كل مكان 
 
-```C++
+```c++
 #include <iostream>
 using namespace std;
 
@@ -379,7 +379,7 @@ int main() {
 علشان كده الاراي في CPP دايما بتتبعت Pass by Pointer اوتوماتيك (مش بيتاخد منها Copy لأنها ممكن تكون كبيرة جداً).
 
 - **الشكلين لتعريف الدالة (والاتنين واحد):**
-```C++
+```c++
 void printArray(int* arr, int size)  // طريقة المحترفين
 void printArray(int arr[], int size) // طريقة سهلة للقراءة (بس هي هي اللي فوق)
 ```
@@ -388,7 +388,7 @@ void printArray(int arr[], int size) // طريقة سهلة للقراءة (بس
 
 لأن البوينتر `arr` اللي راح للدالة ده "غلبان"، هو شايل عنوان أول عنصر بس، وميعرفش المصفوفة بتخلص فين. فلو مبعتش الـ Size، الدالة مش هتعرف تقف وهتكمل قراءة في الميموري العشوائية (Buffer Overflow).
 
-```C++
+```c++
 #include <iostream>
 using namespace std;
 
@@ -425,7 +425,7 @@ A pointer that **points to memory that is no longer valid**.
 The pointer still holds the address, but the memory it points to has been **deleted or gone out of scope**.
 
 تخيل دالة بتعرف متغير جواها، وبترجع عنوانه. المتغيرات اللي بتتعرف جوه الدالة (Local Variables) بتعيش في الـ **Stack**. أول ما الدالة تخلص وتوصل لـ `}`، المتغير ده **بيموت وبيتمسح من الذاكرة**. لو أنت رجعت عنوانه.. أنت بترجع عنوان "بيت مهدود".
-```C++
+```c++
 int* createNumber() {
     int x = 10;   // x اتولد هنا (Local Variable)
     return &x;    // كارثة! بنرجع عنوان متغير هيموت حالاً
@@ -441,7 +441,7 @@ int* createNumber() {
 
 **2. ترجع واحد من البوينترز اللي مبعوتلها أصلاً:** زي دالة بتشوف مين الأكبر وترجع عنوانه.
 
-```C++
+```c++
 #include <iostream>
 using namespace std;
 
@@ -493,7 +493,7 @@ int main() {
 
 - **Syntax:**  `const int* ptr` **OR** `int const *ptr`
 
-```C++
+```c++
 int x = 10;
 int y = 20;
 const int* ptr = &x; // (1) تعريف البوينتر
@@ -508,7 +508,7 @@ ptr = &y;   // ✅ صح: مسموح يغير العنوان ويشاور على 
 
 - **Syntax:**  `int* const ptr`
 
-```C++
+```c++
 int x = 10;
 int y = 20;
 int* const ptr = &x; // لازم ياخد عنوان لحظة التعريف
@@ -523,7 +523,7 @@ ptr = &y;   // ❌ خطأ: ممنوع يغير العنوان (Assignment of rea
 
 - **Syntax:**  `const int* const ptr`
 
-```C++
+```c++
 int x = 10;
 const int* const ptr = &x;
 

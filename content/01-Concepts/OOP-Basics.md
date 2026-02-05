@@ -1,11 +1,11 @@
 # 🧬 Object-Oriented Thinking (OOP)
 
 > [!ABSTRACT] 📝 Note Context
-> **Type:** Hybrid Note (Concept + Implementation). 
-> **Core Topic:** The 4 Pillars of OOP (Encapsulation, Inheritance, Polymorphism, Abstraction). 
-> **Language Used:** Java ☕ (for demonstration). 
->  
-> *Note: Although written in Java, these concepts apply to C++, Python, and C#. *
+> * **Type:** Hybrid Note (Concept + Implementation).
+> * **Core Topic:** The 4 Pillars of OOP (Encapsulation, Inheritance, Polymorphism, Abstraction).
+> * **Language Used:** Java ☕ (for demonstration).
+>
+> *Note: Although written in Java, these concepts apply to C++, Python, and C#.*
 
 Tags: #concept #oop #java #fundamentals
 

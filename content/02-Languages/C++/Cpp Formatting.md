@@ -26,7 +26,7 @@ Tags: #cpp #formatting #output #syntax
 ## Integer Format
 
 بتستخدم `%d` او `%i` مع الاعداد الصحيحه في الطباعه
-```C++
+```c++
 int Page = 1, TotalPages = 10;
 // print string and int variable
 printf("The page number = %d \n", Page); // 1
@@ -64,7 +64,7 @@ printf("pi = %.4f\n", pi);   // 3.1416 خلي بالك انه بيقرب
 هنا بنتعامل مع ال Array of Character بس 
 - `%s` -> للجمله
 -  `%*c` -> فراغات قبل الحرف
-```C++
+```c++
 char Name[] = "Mohammed Khaled";
 char SchoolName[] = "HNU";
 // print string and String
@@ -84,7 +84,7 @@ printf("Setting the width of c :%*c \n", 5, c);//     S
 
 **عشان تستخدمها لازم تضم المكتبة دي:**
 
-```C++
+```c++
 #include <iomanip>
 ```
 
@@ -92,7 +92,7 @@ printf("Setting the width of c :%*c \n", 5, c);//     S
 
 `setw(n)` -- > ممكن نقول بيعمل عرض ثابت لكل عمود او انه بيديني مساحه للكاتبه بقد الرقم اللي جواه و بيبدا كتابه من اليمين للشمال
 
-```C++
+```c++
 #include <iostream>
 #include <iomanip>
 using namespace std;
@@ -138,4 +138,3 @@ int main()
 | **Table Line**        | (Manual Loop)                                 | `cout << setfill('-') << setw(20) << "";`                               | Quick way to print separator lines.                                           |
 | **Char**              | `%c`                                          | `cout << ch;`                                                           |                                                                               |
 
----

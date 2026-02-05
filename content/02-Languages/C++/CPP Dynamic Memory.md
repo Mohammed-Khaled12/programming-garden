@@ -71,7 +71,7 @@ Since the Heap is manual, C++ will **NEVER** clean it up for you. If you lose th
 3. **Crucial Note:** It does **NOT** clear the pointer itself. The pointer still holds the old address (Time bomb!).
 ### Syntax
 
-```C++
+```c++
 // 1. Single Variable
 delete ptr;  
 
@@ -88,7 +88,7 @@ Allocating memory and forgetting to `delete` it.
 
 - **Result:** RAM fills up slowly until the PC hangs or crashes.
 
-```C++
+```c++
 void badFunction() {
     int* p = new int[1000];
     // Function ends, 'p' (stack variable) dies.
@@ -101,7 +101,7 @@ void badFunction() {
 
 A pointer that points to memory that has _already_ been deleted.
 
-```C++
+```c++
 int* p = new int(10);
 delete p; 
 // p still stores the address (e.g., 0x500), but 0x500 is now free/garbage.
@@ -115,7 +115,7 @@ cout << *p; // ❌ CRASH or Undefined Behavior!
 
 Trying to `delete` the same memory twice.
 
-```C++
+```c++
 int* p = new int;
 delete p;
 delete p; // ❌ CRASH! Corrupts memory manager.

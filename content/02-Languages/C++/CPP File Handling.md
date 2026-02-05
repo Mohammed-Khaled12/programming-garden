@@ -14,7 +14,7 @@ Tags: #cpp #files #persistence #io
 افتح ملف و اخزن عليه الداتا
 وضع الـ **Write (`ios::out`)** ده بيمسح أي حاجة موجودة في الملف ويبدأ يكتب من جديد. لو الملف مش موجود، هو بيكريهه (ينشئه).
 
-```C++
+```c++
 #include <iostream>
 #include <fstream> 
 
@@ -42,7 +42,7 @@ int main() {
 
 لو مش عايز تمسح اللي فات وعايز تزود سطر جديد في آخر الملف، بنستخدم وضع الـ **Append (`ios::app`)**.
 
-```C++
+```c++
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -66,7 +66,7 @@ return 0;
 
 عشان تقرأ من الملف، بنستخدم وضع **Read (`ios::in`)**. التحدي هنا إننا بنقرأ سطر بسطر لحد ما الملف يخلص
 
-```C++
+```c++
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -95,7 +95,7 @@ return 0;
 
 في البرامج الحقيقية، مش بنقرأ سطر ونطبعه وخلاص، إحنا بنسحب بيانات الملف كلها نحطها في الـ **RAM** (على شكل `vector`) عشان نعدل فيها براحتنا، وبعدين نرجع نحفظ الـ vector ده في الملف تاني.
 
-```C++
+```c++
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -134,7 +134,7 @@ int main() {
 
 # 5. Save Vector to File
 
-```C++
+```c++
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -173,7 +173,7 @@ return 0;
 2. امسح السطر اللي مش عايزه من الـ **Vector**.
     
 3. احفظ الـ **Vector** تاني في الملف.
-```C++
+```c++
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -252,7 +252,7 @@ int main() {
 
 نفس فكرة الحذف بالظبط، بس بدل ما بنخلي السطر فاضي، بنبدله بالبيانات الجديدة.
 
-```C++
+```c++
 #include <iostream>
 #include <fstream>
 #include <string>
