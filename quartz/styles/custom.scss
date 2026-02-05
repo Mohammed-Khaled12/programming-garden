@@ -1,3 +1,21 @@
 @use "./base.scss";
 
 // put your custom CSS here!
+
+/*  Smart Text Direction: */
+p, h1, h2, h3, h4, h5, h6, li, blockquote, th, td {
+  unicode-bidi: plaintext;
+  text-align: start;
+}
+
+/*  Code Protection: */
+pre, code, .code-block {
+  direction: ltr !important;
+  unicode-bidi: normal;
+  text-align: left;
+}
+
+/*  List Fixes:  */
+ul, ol {
+  unicode-bidi: plaintext;
+}
