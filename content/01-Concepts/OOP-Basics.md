@@ -1,11 +1,11 @@
 # 🧬 Object-Oriented Thinking (OOP)
 
 > [!ABSTRACT] 📝 Note Context
-> **Type:** Hybrid Note (Concept + Implementation).
-> **Core Topic:** The 4 Pillars of OOP (Encapsulation, Inheritance, Polymorphism, Abstraction).
-> **Language Used:** Java ☕ (for demonstration).
-> 
-> *Note: Although written in Java, these concepts apply to C++, Python, and C#.*
+> **Type:** Hybrid Note (Concept + Implementation). 
+> **Core Topic:** The 4 Pillars of OOP (Encapsulation, Inheritance, Polymorphism, Abstraction). 
+> **Language Used:** Java ☕ (for demonstration). 
+>  
+> *Note: Although written in Java, these concepts apply to C++, Python, and C#. *
 
 Tags: #concept #oop #java #fundamentals
 
@@ -456,7 +456,7 @@ public class TEST
 ***--> Notes:***
 1) Use Final To Prevent Inheritance From the class **-Write it Before word class-**
 2) ***Constructor Do Not Inherited But Invoked*** , _***Look***_ at the next example to understand
-```JAVA
+```java
 package com.mycompany.test;
 
 import java.util.Scanner;
@@ -570,7 +570,7 @@ Hiding The Implementation of a Function .
 
 علشان اكمل الداله في الكلاس اللي هيورث هعمل اوفررايد 
 
-```JAVA
+```java
 package com.mycompany.test;
 import java.util.Scanner;
 
