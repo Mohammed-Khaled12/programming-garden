@@ -1,3 +1,6 @@
+---
+title: Welcome Home 🏠
+---
 # 🌱 My Engineering Notes
 
 > [!ABSTRACT] 🎓 Current Status: Student
