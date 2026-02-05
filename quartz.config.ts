@@ -16,7 +16,7 @@ const config: QuartzConfig = {
       provider: "plausible",
     },
     locale: "en-US",
-    baseUrl: "quartz.jzhao.xyz",
+    baseUrl: "mohammed-khaled12.github.io/programming-garden",
     ignorePatterns: ["private", "templates", ".obsidian"],
     defaultDateType: "modified",
     theme: {
@@ -52,6 +52,7 @@ const config: QuartzConfig = {
         },
       },
     },
+    
   },
   plugins: {
     transformers: [
