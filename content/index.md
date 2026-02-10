@@ -21,7 +21,6 @@ title: Home
 
 > [!EXAMPLE] 💻 02 Languages (The Tools)
 > *Syntax, libraries, and language specifics.*
-> - [[02-Languages/Index|📂 Browse Languages]]
 > - [[CPP Basics|🔵 C++ (Fundamentals)]]
 > - [[Cpp Formatting|🎨 Formatting (printf/cout)]]  
 > - [[CPP Headers|📚 Libraries & Headers]] 
@@ -46,43 +45,40 @@ title: Home
 ## 🎯 Dashboard
 
 ### ⚡ Study Goals (Current Focus)
-- [x] Pointers and Functions (Pass by Pointer)
-- [x] Pointers and Const (Const Correctness
-- [x] Dynamic Memory Allocation (New & Delete)
-- [x] Dynamic Arrays
-- [x] Memory Leaks & Dangling Pointers
-- [ ] Pointer to Pointer (Double Pointers)
-- [ ] Function Pointers
-- [ ] Smart Pointers (RAII)
+- [ ] Pointers Deep Dive
+- [ ] CPC-Traning
 
 ### 📝 Active Notes
 > Notes I am currently working on:
 - [[CPP Pointers]]
-- [[CPP Vectors]]
-- [[Cpp Formatting]]
+- [[Math-Tricks]]
 
 ### 📖 Reading Station
 **Currently Reading:**
 - [ ]  STARTING OUT WITH C++ From Control Structures through Objects
-- [ ] 
 
 **On The Shelf (Next):**
 - [ ] 📘 **Grokking Algorithms** (Chapter 1)
 - [ ] ☕ **Head First Design Patterns**
 ---
 
-## 🌿 Notes Status
+## 🏗️ Knowledge Pipeline
 
-> [!NOTE] Legend
-> - 🌱 **Draft:** Just pasted from PDF/Old notes.
-> - 🌿 **Processing:** Organized but needs review.
-> - 🌳 **Done:** Clean, linked, and understood.
+> [!bug] **Processing (Debugging & Refining)**
+> *نوتس بذاكرها وبنقيها حالياً.*
+> * [[CPP Pointers]]
+> * [[Debugging-Strategy]]
 
-| Note                   | Status | Topic    |
-| :--------------------- | :----: | :------- |
-| [[Debugging-Strategy]] |   🌿   | Workflow |
-| [[OOP-Basics]]         |   🌱   | Concept  |
-| [[CPP Basics]]         |   🌳   | Language |
+> [!example] **Drafts (Raw Data)**
+> *أفكار ومسودات أولية.*
+> * [[Math-Tricks]] (CPC)
+> * [[Head First Design Patterns]]
+
+> [!success] **Stable (Production Ready)**
+> *نوتس خلصت وبقت مراجع.*
+> * [[CPP Basics]]
+> * [[CPP Vectors]]
 
 ---
-*Last updated: `2026-01-28`*
+*Last updated: `2026-02-10`*
+
