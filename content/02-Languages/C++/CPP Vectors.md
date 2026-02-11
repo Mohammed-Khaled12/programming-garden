@@ -364,3 +364,35 @@ int main()
   return 0;
 }
 ```
+
+# Notes:
+
+## C++ Iterators: Forward vs. Reverse
+### 1. Forward Iterators (`begin` & `end`)
+
+Used for traversing a container from **left to right** (start to finish).
+
+- **`begin()`**: Returns an iterator pointing to the **first element** of the container (Index $0$).
+    
+- **`end()`**: Returns an iterator pointing to the **theoretical element** that follows the last element. It acts as a sentinel; attempting to dereference it will cause a crash.
+    
+- **Incrementing (`it++`)**: Moves the iterator **forward** toward the end of the container.
+    
+
+### 2. Reverse Iterators (`rbegin` & `rend`)
+
+Used for traversing a container from **right to left** (finish to start).
+
+- **`rbegin()`** (Reverse Begin): Returns a reverse iterator pointing to the **last actual element** (the reverse beginning).
+    
+- **`rend()`** (Reverse End): Returns a reverse iterator pointing to the **theoretical element preceding the first element**.
+    
+- **Incrementing (`it++`)**: Moves the iterator **backward** toward the beginning of the container.
+
+| **Iterator**   | **Points to...** | **Direction of ++** | **Common Use Case**            |
+| -------------- | ---------------- | ------------------- | ------------------------------ |
+| **`begin()`**  | First Element    | Forward             | Normal processing/sorting.     |
+| **`rbegin()`** | Last Element     | Backward            | Reversing strings or logic.    |
+| **`end()`**    | After Last       | N/A                 | Loop termination (Stop point). |
+| **`rend()`**   | Before First     | N/A                 | Reverse loop termination.      |
+In Modern C++, always prefer using `rbegin()` and `rend()` when reversing a collection. It is safer than manual indexing (like `size()-1`) because it handles empty containers gracefully and follows the **RAII** (Resource Acquisition Is Initialization) philosophy of the C++ Standard Library.
