@@ -15,7 +15,7 @@ tags: #cpc #math #problem-solving #cpp
 
 $$Sum = \frac{n(n+1)}{2}$$
 
-```cpp
+```c++
 // ⚡ Best Practice: Use long long to prevent overflow
 long long sum = (n * (n + 1)) / 2;
 ```
@@ -33,7 +33,7 @@ $$Sum = \frac{Count \times (First + Last)}{2}$$
     
 - **$Last$ (آخر رقم):** $R$
 
-```C++
+```c++
 // ⚡ Best Practice: Use long long to prevent overflow
 // لأن حاصل ضرب العدد في المجموع ممكن يعدي مساحة الـ int بكتير
 long long count = (R - L + 1);
@@ -67,7 +67,7 @@ $$Sum = \frac{-(n+1)}{2}$$
 * **الحل:** كفاية تمشي لحد الجذر بتاعه $\sqrt{N}$.
 * **السبب:** لو الرقم ملوش قواسم قبل الجذر، مش هيكون ليه بعده.
 
-```cpp
+```c++
 bool isPrime(long long n) {
     if (n <= 1) return false;
     // Check from 2 up to sqrt(n)
@@ -89,7 +89,7 @@ bool isPrime(long long n) {
 * **Circle inside Square?** $\rightarrow$ قارن **قطر الدائرة** ($2R$) مع **ضلع المربع** ($S$).
     * القانون: $2R \le S$
 
-```cpp
+```c++
 #include <iostream>
 #include <cmath>
 using namespace std;
