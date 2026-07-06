@@ -3,14 +3,14 @@
 > [!ABSTRACT] 📝 Note Context
 > * **Type:** Hybrid Note (Concept + Implementation).
 > * **Core Topic:** The 4 Pillars of OOP (Encapsulation, Inheritance, Polymorphism, Abstraction).
-> * **Language Used:** Java ☕ (for demonstration).
+> * **Language Used:** Java ☕ (for demonstration) , Lately C++.
 >
 > *Note: Although written in Java, these concepts apply to C++, Python, and C#.*
 
 Tags: #concept #oop #java #fundamentals
 
 ---
-# Youtube Playlist
+# YouTube Playlist
 {
 https://youtube.com/playlist?list=PLwWuxCLlF_ue7GPvoG_Ko1x43tZw5cz9v&si=ZND2aqnMDiRsE1d2
 }
@@ -38,6 +38,8 @@ https://youtube.com/playlist?list=PLwWuxCLlF_ue7GPvoG_Ko1x43tZw5cz9v&si=ZND2aqnM
 روحت مكتب هندسي معماري قولتله صمملي مبني فاا هو صممه و اداك ورقه مرسوم فيها و فيها كل المواصفات (**Class**) خدت انت الورقه و روحت لمقاول يعملك العماره (**Constructor**) العماره اتعملت (**Object**) و من ورقه مواصفات واحده تقدر تعمل عدد لا نهائي من المباني 
 كلاس واحد تقدر تنشي منه عدد لا نهائي من الاوبجيكتس 
 
+![[Pasted image 20260702164000.png]]
+
 
 ## Constructor :
 هو فانكشن خاصه جوه ال Class بتشتغل لحظه ما تعمل Object و هي اللي بتعمل ال Object و تجهزه بالقيم اللي انت عايزها 
@@ -45,7 +47,7 @@ https://youtube.com/playlist?list=PLwWuxCLlF_ue7GPvoG_Ko1x43tZw5cz9v&si=ZND2aqnM
 
 
 
-# More Details With Coding : 
+# More Details With Codes : 
 
 *Class File* :
 
@@ -171,6 +173,15 @@ public class Car
 	}
 }
 ```
+#### النوع الرابع:  Copy Constructor
+
+ده بياخد Object تاني (مبني وجاهز) كـ Parameter، وينسخ كل بياناته للـ Object الجديد اللي إنت لسه بتعمله.
+
+#### Destructor:
+
+دي دالة بتشتغل **لوحدها أوتوماتيك** في نهاية حياة الـ Object (يعني لما البرنامج يخلص أو الفانكشن اللي الـ Object جواها تقفل).
+
+- **وظيفته:** "التنظيف". لو الـ Object ده كان حاجز مساحة معينة في الميموري (Dynamic Memory)، أو ماسك سلاح، الـ Destructor بياخد الحاجات دي يفضيها ويرجعها للسيستم عشان الرامات ماتتمليش وتضرب.
 
 ## امثله : 
 
@@ -236,6 +247,59 @@ public class TEST
 }
 ```
 
+```c++
+#include <iostream>
+#include <string>
+
+class Character {
+private:
+    std::string m_name;
+    int m_health;
+
+public:
+    // 1. Default Constructor
+    Character() {
+        m_name = "Unknown Player";
+        m_health = 100;
+        std::cout << m_name << " is created with Default Constructor.\n";
+    }
+
+    // 2. Parameterized Constructor
+    Character(std::string name, int health) {
+        m_name = name;
+        m_health = health;
+        std::cout << m_name << " is created with Parameterized Constructor.\n";
+    }
+
+    // 3. Copy Constructor
+    Character(const Character& other_character) {
+        m_name = other_character.m_name + " (Clone)";
+        m_health = other_character.m_health;
+        std::cout << m_name << " is created using Copy Constructor.\n";
+    }
+
+    // 4. Destructor (دايماً بيبدأ بعلامة ~)
+    ~Character() {
+        std::cout << m_name << " is destroyed! Cleaning up memory...\n";
+    }
+};
+
+int main() {
+    // هيشغل الـ Default
+    Character player1; 
+    
+    // هيشغل الـ Parameterized
+    Character player2("Geralt", 500); 
+    
+    // هيشغل الـ Copy (بياخد نسخة من player2)
+    Character player3(player2); 
+
+    std::cout << "--- End of Game ---\n";
+    
+    return 0;
+    // أول ما الـ return 0 تشتغل، الـ Destructors للـ 3 شخصيات هتشتغل وتمسحهم
+}
+```
 
 # OOP Concepts :
 
@@ -258,6 +322,7 @@ public class TEST
 
 1) Setter : دالة لـ "تعديل" القيمة (Modify/Write).
 2) Getter : دالة لـ "قراءة" القيمة (Access/Read).
+3) Read Only: اعمل للفاريابل جت بس و متعملوش ست
 
 ```java
 package com.mycompany.test;
@@ -558,8 +623,472 @@ public class TEST
 ```
 
 
+### Inheritance in C++ :
+مفيش كلمه `etends` بنستعمل مكانها السينتاكس ده علشان نورث
+```cpp
+class clsEmployee : public clsPerson
+```
+كده clsPerson ورث من clsEmployee ايه بقي حوار public دي ؟ دي اسمها Inheritance Visibility Modes
 
+1) Public: 
+وراثه صريحه عاديه زي بتاعت جافا
+- الـ `public` في الأب بيفضل `public` في الابن (اليوزر يقدر يشوفه في الـ `main`)
+- الـ `protected` في الأب بيفضل `protected` في الابن.
+2) protected: 
+**إيه اللي بيحصل؟** أي حاجة الأب كان سايبها للناس بره (`public`)، الابن هيورثها ويخفيها جواه ويخليها `protected`.
+- - الـ `public` في الأب بينزل يبقى `protected` في الابن.
+- الـ `protected` في الأب بيفضل `protected` في الابن.
 
+1) private: 
+**إيه اللي بيحصل؟** دي وراثة "مقفولة". الابن بيورث حاجات الأب كلها، وبيخليها `private` لنفسه بس.
+- الـ `public` والـ `protected` في الأب بينزلوا يبقوا `private` في الابن.
+  
+***Note*** : No `super` keyword in C++ , Use `Initializer List` instead 
+```cpp
+#include <iostream>
+using namespace std;
+
+// Base Class (Parent)
+class Vehicle
+{
+protected:
+    string _Brand;
+
+public:
+    // Parent Parameterized Constructor
+    Vehicle(string Brand)
+    {
+        _Brand = Brand;
+        cout << "1. Vehicle (Parent) Built: " << _Brand << "\n";
+    }
+};
+
+// Derived Class (Child) inheriting publicly from Vehicle
+class Car : public Vehicle
+{
+private:
+    int _Doors;
+
+public:
+    // Child Constructor
+    // The ": Vehicle(Brand)" part is the Initializer List.
+    // It is the EXACT C++ equivalent of calling "super(Brand);" in Java or C#.
+    // It MUST be called before the opening brace '{' of the child's constructor.
+    Car(string Brand, int Doors) : Vehicle(Brand)
+    {
+        _Doors = Doors;
+        cout << "2. Car (Child) Built with: " << _Doors << " Doors\n";
+    }
+};
+
+int main()
+{
+    // Output will show Parent building first, then Child.
+    Car myCar("KIA", 4);
+
+    return 0;
+}
+```
+
+![[Pasted image 20260706115214.png]]
+#### إزاي تعمل Overriding في C++؟
+
+لازم يكون في وراثة (باستخدام `: public`). نفس الشروط بتاعت جافا بالضبط، بس بنغير شوية مسميات:
+
+1. **الشرط الإضافي في C++ (تصريح الأب):** في جافا، أي دالة ينفع يتعملها Override تلقائياً. في C++ لأ! لازم الأب يدي تصريح إن الدالة دي ينفع تتعدل، عن طريق إنه يكتب كلمة `virtual` قبلها. لو مكتبتش `virtual`، الكومبايلر هيعتبرك بتعمل Hiding مش Overriding.
+    
+2. **بديل `@Override`:** في C++ بنكتب كلمة `override` في **آخر الدالة** مش فوقها. (وهي برضه مش إلزامية بس بتنقذك لو كتبت اسم الدالة غلط).
+    
+3. **بديل `super.funcName()`:** زي ما اتفقنا قبل كده، C++ مفهاش كلمة `super`. البديل بتاعها إنك تنادي اسم كلاس الأب مباشرة متبوع بـ `::` كده: `ParentName::funcName()`.
+```c++
+#include <iostream>
+using namespace std;
+
+class Father 
+{
+public:
+    // 1. كلمة virtual هنا بتسمح للأبناء يعملوا Override
+    virtual void whoAmI() 
+    {
+        cout << "I'm Father";
+    }
+};
+
+class Boy : public Father 
+{
+public:
+    // 2. كلمة override بتتكتب في الآخر
+    void whoAmI() override 
+    {
+        // 3. ده البديل بتاع super.whoAmI()
+        Father::whoAmI(); 
+        cout << " , No I'm Joking I'm a Boy\n";
+    }
+};
+
+class Girl : public Father 
+{
+public:
+    void whoAmI() override 
+    {
+        cout << "I'm Girl\n";
+    }
+};
+
+int main() 
+{
+    Girl G1;
+    Boy B1;
+    Father F1;
+    
+    G1.whoAmI(); // I'm Girl
+    B1.whoAmI(); // I'm Father , No I'm Joking I'm a Boy
+    F1.whoAmI(); // I'm Father
+    
+    return 0;
+}
+```
+##### يعني إيه Function Hiding ؟
+الـ Hiding بيحصل لما كلاس الابن يعمل دالة بنفس اسم دالة موجودة في كلاس الأب، بس **من غير** ما الأب يكون كاتب قبلها كلمة `virtual`. هنا الابن "بيخبي" دالة الأب. كأن الأب كان معلق يافطة مكتوب عليها `Print`، فجه الابن لزق فوقيها يافطة تانية بتاعته مكتوب عليها `Print`. اليافطة القديمة لسه موجودة تحت، بس اللي بيبص على الابن مش هيشوف غير اليافطة الجديدة.
+الفرق بينه و بين ال Overriding مبيظهرش لو إنت بتستخدم الكلاس بشكل مباشر وعادي (`Child c; c.speak();`). في الحالتين هيطبع كلام الابن. الفرق والكارثة بتظهر **لما نستخدم الـ Pointers **.
+###### بيتعمل إزاي؟ (How it's done)
+عادي جداً، مجرد إنك تكتب الدالة بنفس الاسم في الابن، من غير أي كلمات مميزة 
+```c++
+class Parent {
+public:
+    // دالة عادية جداً مفيش قبلها virtual
+    void speak() { 
+        cout << "I am the Parent\n"; 
+    }
+};
+
+class Child : public Parent {
+public:
+    // الابن عمل دالة بنفس الاسم.. ده هو الـ Hiding!
+    void speak() { 
+        cout << "I am the Child\n"; 
+    }
+};
+```
+
+#### Up Casting vs Down Casting : 
+
+**Up Casting:** تحويل الابن لأب
+**Down Casting:** تحويل الأب لابن
+```c++
+#include <iostream>
+using namespace std;
+
+class Person 
+{
+public:
+    // ملحوظة خطيرة: الـ Down Casting مش هيشتغل في C++ أصلاً إلا لو الأب فيه دالة virtual
+    virtual void Print() { cout << "I am a Person\n"; }
+};
+
+class Employee : public Person 
+{
+public:
+    void Print() override { cout << "I am an Employee\n"; }
+    
+    // دالة خاصة بالابن بس
+    void GetSalary() { cout << "Salary is 5000\n"; } 
+};
+
+int main() 
+{
+    // ==========================================
+    // 1. Up Casting (Safe)
+    // ==========================================
+    Employee emp;
+    
+    // ريموت أب بيشاور على أوبجيكت ابن (بيحصل أوتوماتيك)
+    Person* ptrPerson = &emp; 
+    
+    ptrPerson->Print(); // هيطبع دالة الموظف لأنها virtual
+    // ptrPerson->GetSalary(); // Error! ريموت الأب مفيش فيه زرار المرتب
+
+    // ==========================================
+    // 2. Down Casting (Risky)
+    // ==========================================
+    // عايزين نرجع نستخدم ريموت الابن عشان نوصل للمرتب
+    // بنستخدم أداة اسمها dynamic_cast عشان نتأكد إن التحويل أمان
+    
+    Employee* ptrEmp = dynamic_cast<Employee*>(ptrPerson);
+
+    // بنسأل: هل التحويل نجح؟ (يعني هل الشخص ده فعلاً طلع موظف متخفي؟)
+    if (ptrEmp != nullptr) 
+    {
+        cout << "Down Casting Successful!\n";
+        ptrEmp->GetSalary(); // اشتغلت أمان جداً
+    } 
+    else 
+    {
+        // لو الـ ptrPerson كان بيشاور على Person بجد مش Employee، التحويل هيفشل
+        cout << "Down Casting Failed! This is not an Employee.\n";
+    }
+
+    return 0;
+}
+```
+الأب يسمح له بالإشارة الى ابنه بينما الابن من قلة الاحترام وممنوع ان يؤشر على ابيه
+![[Pasted image 20260706121727.png]]
+#### Virtual Functions:
+
+الـ **Virtual Functions** هي مجرد "أمر" بتكتبه للكومبايلر عشان يغير الطريقة اللي بيختار بيها الدالة اللي هتتنفذ.
+
+عشان تفهمها، لازم تفهم إزاي الكومبايلر بيفكر الأول.
+
+##### المشكلة: الكومبايلر متسرع (Early Binding)
+
+تخيل إنك بتبني برنامج زي Word، وعندك كلاس أساسي اسمه `Document`، وكلاس تاني بيورث منه اسمه `PdfDocument`. الاتنين جواهم دالة اسمها `Export()`.
+
+لو عملت كده:
+```c++
+Document* docPtr = new PdfDocument(); 
+docPtr->Export();
+```
+**إيه اللي هيحصل هنا؟** الكومبايلر بيقرر هو هيشغل أنهي دالة **وقت الترجمة (Compile Time)**. بيبص للسطر ده ويقول: "الـ Pointer ده نوعه `Document`، إذن أنا هربط السطر ده بدالة الـ `Export` بتاعة الـ `Document`، ومش مهم إيه اللي هيتحط في الميموري بعدين".
+
+النتيجة؟ هيطبع دالة الأب الأساسية، وهيتجاهل تماماً كود الـ PDF اللي إنت تعبت فيه. الميكانيزم ده اسمه **Static Binding** أو الربط المبكر.
+
+##### الحل: كلمة `virtual` (Late Binding)
+
+هنا بييجي دور الـ Virtual Function. لما بتروح لكلاس الأب (`Document`) وتكتب كلمة `virtual` قبل الدالة:
+```c++
+virtual void Export();
+```
+إنت هنا بتدي للكومبايلر أمر هندسي صريح: **"ماتتسرعش وماتقررش الدالة وقت الكومبايل. استنى لحد ما البرنامج يشتغل (Run Time)، وروح بص بنفسك جوه الميموري شوف الـ Object الحقيقي اللي متخزن هناك نوعه إيه، وشغل الدالة بتاعته."**
+الميكانيزم ده اسمه **Dynamic Binding** أو الربط المتأخر.
+```c++
+#include <iostream>
+using namespace std;
+class clsPerson
+{
+public:
+    virtual void Print()
+    {
+        cout << "Hi, i'm a person!\n ";
+    }
+};
+class clsEmployee : public clsPerson
+{
+public:
+    void Print()
+    {
+        cout << "Hi, I'm an Employee\n";
+    }
+};
+class clsStudent : public clsPerson
+{
+public:
+    void Print()
+    {
+        cout << "Hi, I'm a student\n";
+    }
+};
+int main()
+{
+    clsEmployee Employee1;
+    clsStudent Student1;
+    Employee1.Print(); // Hi, I'm an Employee
+    Student1.Print();  // Hi, I'm a student
+    clsPerson *Person1 = &Employee1;
+    clsPerson *Person2 = &Student1;
+    Person1->Print(); // Hi, I'm an Employee
+    Person2->Print(); // Hi, I'm a student
+    // لو مكانش فيه كلمه فيرتشوال كان هيطبع بتاعت البيرسون الفيرتشوال قالتله يبص علي الاوبجيكت نفسه في الران تايم فيه ايه اللي هو قالتله شوف عيالك من الاخر
+    return 0;
+}
+```
+إزاي الـ C++ بتعرف نوع الـ Object في الميموري وقت التشغيل؟ أول ما بتكتب كلمة `virtual` في أي كلاس، الكومبايلر بيخلق جدول مخفي في الميموري اسمه **V-Table (Virtual Table)**. الجدول ده عبارة عن خريطة (Array of Function Pointers). كل Object بيتخلق بيبقى جواه Pointer خفي بيشاور على الجدول بتاعه. لما بتيجي تنادي الدالة، البرنامج بيروح للجدول ده، والجدول هو اللي بيوجهه للكود الصح في الميموري.
+
+عشان كده، الـ Virtual Functions بتستهلك جزء بسيط جداً زيادة من الميموري (بسبب الجدول ده) وجزء بسيط من وقت المعالج، بس في المقابل بتديك مرونة هندسية مستحيل تبني سيستم كبير من غيرها.
+
+###  Code Exercise (Cloud Server Manager):
+#### Requirements 
+
+ 1. الـ Base Class (الأب): `clsServer`
+
+- **Static Members & Methods:**
+    
+    - اعمل متغير `Static` اسمه `TotalServersCount` بيبدأ بـ 0.
+        
+    - اعمل `Static Method` بترجع الرقم ده.
+        
+- **Encapsulation & Properties:**
+    
+    - متغيرات خاصة (Private): `_IPAddress` (String) و `_RAM` (int).
+        
+    - اعمل للـ `_IPAddress` خاصية **Read-Only Property** (يعني دالة Get بس، مينفعش يتعدل بعد ما السيرفر يتكريت).
+        
+    - اعمل للـ `_RAM` خصائص **Set و Get**.
+        
+- **Constructors & Destructors:**
+    
+    - اعمل **Parameterized Constructor** بياخد الـ IP والـ RAM، وبيزود الـ `TotalServersCount` بواحد.
+        
+    - اعمل **Destructor** بيطبع رسالة إن السيرفر اللي الآي بي بتاعه كذا بيتعمله Shut down، وبينقص الـ `TotalServersCount` بواحد.
+        
+- **Abstraction:**
+    
+    - اعمل دالة مخفية (Private) اسمها `_CheckHardware()` بتطبع بس سطر "Checking CPU and RAM...".
+        
+- **Virtual Functions:**
+    
+    - اعمل دالة `public` اسمها `Boot()` (خليها جاهزة للـ Overriding). الدالة دي بتنادي جواها على `_CheckHardware()` وبعدين تطبع: "Server [IP] is booting up...".
+        
+
+ 2. الـ Derived Class الأول (الابن): `clsDatabaseServer`
+
+- بيورث من `clsServer`.
+    
+- عنده متغير خاص بيه اسمه `_DBType` (مثلاً MySQL أو MongoDB).
+    
+- اعمل **Constructor** بياخد (IP, RAM, DBType)، ويباصي الـ IP والـ RAM لـ **Constructor بتاع الأب**.
+    
+- اعمل **Function Overriding** لدالة `Boot()`: خليها تطبع الأول بيانات الـ `clsServer` الأصلية (عشان نطبق الـ DRY ولا تكرر الكود)، وبعدين تطبع سطر زيادة: "Starting Database Engine: [DBType]".
+    
+
+ 3. الـ Derived Class التاني (الابن): `clsWebServer`
+
+- بيورث من `clsServer`.
+    
+- عنده متغير خاص بيه اسمه `_DomainName`.
+    
+- اعمله Constructor زي اخوه بيباصي للأب.
+    
+- اعمل **Overriding** لدالة `Boot()`: تطبع بيانات الأب، وبعدين تطبع: "Hosting Domain: [DomainName]".
+    
+
+ 4. الـ Main Function (الوحش: Up Casting & Late Binding)
+
+- كريت Object من `clsDatabaseServer` و Object من `clsWebServer`.
+    
+- اعمل **مصفوفة (Array) من الـ Pointers من نوع الأب `clsServer*`** حجمها 2.
+    
+- خلي البوينتر الأول يشاور على سيرفر الداتابيز، والبوينتر التاني يشاور على سيرفر الويب (ده هو الـ **Up Casting**).
+    
+- اعمل `For Loop` بتلف على المصفوفة دي، وبتنادي دالة `Boot()` لكل بوينتر (عشان نختبر الـ **Dynamic/Late Binding** ونشوف هيطبع صح ولا لأ).
+    
+- في آخر الـ main، اطبع الـ Static method عشان نشوف عدد السيرفرات اللي شغالة كام.
+
+#### Solution
+```c++
+#include <iostream>
+using namespace std;
+
+class Server
+{
+private:
+    int _RAM;
+    string _IPAddress;
+    void _CheckHardware()
+    {
+        cout << "Checking CPU and RAM...\n";
+    }
+
+public:
+    static int TotalServersCount;
+    static int ServersCount()
+    {
+        return TotalServersCount;
+    }
+
+    string GetIPAdderss()
+    {
+        return _IPAddress;
+    }
+    int GetRAM()
+    {
+        return _RAM;
+    }
+    void SetRAM(int RAM)
+    {
+        _RAM = RAM;
+    }
+
+    Server(string IPAddress, int RAM) : _IPAddress(IPAddress), _RAM(RAM)
+    {
+        TotalServersCount++;
+    }
+    ~Server()
+    {
+        cout << "Server with IP: " << _IPAddress << " is Shutting Down \n";
+        TotalServersCount--;
+    }
+    virtual void Boot()
+    {
+        _CheckHardware();
+        cout << "Server " << _IPAddress << " is booting up...\n";
+    }
+};
+
+int Server::TotalServersCount = 0;
+
+class DatabaseServer : public Server
+{
+private:
+    string _DBType;
+
+public:
+    DatabaseServer(string IPAddress, int RAM, string DBType)
+        : Server(IPAddress, RAM), _DBType(DBType)
+    {
+    }
+    void Boot() override
+    {
+        Server::Boot();
+        cout << "Starting Database Engine: " << _DBType << " \n";
+    }
+};
+
+class WebServer : public Server
+{
+private:
+    string _DomainName;
+
+public:
+    WebServer(string IPAddress, int RAM, string DomainName)
+        : Server(IPAddress, RAM), _DomainName(DomainName)
+    {
+    }
+
+    void Boot() override
+    {
+        Server::Boot();
+        cout << "Hosting Domain: " << _DomainName << "\n";
+    }
+};
+
+int main()
+{
+
+    DatabaseServer DB("192.1.1.168", 128, "MongoDB");
+    WebServer Web("192.1.1.169", 256, "algoforge.ai");
+
+    Server *Pointer[2];
+    Pointer[0] = &DB;
+    Pointer[1] = &Web;
+
+    // for (Server i : Pointer)
+    // {
+    //     *Pointer[i]->Boot(); XXXXXX Wrong
+    // }
+
+    // for (Server* i : Pointer)
+    // {
+    //     i->Boot(); Right
+    // }
+
+    for (int i = 0; i < 2; i++)
+    {
+        Pointer[i]->Boot();
+    }
+
+    return 0;
+}
+```
 ## 3) Abstraction:
 
 Hiding The Implementation of a Function .
@@ -677,3 +1206,114 @@ public class TEST
 ***Method Overriding :*** شرحتها في التوريث
 ***Method Overloading :*** دالتين بنفس الاسم لكن مدخلات مختلفه
 
+---
+# Extras:
+
+## 1) Static Member
+
+في العادي، أي متغير (Member Variable) بتكتبه جوه الـ Class، كل ما تعمل Object جديد، الـ Compiler بيحجزله مساحة خاصة بيه في الميموري. يعني لو عندك متغير اسمه `m_health`، وعملت 10 شخصيات، هيبقى عندك 10 نسخ من `m_health` في الميموري، كل شخصية ليها النسخة بتاعتها اللي مفيش شخصية تانية تقدر تلمسها.
+
+![[Pasted image 20260702164000.png]]
+
+**لكن الـ Static Member حاجة تانية خالص:** ده متغير **مشترك** بين كل الـ Objects اللي طالعة من نفس الـ Class. الـ Compiler بيحجزله مكان **واحد بس** في الميموري، وكل الـ Objects بتبص عليه وتعدل فيه هو هو. الـ Static Member ده مِلك للـ Class نفسه، مش مِلك للـ Object.
+```cpp
+class nums
+{
+  static int x;
+}
+```
+الاهم متنساش تعمله Initialization تاني تحت الكلاس 
+
+```cpp
+int nums::x = 0;
+```
+
+```cpp
+#include <iostream>
+#include <string>
+
+class Character {
+private:
+std::string m_name;
+int m_health;
+
+public:
+// ده Static Member (عداد مشترك لكل الشخصيات)
+static int player_count;
+
+// Constructor
+Character(std::string name, int health) {
+m_name = name;
+m_health = health;
+// كل ما شخصية جديدة تتخلق، نزود العداد المشترك
+player_count++;
+}
+
+~Character() {
+// كل ما شخصية تموت، ننقص العداد المشترك
+player_count--;
+}
+
+};
+// القاعدة الذهبية في C++: الـ Static Members لازم يتعملها Initialization بره الـ Class
+int Character::player_count = 0;
+
+int main() {
+// Class لسه معملناش أي شخصيات، بس نقدر نوصل للعداد عن طريق اسم الـ
+std::cout << "Initial Players: " << Character::player_count << "\n"; // هيطبع 0
+
+Character p1("Geralt", 100);
+Character p2("Ciri", 100);
+
+// دلوقتي العداد زاد مرتين
+std::cout << "Current Players: " << Character::player_count << "\n"; // هيطبع 2
+
+// الـ Objects ممكن برضه تشوف المتغير ده، وهتلاقيه نفس الرقم
+
+std::cout << "P1 sees player count as: " << p1.player_count << "\n"; // هيطبع 2
+std::cout << "P2 sees player count as: " << p2.player_count << "\n"; // هيطبع 2
+
+return 0;
+}
+```
+
+## 2) Static Function:
+زى ما الـ Static Variables مشتركة بين كل الـ Objects، الـ **Static Methods** (أو Functions) هى كمان دوال مِلك للـ Class نفسه، مش مِلك لـ Object بعينه.
+عشان تستخدم دالة (Method) عادية جوه الكلاس، لازم الأول تعمل Object، وبعدين تنادى الدالة دى من خلاله. يعنى لو الدالة اسمها `jump()`، لازم تعمل `Character p1;` وبعدين تقول `p1.jump();`.
+
+لكن لو الدالة `static`، إنت مش محتاج تعمل Object أصلاً. الدالة دى شغالة وموجودة على مستوى الكلاس نفسه، وتقدر تناديها مباشرة كده: `Character::print_game_rules();`.
+
+```cpp
+#include <iostream>
+using namespace std;
+
+class clsA
+{
+public:
+static int Function1()
+{
+return 10;
+}
+int Function2()
+{
+return 20;
+}
+};
+int main()
+{
+// The following line calls static function directly via class not through the object
+// At class level you can call only static methods and static members
+cout << clsA::Function1() << endl;
+// static methods can also be called throught the object.
+clsA A1, A2;
+cout << A1.Function1() << endl;
+cout << A1.Function2() << endl;\
+cout << A2.Function1() << endl;
+}
+```
+
+الـ Static Method **ممنوع منعاً باتاً** إنها تتعامل مع أي متغير عادي (Non-Static) جوه الكلاس (زي `m_name` أو `m_health`).
+
+**ليه؟** لأن المتغيرات العادية مابتتخلقش غير لما تعمل Object. لكن الدالة الـ `static` شغالة حتى لو مفيش Objects خالص. فلو الدالة الـ `static` حاولت تقرأ `m_name`، الكومبايلر هيقولها: "أنا معرفش إنتي بتتكلمي عن ياتا `m_name`؟ بتاع `player1` ولا `player2`؟ الداتا دي مش موجودة عندي دلوقتي!".
+
+- **الخلاصة:** الـ Static Method تقدر بس تقرأ وتعدل في الـ **Static Variables** اللي زيها.
