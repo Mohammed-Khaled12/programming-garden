@@ -1201,6 +1201,18 @@ public class TEST
 }
 ```
 
+#### Abstract Class and Interface in C++ :
+Pure Virtual Function :
+هي دالة إنت بتعلن عنها في كلاس الأب، بس بتقول للكومبايلر أنا مش هكتبلها كود هنا، أنا بس بجبر أي كلاس ابن يورثني إنه يكتبها بطريقته غصب عنه
+بتتعمل إزاي؟ بتكتب الدالة `virtual` عادي جداً، وفي آخرها بتحط `= 0;`.
+```c++
+virtual void Connect() = 0; // = 0 for No Implemintation , It's Like a Contract
+```
+
+لو الكلاس بتاعك علي الاقل فيه واحده Pure Virtual Function ---> كلاس Abstract Class
+مستحيل تعمل من ال Abstract Class اوبجيكت 
+
+لو الكلاس بتاعك  كل الدوال اللي فيه Pure Virtual Function و مفهوش ولا متغير ---> انترفيس Interface
 ## 4) Polymorphism:
 ترجمته الحرفيه هي تعدد الاشكال
 ***Method Overriding :*** شرحتها في التوريث
@@ -1317,3 +1329,170 @@ cout << A2.Function1() << endl;
 **ليه؟** لأن المتغيرات العادية مابتتخلقش غير لما تعمل Object. لكن الدالة الـ `static` شغالة حتى لو مفيش Objects خالص. فلو الدالة الـ `static` حاولت تقرأ `m_name`، الكومبايلر هيقولها: "أنا معرفش إنتي بتتكلمي عن ياتا `m_name`؟ بتاع `player1` ولا `player2`؟ الداتا دي مش موجودة عندي دلوقتي!".
 
 - **الخلاصة:** الـ Static Method تقدر بس تقرأ وتعدل في الـ **Static Variables** اللي زيها.
+
+## 3) Friend Class:
+
+ساعات بكون عايز اخلي كلاس واحد يتفرج علي بيانات كلاس تاني بس مش عايز اعمل Getters أو Setters علشان مش عايز بقيه الكلاسات تشوفهم
+من الاخر زي ما في رشوه في عالمنا في رشوه بين الكلاسات للاسف 
+الفريند كلاس هو عباره عن تصريح منك انك بتدي كلاس معين الاكسيس علي ال `private` والـ `protected` داتا بتاعة كلاس تاني مباشرة، من غير ما يضطر يستخدم Getters أو Setters.
+
+الكلاس اللي هتشير الداتا بتاعته هتكتب فيه السطر ده
+```c++
+friend class targetClassName 
+```
+
+```c++
+#include <iostream>
+using namespace std;
+class clsA
+{
+private:
+    int _Var1;
+
+protected:
+    int _Var3;
+
+public:
+    int Var2;
+    clsA()
+    {
+        _Var1 = 10;
+        Var2 = 20;
+        _Var3 = 30;
+    }
+    // This will grant access for everything to class B
+    friend class clsB; // friend class
+};
+
+class clsB
+{
+public:
+    void display(clsA A1)
+    {
+        cout << endl << "The value of Var1=" << A1._Var1;
+        cout << endl << "The value of Var2=" << A1.Var2;
+        cout << endl << "The value of Var3=" << A1._Var3;
+    }
+};
+int main()
+{
+    clsA A1;
+    clsB B1;
+    B1.display(A1);
+    system("pause>0");
+    return 0;
+}
+```
+
+![[Pasted image 20260707000338.png]]
+
+## 4) Friend Function:
+فانكشن بره الكلاس في الشارع هتدفع رشوه للكلاس علشان تشوف اعضاءه كلها "اخخ يا عالم برمجه ماشي بالرشاوي"
+
+في الكلاس خد سيجنيتشر الداله و اكتب قبله فريند 
+```c++
+friend int mySum(clsA A1);
+```
+
+```c++
+#include <iostream>
+using namespace std;
+class clsA
+{
+private:
+    int _Var1;
+
+protected:
+    int _Var3;
+
+public:
+    int Var2;
+    clsA()
+    {
+        _Var1 = 10;
+        Var2 = 20;
+        _Var3 = 30;
+    }
+    friend int MySum(clsA A1); // friend function
+};
+// this function is a normal function and not a member of any class
+int MySum(clsA A1)
+{
+    return A1._Var1 + A1.Var2 + A1._Var3;
+}
+// int Fun2(clsA A1)
+//{
+//  return A1._Var1 + A1.Var2 + A1._Var3;
+// }
+int main()
+{
+    clsA A1;
+    cout << MySum(A1);
+    system("pause>0");
+    return 0;
+}
+```
+
+## 5) `this` Pointer in C++ :
+
+هو بوينتر مخفي الكومبايلر بيبعته اوتوماتيك ك Parameter للدوال ال non static جوه الكلاس , بيشاور علي ال Object الحالي اللي نادي الداله دي 
+
+![[Pasted image 20260707131403.png]]
+
+![[Pasted image 20260707132044.png]]
+### Use Cases:
+
+![[Pasted image 20260707132219.png]]
+#### 1) Shadowing
+لما يكون اسم الـ Parameter اللي مبعوت للدالة هو نفس اسم المتغير اللي جوه الكلاس
+
+```c++
+class Person 
+{
+private:
+    int age;
+public:
+    void setAge(int age) 
+    {
+        this->age = age;
+    }
+};
+```
+
+#### 2) Method Chaining
+ربط الدوال / ترجع اوبجيكت من الداله 
+
+```c++
+class Point 
+{
+private:
+    int _x, _y;
+public:
+    Point& setX(int x) 
+    {
+        this->_x = x;
+        return *this; // بنرجع الـ Object نفسه بالـ Reference (النجمة عشان نجيب القيمة اللي بيشاور عليها البوينتر)
+    }
+    Point& setY(int y) 
+    {
+        this->_y = y;
+        return *this; 
+    }
+};
+```
+
+#### 3) Pass Object to Function
+
+لو عندك Object عايز يبعت نفسه لدالة تانية بره الكلاس عشان تعمل عليه عملية معينة 
+
+```c++
+class Game 
+{
+public:
+    void CheckPlayer() 
+    {
+        // بنبعت عنوان الـ Object الحالي لدالة تانية خالص
+        GlobalSecurityCheck(this); 
+    }
+};
+```
