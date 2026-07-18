@@ -1496,3 +1496,91 @@ public:
     }
 };
 ```
+
+## 6) Template Functions
+### المشكله:
+تخيل إنك بتعمل دالة بسيطة جداً بتجمع رقمين. لو الرقمين دول `int`، هتعمل دالة بتستقبل `int`. طيب لو اليوزر دخل أرقام بكسور `double`؟ هتضطر تعمل Overloading وتكتب نفس الدالة تاني بس بـ `double`. طيب لو عايز تجمع كلمتين `string`؟ هتكتب الدالة تالت؟؟؟؟؟؟؟ يوجع الكلين كود ما اللوجيك واحد بس التايب بتاع الداتا اللي بيتغير 
+```c++
+int Add(int a, int b) { return a + b; }
+double Add(double a, double b) { return a + b; }
+string Add(string a, string b) { return a + b; }
+```
+
+### الحل: الـ Template Functions
+اعمل قالب واحد فيه اللوجيك و سيب نوع البيانات مجهول "متغير"
+```c++
+#include <iostream>
+using namespace std;
+
+// السطر ده بيعرف الكومبايلر إننا بنعمل قالب، وإن T هو نوع الداتا المجهول
+template <typename T>
+T Add(T a, T b) 
+{
+    return a + b;
+}
+
+int main() 
+{
+    // الكومبايلر هنا هيشوف أرقام صحيحة، فهيبدل الـ T بـ int
+    cout << Add(5, 10) << "\n"; 
+
+    // هنا الكومبايلر هيشوف كسور، فهيبدل الـ T بـ double
+    cout << Add(5.5, 2.3) << "\n"; 
+
+    // هنا الكومبايلر هيبدل الـ T بـ string
+    string s1 = "Hello ", s2 = "Backend";
+    cout << Add(s1, s2) << "\n"; 
+
+    return 0;
+}
+```
+
+## 6) Template Functions
+
+بنفس منطق الـ Template Functions، الـ Template Class هو "أسطمبة" لكلاس كامل. إنت بتبني الـ Architecture بتاع الكلاس (المتغيرات، الـ Constructors، الدوال) وتسيب نوع الداتا (Data Type) مجهول `T`. اليوم اللي تيجي تاخد فيه Object من الكلاس ده في الـ `main`، بتحدد للكومبايلر الـ `T` ده عبارة عن إيه (هل هو `int`، `string`، ولا حتى كلاس تاني زي `clsDate`).
+
+```c++
+#include <iostream>
+#include <string>
+using namespace std;
+
+// بنعرف الكومبايلر إن الكلاس ده قالب بيعتمد على نوع مجهول T
+template <typename T>
+class clsBox 
+{
+private:
+    T _Value; // المتغير نوعه مجهول
+
+public:
+    // الـ Constructor بيستقبل داتا من النوع المجهول
+    clsBox(T Value) 
+    {
+        _Value = Value;
+    }
+
+    void SetValue(T Value) 
+    {
+        _Value = Value;
+    }
+
+    // الدالة بترجع داتا من النوع المجهول
+    T GetValue() const 
+    {
+        return _Value;
+    }
+};
+
+int main() 
+{
+    // عملنا صندوق للأرقام الصحيحة
+    clsBox<int> IntBox(10);
+    cout << "Int Box: " << IntBox.GetValue() << "\n";
+
+    // عملنا صندوق للنصوص باستخدام نفس الكلاس!
+    clsBox<string> StringBox("Mohammed Khaled");
+    cout << "String Box: " << StringBox.GetValue() << "\n";
+
+    return 0;
+}
+
+```

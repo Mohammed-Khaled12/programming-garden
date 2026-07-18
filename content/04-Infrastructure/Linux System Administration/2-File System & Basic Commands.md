@@ -25,8 +25,6 @@ Unlike Windows (C:, D:, E: drives), Linux uses a **single-rooted hierarchical**
 ![[Pasted image 20260628160352.png]]
 
 ### Important Directory Purposes:
-1) `/bin` ---> Essential user commands
-
 
 | **Directory** | **Purpose**                                                             | **Examples**                                                                             |
 | ------------- | ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
@@ -38,6 +36,7 @@ Unlike Windows (C:, D:, E: drives), Linux uses a **single-rooted hierarchical**
 | `/root`       | Personal directory for root user<br>Separate from /home (regular users) |                                                                                          |
 | `/lib`        | Essential shared libraries                                              | System libraries for /bin and /sbin                                                      |
 | `/media`      | Removable media "Mount Point"                                           | /media/usb, /media/cdrom                                                                 |
+
 **Three Different "Roots":**
 
 ROOT DIRECTORY (/)
