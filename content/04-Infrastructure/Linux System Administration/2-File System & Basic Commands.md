@@ -100,7 +100,7 @@ ls -A           # Shows all hidden files except . and ..
 
 Creating Files and Directories
 ```
-ouch filename.txt        # Create empty file
+touch filename.txt        # Create empty file
 touch file1 file2 file3   # Create multiple files
 mkdir dirname             # Create directory
 mkdir -p path/to/dir      # Create directory path (including parents)
