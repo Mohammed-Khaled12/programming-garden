@@ -87,3 +87,60 @@ ln -s target_file link_name
 *لاحظ ان فايل 5 بقي بيبدا ب L اللي هي Soft Link*
 *لاحظ ان الاينودز مختلفه*
 
+# Editors: Vi & VIM
+
+![[Pasted image 20260720002005.png]]
+### Basic Commands (Command Mode)
+
+- **i**: Insert text before the cursor.
+- **a**: Append text after the cursor.
+- **A**: Append text at the end of the line.
+- **o**: Open a new line below the current line.
+- **O**: Open a new line above the current line.
+
+### Navigation (Command Mode)
+
+- **h**: Move cursor left.
+- **j**: Move cursor down.
+- **k**: Move cursor up.
+- **l**: Move cursor right.
+- **w**: Move to the beginning of the next word.
+- **b**: Move to the beginning of the previous word.
+- **0**: Move to the beginning of the line.
+- **$**: Move to the end of the line.
+- **G**: Move to the end of the file.
+- **gg**: Move to the beginning of the file.
+
+### Editing (Command Mode)
+
+- **x**: Delete the character under the cursor.
+- **dd**: Delete the current line.
+- **yy**: Yank (copy) the current line.
+- **p**: Paste the yanked line below the current line.
+- **P:** Paste the yanked line above the current line.
+- **u**: Undo the last change.
+- **Ctrl-r**: Redo the undone change.
+
+### Searching and Replacing
+
+- **/pattern**: Search for `pattern` in the file.
+- **n**: Move to the next occurrence of the search pattern.
+- **N**: Move to the previous occurrence of the search pattern.
+- **:s/old/new**: Replace the first occurrence of `old` with `new` in the current line.
+- **:s/old/new/g**: Replace all occurrences of `old` with `new` in the current line.
+- **:%s/old/new/g**: Replace all occurrences of `old` with `new` in the entire file.
+
+### Saving and Exiting
+
+- **:w**: Save the file.
+- **:w file name:** Save as to specific file name
+- **:q**: Quit `vi`.
+- **:wq**: Save the file and quit `vi`.
+- **:q!**: Quit `vi` without saving changes.
+
+### Advanced Commands
+
+- **:r filename**: Read the contents of `filename` and insert it after the current line.
+- **:!command**: Execute an external command and display the output in `vi`.
+- **:set number**: Show line numbers.
+- **:set nonumber**: Hide line numbers.
