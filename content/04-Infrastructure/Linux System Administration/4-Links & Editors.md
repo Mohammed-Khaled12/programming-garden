@@ -144,3 +144,35 @@ ln -s target_file link_name
 - **:!command**: Execute an external command and display the output in `vi`.
 - **:set number**: Show line numbers.
 - **:set nonumber**: Hide line numbers.
+
+### The `.vimrc` File (Vim Configuration)
+
+The `.vimrc` (Vim Run Commands) is a hidden configuration file located in your home directory (`~/.vimrc`). It acts as the "brain" of the editor. Every time you launch `vim`, the system reads this file first and executes its instructions before rendering the interface.
+
+ Core Architectural Rules:
+1. **Persistence:** Running a command like `:set number` inside a live Vim session is temporary; it disappears when you close the file. To make configurations permanent across all future sessions, they must be declared in `.vimrc`.
+    
+2. **Hidden File:** The dot prefix (`.`) makes it a hidden file. It won't appear with a standard `ls` command; you must use `ls -a` to view it.
+    
+3. **Language:** The commands inside this file are not Bash commands. They are written in Vim's own dedicated scripting language called **Vimscript**.
+
+```vim
+" This is how you write a comment in Vimscript
+
+" 1. Visual & UI Settings
+syntax on           " Enable Syntax Highlighting (Crucial for programming)
+set number          " Show absolute line numbers on the left
+set relativenumber  " Show relative line numbers (For rapid vertical movement)
+set cursorline      " Highlight the current line you are on
+
+" 2. Indentation & Tabs (C++ / Backend Standard)
+set autoindent      " Copy the indentation from the previous line
+set tabstop=4       " A TAB character equals 4 spaces
+set shiftwidth=4    " Indent size for auto-indent is 4 spaces
+set expandtab       " Convert TABs to actual spaces (Prevents formatting breakage across different editors)
+
+" 3. Usability Tweaks
+set mouse=a         " Enable mouse support (Allows scrolling and clicking if needed)
+set ignorecase      " Ignore case when searching
+set smartcase       " ...unless you type a Capital letter in the search query
+```
