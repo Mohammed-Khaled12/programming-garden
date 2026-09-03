@@ -97,7 +97,7 @@ sudo useradd -md /home/username -s /bin/bash -g primary_group -G sec_group1,sec_
 
 Always use `-m` when creating user accounts. This creates the home directory and copies essential configuration files from `/etc/skel` (like `.bashrc`, `.profile`) that are necessary for proper shell environment setup.
 
-في كوماند تاني غير ده اسمه `adduser` جه معمول ب perl script بيسهل الدنيا عكس `useradd` اللي هو اصلا unix-standard
+في كوماند تاني غير ده اسمه `adduser` ده معمول ب perl script بيسهل الدنيا عكس `useradd` اللي هو اصلا unix-standard
 
 ```shell
 useradd -D
@@ -233,7 +233,6 @@ Without execute permission on a directory, you cannot `cd` into it or access i
 ## Changing Permissions with `chmod`
 
 The `chmod` command changes file and directory permissions using two methods:
-
 ### 1) Numeric Mode:
 `Bitwise OP` --> [[CPP Basics#Bitwise Operator]]
 
@@ -266,6 +265,7 @@ chmod ug+w
 # Set exact permissions (overwrites existing)
 chmod u=rwx,g=rw,o=r file.txt
 ```
+
 
 
 ## Default Permissions and Umask
