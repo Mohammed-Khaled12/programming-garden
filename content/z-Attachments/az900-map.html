@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Azure Fundamentals — Complete Map</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0e14;
+    --panel:#0f1620;
+    --panel2:#121b28;
+    --line:#1f2c3d;
+    --line-strong:#2c3f56;
+    --cyan:#5eead4;
+    --cyan-dim:#2a4a48;
+    --amber:#f4b740;
+    --amber-dim:#4a3a18;
+    --coral:#f2836b;
+    --coral-dim:#4a2a20;
+    --text:#e7ecf3;
+    --text-dim:#93a1b5;
+    --text-faint:#5a6a80;
+    --mono:'JetBrains Mono',monospace;
+    --sans:'Inter',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    line-height:1.5;
+    padding:0 0 80px;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px;}
+
+  /* header */
+  header{
+    padding:56px 24px 40px;
+    border-bottom:1px solid var(--line);
+    background:
+      linear-gradient(var(--line) 1px, transparent 1px) 0 0/100% 40px,
+      linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0/40px 100%;
+    background-color:var(--bg);
+    position:relative;
+  }
+  header .wrap{position:relative;}
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.12em;
+    color:var(--cyan);
+    text-transform:uppercase;
+  }
+  h1{
+    font-family:var(--mono);
+    font-size:clamp(28px,4vw,44px);
+    font-weight:700;
+    margin-top:10px;
+    color:var(--text);
+  }
+  header p{
+    color:var(--text-dim);
+    font-size:15px;
+    max-width:640px;
+    margin-top:12px;
+  }
+  .legend{
+    display:flex;
+    gap:20px;
+    margin-top:24px;
+    flex-wrap:wrap;
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--text-faint);
+  }
+  .legend span{display:flex;align-items:center;gap:6px;}
+  .dot{width:8px;height:8px;border-radius:50%;display:inline-block;}
+  .dot.cyan{background:var(--cyan);}
+  .dot.amber{background:var(--amber);}
+  .dot.coral{background:var(--coral);}
+
+  /* backbone hierarchy section */
+  .backbone{padding:44px 24px;border-bottom:1px solid var(--line);}
+  .backbone-title{
+    font-family:var(--mono);font-size:12px;letter-spacing:0.1em;
+    color:var(--text-faint);text-transform:uppercase;margin-bottom:18px;
+  }
+  .chain{
+    display:flex;align-items:stretch;gap:0;flex-wrap:wrap;margin-bottom:14px;
+  }
+  .chain-label{
+    font-family:var(--mono);font-size:11px;color:var(--cyan);
+    writing-mode:horizontal-tb;min-width:110px;display:flex;align-items:center;
+    padding-right:12px;flex-shrink:0;
+  }
+  .node{
+    background:var(--panel);
+    border:1px solid var(--line-strong);
+    border-radius:4px;
+    padding:12px 16px;
+    min-width:130px;
+    flex:1 1 auto;
+  }
+  .node .nt{font-family:var(--mono);font-size:13px;font-weight:500;color:var(--text);}
+  .node .nn{font-size:11px;color:var(--text-faint);margin-top:4px;display:block;}
+  .arrow{
+    display:flex;align-items:center;justify-content:center;
+    color:var(--text-faint);font-family:var(--mono);font-size:14px;
+    padding:0 8px;flex-shrink:0;
+  }
+  .branch-note{
+    font-family:var(--mono);font-size:11px;color:var(--amber);
+    margin-left:110px;margin-top:6px;padding-left:2px;
+  }
+  .branch-note::before{content:"↳ ";}
+
+  /* domain sections */
+  .domain{
+    padding:40px 24px;
+    border-bottom:1px solid var(--line);
+  }
+  .domain-head{
+    display:flex;align-items:baseline;gap:12px;margin-bottom:22px;
+  }
+  .domain-code{
+    font-family:var(--mono);font-size:11px;color:var(--bg);
+    background:var(--cyan);padding:2px 7px;border-radius:3px;font-weight:700;
+  }
+  .domain-title{font-family:var(--mono);font-size:19px;font-weight:500;color:var(--text);}
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+    gap:12px;
+  }
+  .item{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-left:2px solid var(--cyan-dim);
+    border-radius:3px;
+    padding:12px 14px;
+  }
+  .item.warn{border-left-color:var(--amber-dim);}
+  .item.crit{border-left-color:var(--coral-dim);}
+  .item .it{font-size:14px;font-weight:600;color:var(--text);}
+  .item .in{font-size:12.5px;color:var(--text-dim);margin-top:5px;display:block;}
+  .item .tag{
+    font-family:var(--mono);font-size:10px;color:var(--amber);
+    display:block;margin-top:6px;letter-spacing:0.02em;
+  }
+  .item .tag.c{color:var(--coral);}
+
+  /* table-like block for VM series / redundancy */
+  .microtable{
+    background:var(--panel);border:1px solid var(--line);border-radius:4px;
+    overflow:hidden;grid-column:1/-1;
+  }
+  .microtable .row{
+    display:grid;grid-template-columns:90px 1fr 1fr;
+    border-bottom:1px solid var(--line);
+  }
+  .microtable .row:last-child{border-bottom:none;}
+  .microtable .row.head{background:var(--panel2);}
+  .microtable .cell{padding:10px 14px;font-size:12.5px;color:var(--text-dim);}
+  .microtable .row.head .cell{font-family:var(--mono);font-size:11px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.05em;}
+  .microtable .cell.k{font-family:var(--mono);font-weight:700;color:var(--cyan);font-size:13px;}
+
+  footer{
+    padding:32px 24px;text-align:center;
+    font-family:var(--mono);font-size:11px;color:var(--text-faint);
+  }
+
+  @media (max-width:640px){
+    .microtable .row{grid-template-columns:70px 1fr;}
+    .microtable .cell:nth-child(3){grid-column:2;border-top:1px dashed var(--line);}
+    .chain-label{min-width:100%;padding-bottom:6px;}
+    .branch-note{margin-left:0;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="eyebrow">AZ-900 · reference map</div>
+    <h1>Azure fundamentals</h1>
+    <p>Every concept covered, in one map — from the physical datacenter up to Zero Trust. Built for a final pass before the exam, not for first-time learning.</p>
+    <div class="legend">
+      <span><span class="dot cyan"></span> core concept</span>
+      <span><span class="dot amber"></span> good-to-know detail</span>
+      <span><span class="dot coral"></span> common exam trap</span>
+    </div>
+  </div>
+</header>
+
+<section class="backbone">
+  <div class="wrap">
+    <div class="backbone-title">Two hierarchies everything else sits inside</div>
+
+    <div class="chain">
+      <div class="chain-label">Physical /<br>global</div>
+      <div class="node"><span class="nt">Datacenter</span><span class="nn">one building</span></div>
+      <div class="arrow">→</div>
+      <div class="node"><span class="nt">Availability zone</span><span class="nn">1+ datacenters, own power/cooling</span></div>
+      <div class="arrow">→</div>
+      <div class="node"><span class="nt">Region</span><span class="nn">min. 3 zones, if zones supported</span></div>
+      <div class="arrow">→</div>
+      <div class="node"><span class="nt">Region pair</span><span class="nn">manual DR, sequential updates</span></div>
+    </div>
+    <div class="branch-note">Availability set — fault domains (≤3, rack power/network) + update domains (≤20, staged maintenance) — protects inside ONE datacenter only, not a full outage</div>
+
+    <div class="chain" style="margin-top:26px;">
+      <div class="chain-label">Resource<br>management</div>
+      <div class="node"><span class="nt">Management group</span><span class="nn">≤ 6 levels deep</span></div>
+      <div class="arrow">→</div>
+      <div class="node"><span class="nt">Subscription</span><span class="nn">billing + quota boundary</span></div>
+      <div class="arrow">→</div>
+      <div class="node"><span class="nt">Resource group</span><span class="nn">1 group per resource</span></div>
+      <div class="arrow">→</div>
+      <div class="node"><span class="nt">Resource</span><span class="nn">VM, storage, DB…</span></div>
+    </div>
+    <div class="branch-note">Every request (Portal / CLI / PowerShell / SDK) → ARM validates auth + policy → routes to the matching Resource Provider (Microsoft.Compute, Microsoft.Storage…), which does the actual work</div>
+  </div>
+</section>
+
+<section class="domain">
+  <div class="wrap">
+    <div class="domain-head"><span class="domain-code">01</span><span class="domain-title">Cloud concepts</span></div>
+    <div class="grid">
+      <div class="item"><span class="it">Service models</span><span class="in">IaaS / PaaS / SaaS — responsibility shifts up as you move from IaaS to SaaS</span></div>
+      <div class="item"><span class="it">Deployment models</span><span class="in">Public / Private / Hybrid</span></div>
+      <div class="item"><span class="it">CapEx → OpEx</span><span class="in">upfront hardware purchase becomes ongoing pay-as-you-go</span></div>
+      <div class="item warn"><span class="it">Scalability vs elasticity</span><span class="in">scalability = add resources; elasticity = auto grow AND shrink</span></div>
+      <div class="item"><span class="it">High availability</span><span class="in">system stays up despite failures</span></div>
+      <div class="item"><span class="it">Fault tolerance</span><span class="in">keeps working even with a component down</span></div>
+      <div class="item"><span class="it">Disaster recovery</span><span class="in">restoring service after a major outage</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="domain">
+  <div class="wrap">
+    <div class="domain-head"><span class="domain-code">02</span><span class="domain-title">Compute — virtual machines</span></div>
+    <div class="grid">
+      <div class="microtable">
+        <div class="row head"><div class="cell">series</div><div class="cell">built for</div><div class="cell">notes</div></div>
+        <div class="row"><div class="cell k">B</div><div class="cell">burstable, light/occasional load</div><div class="cell">CPU credits — cheapest, best for labs</div></div>
+        <div class="row"><div class="cell k">D</div><div class="cell">general purpose</div><div class="cell">balanced CPU/RAM, most production apps</div></div>
+        <div class="row"><div class="cell k">E</div><div class="cell">memory-optimized</div><div class="cell">databases, in-memory analytics</div></div>
+        <div class="row"><div class="cell k">F</div><div class="cell">compute-optimized</div><div class="cell">batch processing, heavy CPU</div></div>
+        <div class="row"><div class="cell k">N</div><div class="cell">GPU-enabled</div><div class="cell">AI/ML training, rendering</div></div>
+      </div>
+      <div class="item crit"><span class="it">Power states</span><span class="in">Running / Stopped / Deallocated</span><span class="tag c">OS shutdown ≠ Deallocate — compute still billed until deallocated</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="domain">
+  <div class="wrap">
+    <div class="domain-head"><span class="domain-code">03</span><span class="domain-title">Networking</span></div>
+    <div class="grid">
+      <div class="item"><span class="it">Virtual network (VNet)</span><span class="in">isolated private network, defined by a CIDR address space</span></div>
+      <div class="item warn"><span class="it">Subnet</span><span class="in">segments a VNet</span><span class="tag">5 IPs always reserved (network, gateway, 2× DNS, broadcast)</span></div>
+      <div class="item"><span class="it">VNet peering</span><span class="in">VNet ↔ VNet over Microsoft's backbone, never the public internet</span><span class="tag c">not transitive — A↔B↔C needs a direct A↔C peering</span></div>
+      <div class="item"><span class="it">Site-to-Site VPN</span><span class="in">on-prem ↔ VNet, public internet, IPsec-encrypted</span></div>
+      <div class="item"><span class="it">Point-to-Site VPN</span><span class="in">single device ↔ VNet, e.g. a laptop working from home</span></div>
+      <div class="item"><span class="it">ExpressRoute</span><span class="in">private dedicated line via a connectivity provider, bypasses the public internet — predictable performance</span></div>
+      <div class="item"><span class="it">Public endpoint</span><span class="in">internet-reachable address on a PaaS service</span></div>
+      <div class="item"><span class="it">Private endpoint</span><span class="in">actual NIC + private IP inside your subnet, via Azure Private Link</span></div>
+      <div class="item"><span class="it">Network security group (NSG)</span><span class="in">L3-4 allow/deny rules on subnet or NIC</span><span class="tag">priority 100–4096, lowest number wins; defaults sit at 65000+</span></div>
+      <div class="item"><span class="it">Azure Firewall</span><span class="in">centralized L3-7, FQDN filtering, threat intelligence</span><span class="tag">lives in a dedicated AzureFirewallSubnet</span></div>
+      <div class="item"><span class="it">DDoS Protection</span><span class="in">Infrastructure tier = free/automatic; Network/IP Protection = paid, SLA-backed</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="domain">
+  <div class="wrap">
+    <div class="domain-head"><span class="domain-code">04</span><span class="domain-title">Storage</span></div>
+    <div class="grid">
+      <div class="item"><span class="it">Storage account</span><span class="in">globally-unique name, the container for everything below</span></div>
+      <div class="item"><span class="it">Blob storage</span><span class="in">object storage — files, images, backups (block/append/page blobs)</span></div>
+      <div class="item"><span class="it">Azure Files</span><span class="in">managed file share — SMB / NFS, mountable by many machines</span></div>
+      <div class="item"><span class="it">Disk storage</span><span class="in">managed disks — VM OS + data disks, built on page blobs</span></div>
+      <div class="item"><span class="it">Queue storage</span><span class="in">simple messages between app components</span></div>
+      <div class="item"><span class="it">Table storage</span><span class="in">simple NoSQL key-value store</span></div>
+      <div class="microtable">
+        <div class="row head"><div class="cell">tier</div><div class="cell">access pattern</div><div class="cell">retrieval</div></div>
+        <div class="row"><div class="cell k">Hot</div><div class="cell">read/written constantly</div><div class="cell">instant</div></div>
+        <div class="row"><div class="cell k">Cool</div><div class="cell">accessed rarely, ~monthly</div><div class="cell">instant</div></div>
+        <div class="row"><div class="cell k">Cold</div><div class="cell">very rare, still needs speed</div><div class="cell">instant</div></div>
+        <div class="row"><div class="cell k">Archive</div><div class="cell">long-term, almost never</div><div class="cell">hours (rehydration)</div></div>
+      </div>
+      <div class="microtable">
+        <div class="row head"><div class="cell">redundancy</div><div class="cell">copies live in</div><div class="cell">protects against</div></div>
+        <div class="row"><div class="cell k">LRS</div><div class="cell">one datacenter</div><div class="cell">disk/hardware failure only</div></div>
+        <div class="row"><div class="cell k">ZRS</div><div class="cell">3 availability zones</div><div class="cell">loss of a datacenter</div></div>
+        <div class="row"><div class="cell k">GRS</div><div class="cell">paired region</div><div class="cell">loss of the whole region</div></div>
+        <div class="row"><div class="cell k">RA-GRS</div><div class="cell">paired region</div><div class="cell">+ read access to the secondary copy</div></div>
+        <div class="row"><div class="cell k">GZRS</div><div class="cell">zones + paired region</div><div class="cell">highest protection, highest cost</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="domain">
+  <div class="wrap">
+    <div class="domain-head"><span class="domain-code">05</span><span class="domain-title">Databases</span></div>
+    <div class="grid">
+      <div class="item"><span class="it">Azure SQL Database</span><span class="in">full PaaS, least management</span></div>
+      <div class="item"><span class="it">SQL Managed Instance</span><span class="in">near-full SQL Server compatibility, still PaaS</span></div>
+      <div class="item"><span class="it">SQL Server on Azure VM</span><span class="in">IaaS — full control, full responsibility</span></div>
+      <div class="item"><span class="it">Database for PostgreSQL / MySQL</span><span class="in">managed open-source relational engines</span></div>
+      <div class="item"><span class="it">Cosmos DB</span><span class="in">NoSQL, multi-model, global distribution</span><span class="tag">99.999% read+write SLA</span></div>
+      <div class="item"><span class="it">Cache for Redis</span><span class="in">in-memory store for fast repeated reads</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="domain">
+  <div class="wrap">
+    <div class="domain-head"><span class="domain-code">06</span><span class="domain-title">Management tools</span></div>
+    <div class="grid">
+      <div class="item"><span class="it">Portal</span><span class="in">browser GUI — exploration, one-off tasks</span></div>
+      <div class="item"><span class="it">Azure CLI</span><span class="in">az commands, cross-platform, scriptable</span></div>
+      <div class="item"><span class="it">Azure PowerShell</span><span class="in">object-based output, Windows-heavy environments</span></div>
+      <div class="item"><span class="it">Cloud Shell</span><span class="in">CLI/PowerShell terminal inside the browser, pre-authenticated</span></div>
+      <div class="item"><span class="it">Azure Marketplace</span><span class="in">pre-built solutions and third-party images</span></div>
+      <div class="item"><span class="it">Azure Advisor</span><span class="in">personalized recommendations — cost, security, reliability, performance</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="domain">
+  <div class="wrap">
+    <div class="domain-head"><span class="domain-code">07</span><span class="domain-title">Monitoring &amp; health</span></div>
+    <div class="grid">
+      <div class="item"><span class="it">Service Health</span><span class="in">is Azure itself having an outage — platform-wide</span></div>
+      <div class="item warn"><span class="it">Resource Health</span><span class="in">is MY specific resource healthy right now</span></div>
+      <div class="item"><span class="it">Planned Maintenance</span><span class="in">upcoming maintenance that may affect your resources</span></div>
+      <div class="item"><span class="it">Health Advisories</span><span class="in">upcoming changes / deprecations to be aware of</span></div>
+      <div class="item"><span class="it">Azure Monitor — Metrics</span><span class="in">lightweight numeric time-series, near real-time</span></div>
+      <div class="item"><span class="it">Azure Monitor — Logs</span><span class="in">rich event data, queried with KQL</span></div>
+      <div class="item"><span class="it">Log Analytics Workspace</span><span class="in">central store logs from many resources land in</span></div>
+      <div class="item"><span class="it">Alerts + Action Groups</span><span class="in">rule fires on a condition → notifies or auto-remediates</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="domain">
+  <div class="wrap">
+    <div class="domain-head"><span class="domain-code">08</span><span class="domain-title">Governance &amp; cost</span></div>
+    <div class="grid">
+      <div class="item crit"><span class="it">Resource locks</span><span class="in">CanNotDelete / ReadOnly</span><span class="tag c">override even the subscription Owner — must be removed first</span></div>
+      <div class="item warn"><span class="it">Tags</span><span class="in">key=value metadata for cost tracking &amp; search</span><span class="tag">NOT inherited automatically · max 50 per resource</span></div>
+      <div class="item"><span class="it">Azure Policy</span><span class="in">controls what a resource is allowed to look like</span><span class="tag">Deny / Audit / Append / DeployIfNotExists</span></div>
+      <div class="item"><span class="it">Cost Management</span><span class="in">budgets, cost analysis, spend alerts</span></div>
+      <div class="item"><span class="it">TCO Calculator</span><span class="in">compares on-premises cost vs. running the same setup in Azure</span></div>
+      <div class="item"><span class="it">Factors affecting cost</span><span class="in">region, resource type, consumption/usage, bandwidth (egress)</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="domain">
+  <div class="wrap">
+    <div class="domain-head"><span class="domain-code">09</span><span class="domain-title">Identity &amp; security</span></div>
+    <div class="grid">
+      <div class="item"><span class="it">Microsoft Entra ID</span><span class="in">directory service — identities, SSO, MFA</span><span class="tag">renamed from "Azure AD" — same service</span></div>
+      <div class="item"><span class="it">B2B collaboration</span><span class="in">invite external partners — they sign in with their own org's account</span></div>
+      <div class="item"><span class="it">B2C / External ID</span><span class="in">identity for customer-facing apps, separate directory</span><span class="tag">B2C is legacy; new projects use Entra External ID</span></div>
+      <div class="item"><span class="it">Conditional Access</span><span class="in">if-this-then-that access rules (location, device, risk)</span></div>
+      <div class="item crit"><span class="it">RBAC — core roles</span><span class="in">Owner / Contributor / Reader / User Access Administrator</span><span class="tag c">additive model — higher scope role still applies lower down</span></div>
+      <div class="item"><span class="it">Defense in Depth</span><span class="in">layered controls: physical → identity → perimeter → network → compute → app → data</span></div>
+      <div class="item"><span class="it">Zero Trust</span><span class="in">never trust, always verify — every request checked regardless of origin</span></div>
+    </div>
+  </div>
+</section>
+
+<footer>AZ-900 · complete concept map</footer>
+
+</body>
+</html>
