@@ -363,6 +363,78 @@ d = dict.fromkeys(keys, 0)
 print(d)  # {'a': 0, 'b': 0, 'c': 0}
 ```
 
+
+# Task 2
+## Requirements
+
+**Student Grades Manager**
+
+اكتب برنامج بايثون بيدير درجات مجموعة طلاب، لازم يستخدم الأربعة أنواع (List, Tuple, Set, Dictionary) كل واحد في المكان المناسب له منطقيًا — مش عشوائي:
+
+1. اعمل **dictionary** اسمه `students`، الـ key هو اسم الطالب، والـ value عبارة عن **list** فيها درجات الطالب في 3 مواد (أرقام).
+
+
+
+```python
+   students = {
+       "Mohammed": [85, 90, 78],
+       "Ahmed": [60, 70, 65],
+       "Sara": [95, 88, 92],
+   }
+```
+
+2. اكتب function `average(grades_list)` بترجع متوسط الدرجات (list → رقم واحد).
+3. اطبع لكل طالب اسمه والمتوسط بتاعه (استخدم `.items()` عشان تلوب على الـ dictionary).
+4. اعمل **tuple** ثابتة (immutable) اسمها `subjects` فيها أسماء المواد التلاتة بنفس الترتيب `("Math", "Science", "English")` — وطبع لكل طالب أعلى مادة عنده (يعني تربط بين index الدرجة الأعلى في الـ list وindex المادة المقابلة في الـ tuple).
+5. اعمل **set** اسمه `passed_students` — أي طالب متوسطه ≥ 70 يتضاف اسمه للـ set (استخدم `.add()`). في الآخر اطبع الـ set وعدد الطلاب الناجحين (`len()`).
+6. ال Bonus: اعمل set تاني اسمه `honor_students` لأي طالب متوسطه ≥ 90، وبعدين استخدم `.intersection()` بين الـ set اللي فات و`passed_students` عشان تتأكد إن كل الـ honor students هما بردو ناجحين (لازم تكون نفس الـ honor_students بالظبط).
+
+
+## Solution
+
+```python
+# Dictionary Contains the name as a Key and a Value as a list of marks
+students = {
+    "Mohammed": [85, 90, 78],
+    "Ahmed": [60, 70, 65],
+    "Sara": [95, 88, 92],
+}
+
+
+def average(grades_list: list) -> float:
+    return sum(grades_list) / len(grades_list)
+
+
+for name, marks in students.items():
+    print(f"{name}'s Average is {average(marks)}")
+
+subjects = ("Math", "Science", "English")
+
+for name, marks in students.items():
+    max_grade = max(marks)
+    max_index = marks.index(max_grade)
+    print(f"{name}'s top subject: {subjects[max_index]} ({max_grade})")
+
+passed_students = set()  # Because it's an empty set
+for name, marks in students.items():
+    if average(marks) >= 70:
+        passed_students.add(name)
+
+print(f"\nPassed students: {passed_students}")
+print(f"Number of passed students: {len(passed_students)}")
+
+honor_students = set()
+for name, grades in students.items():
+    if average(grades) >= 90:
+        honor_students.add(name)
+
+print(f"\nHonor students: {honor_students}")
+
+check = honor_students.intersection(passed_students)
+print(f"Honor ∩ Passed: {check}")
+print("All honor students passed?", check == honor_students)
+
+```
 # Check Points
 
 ال**Checkpoint 1 — حلقات 1 إلى 20 (Syntax أساسي + Data types)**  
@@ -375,9 +447,7 @@ print(d)  # {'a': 0, 'b': 0, 'c': 0}
 هنا ركز أكتر — دي أقرب لـ STL بتاعتك بس بمرونة مختلفة تمامًا (dynamic, مفيش type واحد للـ container).  
 ال**Task:** اكتب برنامج بياخد list of numbers ويستخدم methods مختلفة (append, sort, list comprehension) عشان يرجع لك list تانية فيها بس الأرقام الزوجية × 2. حاول تعمله بـ list comprehension مش loop عادي.
 
-
-
-
+***DONE***
 
 **Checkpoint 3 — حلقات 33 إلى 55 (Operators, Conditions, Loops)**  
 مراجعة سريعة، فيه بس ملاحظة إن `while...else` و`for...else` مش موجودين في C++.  
