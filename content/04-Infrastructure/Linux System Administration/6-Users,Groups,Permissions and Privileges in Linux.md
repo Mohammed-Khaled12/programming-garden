@@ -15,6 +15,8 @@ Users also can be categorized based on their ability to log in interactively:
 | **Login Users**     | Yes        | /bin/bash, <br>/bin/zsh,<br>etc.  | Regular users who can authenticate and access the system  |
 | **Non-Login Users** | No         | /sbin/nologin, <br>/bin/**false** | System/application users for running background processes |
 
+![[Pasted image 20260908145519.png]]
+
 # User and Group Identifiers (UID & GID)
 
 يعني ايه جروب الاول بس؟
@@ -157,6 +159,8 @@ The hyphen `-` (or `-l`, `--login`) is the most critical flag. It tells the Kern
 - It resets the environment variables and executes the target user's startup scripts (`~/.bashrc`, `~/.zshrc`, or `/etc/profile`).
     
 - **Execution:** `su - alice`
+
+![[Pasted image 20260908145636.png]]
 
 #### Privilege Escalation: Switching to Root
 

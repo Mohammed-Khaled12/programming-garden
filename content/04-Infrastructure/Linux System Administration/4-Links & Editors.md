@@ -3,6 +3,10 @@
 ![[Pasted image 20260719194023.png]]
 
 ![[Pasted image 20260719202731.png]]
+
+
+![[Pasted image 20260908125709.png]]
+
 ## Hard Links (Multiple Names, One Inode)
 
 A hard link is simply an additional **Directory Entry** that points to the exact same **Inode** as the original file.
@@ -86,6 +90,7 @@ ln -s target_file link_name
 
 *لاحظ ان فايل 5 بقي بيبدا ب L اللي هي Soft Link*
 *لاحظ ان الاينودز مختلفه*
+
 
 # Editors: Vi & VIM
 

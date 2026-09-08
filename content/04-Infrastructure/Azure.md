@@ -1,3 +1,4 @@
+
 # General Cloud and Pre-Azure
 
 ![[Cloud Essentials.pdf]]
@@ -196,7 +197,7 @@ Infrastructure as a code (IaC)
 
 ## Networks Review
 فاكر النيتورك؟ بالتحديد ال IP بالتحديد IPv4 
-أي جهازين عايزين يتواصلوا مع بعض (سواء Physical أو Virtual) محتاجين **عنوان فريد** يعرفهم من بعض، زي رقم التليفون بالظبط. العنوان ده اسمه **IP Address**.
+أي جهازين عايزين يتواصلوا مع بعض (سواء Physical أو Virtual) محتاجين **عنوان فريد** يعرفهم من بعض، العنوان ده اسمه **IP Address**.
 ال IPv4 بيتكون من **4 أرقام مفصولة بنقط**، كل رقم من 0 لـ 255. مثال: `192.168.1.10`
 كل رقم من الأربعة دول فعليًا ممثل بـ **8 بت (Byte)**، يعني العنوان كله **32 بت**
 
@@ -219,7 +220,7 @@ Host Portion --> بيعرفك انت انهي جهاز في النيتورك
 ## Subnet
 
 لو حطيت كل الرسيورسيز بتاعتك في نفس المساحه الكبيره بتاعت ال Address Space كل حاجه هتقدر توصل للتانيه بسهوله و مش هيبقي فيه تنظيم 
-ال Subnet --> هو تقسيم ال VNet لحتت اصغر و كل حته يبقيليها غرض معين جوه ال VNet 
+ال Subnet --> هو تقسيم ال VNet لحتت اصغر و كل حته يبقي ليها غرض معين جوه ال VNet 
 
 ![[Pasted image 20260902165003.png]]
 
@@ -320,7 +321,7 @@ Host Portion --> بيعرفك انت انهي جهاز في النيتورك
 #### 1) Blob Storage 
 
 **Blob** = **Binary Large Object**.
-ده تطبيق Azure ل Object Storage "راجع في اول النوت في pdf لو نسيته"
+ده تطبيق Azure ل Object Storage "راجع اول النوت في pdf لو نسيته"
 
 **البنية الداخلية**: Blob Storage بتتكون من **Containers** (زي "المجلدات" الأساسية)، وجوه كل Container بتحط **Blobs** (الملفات الفعلية). تفتكر لما شرحنا Object Storage وقلنا إن الوصول بيتم بـ Key مش مسار هرمي حقيقي؟ نفس المبدأ هنا — الـ "مجلدات" اللي بتشوفها في الـ Portal هي محاكاة بصرية بس، مش هيكل حقيقي زي File Storage.
 
@@ -561,6 +562,7 @@ Resource (لو حطيت Lock هنا مباشرة)
 **السبب الهندسي وراء ده**: الفكرة كلها إن القفل بيضيف **خطوة واعية إضافية (deliberate extra step)** قبل أي عملية خطيرة. الشخص هيضطر يقول لنفسه بوعي "أنا فاتح إنه أشيل الحماية دي عشان أقدر أمسح المورد ده"، بدل ما يحصل الحذف **بالصدفة أو بضغطة زرار سريعة** وسط عمليات تانية كتير.
 
 # Describe the purpose of tags
+
 ال **Tag** هي **زوج من (اسم = قيمة)** — **Key-Value pair** — بتلزقه على أي ريسورس، Resource Group، أو حتى Subscription كاملة، عشان تضيفله **معلومة وصفية إضافية** مش موجودة أصلاً في بنية الموارد نفسها.
 
 مثال:
@@ -599,9 +601,6 @@ Project = graduation-project
 - **بعض أنواع الموارد مش بتدعم Tags خالص** (زي Classic resources القديمة، أو بعض الموارد المتخصصة زي DNS zones بقيود خاصة)
 - **مفيش تعقيد منطقي معقد**: Tags هي **بيانات وصفية بسيطة بس (flat metadata)**، مش نظام تصنيف هرمي معقد
 
-# look at cost management in Azure
-
----
 
 # Network Security Groups
 
@@ -732,20 +731,98 @@ Project = graduation-project
 
 # directory services & Azure AD (Microsoft Entra ID)
 
-**الاسم "Azure AD" اتغير رسميًا لـ "Microsoft Entra ID"**
+ال policy كان بتقول ان محمد لازم يعمل vm في UAE بس
+ال RBAC كانت بتقول ان لو محمد معاه الرول ده يقدر يعمل VM اصلا
+ال **Entra ID  بتجاوب عن سوال "طيب أزور أصلاً عرف إن الشخص ده هو 'محمد' منين؟"
+هي قاعدة بيانات فيها كل الهويات** (الأشخاص، المجموعات، التطبيقات) بتاعت مؤسستك. هي **مش بتحدد مين يعمل إيه خالص** — دورها الوحيد: **"محمد ده موجود، وده حسابه، وده الباسورد بتاعه، وده الإيميل بتاعه."**
 
-كل حاجة اتكلمنا عنها لحد دلوقتي (RBAC، الصلاحيات، مين يقدر يعمل إيه على مورد معين) كل ده مبني على افتراض أساسي: **إن فيه أصلاً "هوية" (Identity) معروفة ومسجلة تقدر تدّيها الصلاحية دي**. السؤال الأعمق: **إزاي أزور أصلاً بيعرف "مين إنت"، ومين موظفين شركتك، ومين ليه حق يدخل إيه؟**
+ لما تعمل حساب أزور، أزور بيعملك **Tenant واحد** تلقائيًا يمثل "المؤسسة" أو "الشخص" بتاعك (حتى لو إنت فرد واحد بس، زي حسابك الطلابي).
+**كل حاجة تانية اتكلمنا عنها (Subscriptions, Resource Groups, Resources) موجودة _جوه_ الـ Tenant ده.**
 
-هنا بييجي دور **Directory Service**.
-ال **Directory Service** هو **قاعدة بيانات مركزية** بتخزن معلومات عن **كل الهويات (Identities)** في منظومة معينة — المستخدمين، المجموعات (Groups)، الأجهزة، والتطبيقات — ومعاها **بيانات الاعتماد (Credentials)** والصلاحيات المرتبطة بيهم.
+- الـ **Tenant** هو ال Container اللي بتمثل المنظمة ككل
+    
+- الـ **Entra ID** هو الدليل (Directory) أو المحرك اللي شغال جوه الـ Tenant عشان يدير حسابات الناس وصلاحياتهم.
+    
+- العلاقة بينهم أساسية: كل **Tenant** بيحتوي على نسخة (Instance) واحدة مخصصة له من الـ **Entra ID**.
+    
+- لما بتعمل أي Azure Subscription، لازم تربطه بـ **Tenant** معين، وبالتالي الـ Subscription ده بيعتمد على الـ **Entra ID** الخاص بالـ Tenant ده عشان تأمين الدخول وإدارة الموارد
 
-ال **Microsoft Entra ID** هي **خدمة إدارة الهويات والوصول السحابية (Cloud-based Identity and Access Management)** بتاعة مايكروسوفت. هي **مش جزء من VNet أو أي Resource Group بتاعتك** — دي خدمة **منفصلة تمامًا على مستوى أعلى**، مرتبطة بـ **Tenant** (المؤسسة بتاعتك ككل)، مش بـ Subscription واحدة بس.
 
-**نقطة جوهرية هتتلخبط فيها بسهولة**: فاكر إن كل Azure AD Tenant عنده **Root Management Group واحدة بس** (زي ما شرحنا في هرم Management Groups)؟ ده بالظبط بيوضح العلاقة — **Entra ID Tenant هو المستوى الأعلى من كل حاجة**، وكل الـ Subscriptions والـ Resource Groups اللي شرحناها موجودة **جوه** الـ Tenant ده.
+```
+Tenant (المؤسسة كلها — فيها كل المستخدمين + كل الموارد)
+    ├── Entra ID (دفتر الأسماء: مين موجود؟)
+    │      └── محمد (User) — له إيميل، باسورد
+    │
+    └── Subscription (حدود فوترة)
+           └── Resource Group
+                  └── VM
+```
+
+```
+1. Entra ID → "مين إنت؟" (Authentication)
+       ↓ (لو الهوية اتأكدت)
+2. RBAC → "إنت مسموحلك تعمل العملية دي؟" (Authorization)
+       ↓ (لو مسموح)
+3. Azure Policy → "اللي إنت عايز تعمله ده، شكله متوافق مع القواعد؟" (Compliance)
+       ↓ (لو متوافق)
+4. ARM → ينفذ فعليًا عن طريق Resource Provider
+```
+
+هل ينفع استخدم 2 Entra ID لنفس ال Subscription ؟
+لا, بس ينفع يبقي 2 Subscription مربوطين ب Entra ID واحد
+![[Pasted image 20260908194130.png]]
+
 
 ![[Pasted image 20260904150816.png]]
 
 ![[Pasted image 20260904150830.png]]
+
+## Entra ID Users Types
+
+### 1. Member (Internal/Cloud-only user)
+مستخدم داخلي بالكامل، حسابه اتعمل مباشرة جوه الـ Tenant بتاعك. ده النوع الأساسي (زي موظف جديد في الشركة).
+### 2. Guest (External user)
+فاكر **B2B Collaboration** ؟ [[#1. B2B Collaboration - التعاون بين الشركات | بص عليه من هنا لو نسيته]]
+ده بالظبط تطبيقها العملي — مستخدم من مؤسسة تانية، بيتسجل بحساب مؤسسته الأصلية (Federated)، مش بحساب جديد كامل.
+
+### 3. Synced user (Hybrid)
+مستخدم جاي من **Active Directory تقليدي on-premises** عن طريق **Entra Connect**، ومتزامن تلقائيًا. **مينفعش تنشئه أو تعدله يدويًا من Entra ID مباشرة** — لازم التعديل يحصل من الـ on-premises AD نفسه، وبعدين يتزامن.
+
+
+
+## Creating Users in Entra ID
+
+اولا **لازم يكون معاك دور User Administrator على الأقل** (Role من Entra ID، مش RBAC العادي بتاع الموارد
+
+### Create  Single User
+
+**Entra ID** → **Users** → **+ New user** → **Create new user**
+
+- ال **User principal name (UPN)**: زي `mohammed@yourdomain.onmicrosoft.com` — ده **المعرّف الفريد** بتاع المستخدم، بيتكون من اسم + دومين الـ Tenant
+- ال **Display name**: الاسم اللي بيظهر
+- ال **Password**: يا إما تخلي أزور يولّد واحد تلقائي، يا إما تحدده إنت (Auto-generate أو Let me create the password)
+- ال **Groups and roles** (اختياري وقت الإنشاء): تضيفه لمجموعة أو رول مباشرة
+
+### Bulk Create
+for adding bulk of ***Member*** users
+- **Entra ID** → **Users** → **Bulk create**
+- **Download** template CSV فاضي من أزور نفسه
+- تملأ الأعمدة المطلوبة إلزاميًا: **Name, User principal name, Initial password, Block sign in (Yes/No)**
+- ترفع الملف (**Upload your CSV file**) → **Submit**
+
+**تفصيلة دقيقة لازم تاخد بالك منها**: لو بتضيف صف واحد بس (مستخدم واحد) في الملف، **لازم تسيب الصف التالت (row 3) زي ما هو وتحط بياناتك في الصف الرابع (row 4)** — لأن الصف التالت فيه رقم نسخة القالب (`version:v1.0`) وده إلزامي في أي رفع.
+
+### Bulk Invite
+for adding bulk of ***Eternal (guest)*** users
+
+![[Pasted image 20260909001147.png]]
+
+
+## Creating Groups in Entra ID
+
+
+
+
 
 # Azure Policy
 
