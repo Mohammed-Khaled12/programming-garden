@@ -435,6 +435,15 @@ print(f"Honor ∩ Passed: {check}")
 print("All honor students passed?", check == honor_students)
 
 ```
+
+# 3
+
+ Boolean Operators
+&& ---> and
+|| ---> or
+! ---> not
+
+input("")  note always return string
 # Check Points
 
 ال**Checkpoint 1 — حلقات 1 إلى 20 (Syntax أساسي + Data types)**  

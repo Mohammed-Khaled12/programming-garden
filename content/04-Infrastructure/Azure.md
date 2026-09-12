@@ -114,6 +114,42 @@ Resources (VMs, Storage, إلخ)
 الحد الأقصى للـ **العمق (depth)** المسموح بيه في هرم Management Groups هو **6 مستويات** (مش عدد لا نهائي)، وفيه **Root Management Group واحدة بس** لكل Azure AD Tenant (الحساب المؤسسي الأساسي)، وكل حاجة تانية بتندرج تحتها.
 
 ![[Pasted image 20260901184222.png]]
+
+عشان تقدر **تنشئ أو تدير** Management Groups، **مش كفاية إنك Subscription Owner أو حتى Contributor**. المطلوب واحد من الاتنين:
+
+1. تكون **Global Administrator** في Entra ID، **وتفعّل "Access management for Azure resources"** بنفسك (checkbox في **Entra ID → Properties**) — ده بيدّيك **User Access Administrator role على الـ Root Management Group**
+2. أو يكون **حد تاني معاه الصلاحية دي بالفعل يدّيك إياها**
+
+### Creating Management groups
+
+- Search bar → **Management groups**
+- **+ Create**
+- تحدد:
+    - ال**Management group ID**: معرّف فريد (زي `mg-sales`) — **ده لازم يكون فريد على مستوى الـ Tenant كله، ومينفعش تغيره بعد الإنشاء**
+    - ال**Display name**: الاسم اللي بيظهر (ده تقدر تغيره لاحقًا بسهولة)
+- **Create**
+
+عشان تنقل Subscription لجوه Management Group معينة، لازم يكون معاك **صلاحية كافية على الاتنين مع بعض**: صلاحية على الـ Subscription نفسها (زي Owner)، **وصلاحية على الـ Management Group الهدف** (زي Contributor على الأقل).
+
+**مينفعش تمسح Management Group لو لسه فيها Subscriptions أو Management Groups فرعية جواها** — لازم تفضيها الأول (تنقل كل حاجة برة أو تمسحها)، **بعدين** تقدر تمسح الـ Management Group نفسها.
+
+### Tenant Root Group
+
+فيه **Root Management Group واحدة بس لكل Tenant**؟ أول مرة تفتح صفحة Management Groups، أزور بيوريك **Tenant Root Group** موجودة بالفعل تلقائيًا (اسمها نفس اسم الـ Tenant)، وأي Management Group جديدة تعملها بتتحط **تلقائيًا تحتها مباشرة** كمستوى أول.
+
+### CLI Commands
+
+```bash
+# Creating a Management Group
+az account management-group create --name "mg-sales"
+
+# moving Subscription into it
+az account management-group subscription add \
+  --name "mg-sales" \
+  --subscription "<subscription-id>"
+```
+
+
 # Azure Resource Manager
 
 احنا عندنا طرق كتيره نقدر نتعامل بيها علي Azure 
@@ -236,6 +272,8 @@ Host Portion --> بيعرفك انت انهي جهاز في النيتورك
 - الـ **Address Spaces** بتاعة الـ VNets لازم تكون **مختلفة ومش متداخلة (non-overlapping)** — يعني لو VNet الأولى `10.0.0.0/16` والتانية `10.0.0.0/16` نفسها، الـ Peering مش هيشتغل، لازم تكون مثلاً `10.1.0.0/16`
 - الـ Peering **مش transitive** — يعني لو VNet A متوصلة بـ Peering مع VNet B، وVNet B متوصلة بـ Peering مع VNet C، ده **معناهوش** إن A تقدر توصل لـ C تلقائيًا. لازم تعمل Peering منفصل بين A وC صراحة لو محتاج الاتصال ده
 
+![[Pasted image 20260912135331.png]]
+
 ## VPN Gateway
 
 عباره عن Site-to-Site VPN بيوصل ال on-Prem بال VNet عن طريق بروتوكول اسمه IPsec بيعدي في الانترنت بس البيانات بتبقي مشفره Encrypted 
@@ -274,6 +312,74 @@ Host Portion --> بيعرفك انت انهي جهاز في النيتورك
 كل الحلول التلاتة دي بتحتاج **Gateway Subnet مخصصة** جوه الـ VNet
 
 ![[Pasted image 20260902193628.png]]
+
+## Advanced Options
+### إضافة أكتر من Address Space لنفس الـ VNet
+عندنا VNet بمساحة `10.0.0.0/24` ، تقدر **تضيف مساحات تانية** لنفس الـ VNet بعد إنشائها، مش لازم تتحدد كلها من الأول:
+
+```
+VNet: az900-hands-on-lab
+Address spaces:
+  - 10.0.0.0/24  (الأصلية)
+  - 10.1.0.0/16  (مضافة بعدين، لو احتجت مساحة أكبر لمشروع تاني)
+```
+
+**مثال عملي**: شركة بدأت بمساحة صغيرة، وبعد سنة احتاجت تستضيف مشروع جديد محتاج مئات الأجهزة — بدل ما تعمل VNet كامل جديد وتظبط Peering، بتضيف Address Space تاني لنفس الـ VNet الموجودة.
+
+### تعديل مساحة Subnet موجودة
+تقدر تكبر Subnet موجودة (زي من `/26` لـ `/25`) **بس لو مفيش تداخل (overlap) مع Subnet تانية جنبها**. فاكر إحنا رتبنا الـ Subnets بتاعتنا متتابعة (`10.0.0.0/26`, `10.0.0.64/26`, `10.0.0.128/26`)؟ لو عايز تكبر `Dev` من `/26` لـ `/25`، هتصطدم بـ `Marketing` اللي بعدها فورًا — مش هينفع من غير ما تمسح أو تنقل حاجة الأول.
+
+### Default VNet/Subnet Access
+
+**أي VNet جديدة بتتعمل دلوقتي، الـ Subnets بتاعتها "خاصة" افتراضيًا (Private by default)**. يعني **مفيش اتصال إنترنت خارج تلقائي خالص**، إلا لو إنت **صريح** ضفت واحدة من الطرق دي:
+
+1. ال**Public IP** مباشر على الـ VM
+2. **NAT Gateway**
+3. **Load Balancer** بإعدادات Outbound rules
+
+### NAT Gateway
+
+تخيل عندك **10 VMs** جوه Subnet واحدة، وكلهم محتاجين يعملوا طلبات خارجة للإنترنت (زي تحميل تحديثات)، لكن **من غير ما تدّي كل واحدة فيهم Public IP منفصلة** (تكلفة زيادة + Attack surface أكبر).
+ 
+ال**NAT Gateway** بتتحط على مستوى **Subnet كاملة**، وبتوفر **SNAT (Source Network Address Translation)** لكل الموارد جواها — يعني كل الـ VMs بتشارك **Public IP واحد أو أكتر (Prefix)** بتاع الـ NAT Gateway نفسها للخروج، من غير ما يكون لأي واحدة فيهم Public IP خاص بيها.
+
+```
+10 VMs (كلهم Private IP بس)
+    ↓
+NAT Gateway (له Public IP أو Public IP Prefix)
+    ↓
+الإنترنت
+```
+
+**نقطة تقنية مهمة**: NAT Gateway **بتحتاج Standard Public IP بالإلزام** — **مش شغالة خالص مع Basic Public IP أو Basic Load Balancer**. ده بيوصلنا للنقطة الجاية.
+![[Pasted image 20260912135108.png]]
+
+### User-Defined Routes (UDR) - التحكم اليدوي في المسارات
+
+بشكل افتراضي، Azure عنده **System Routes** تلقائية (زي "أي مرور لـ VNet تانية، اعديه على الـ Peering"، "أي مرور للإنترنت، اعديه مباشرة"). لكن أحيانًا عايز **تتحكم إنت بنفسك** في المسار — مثلاً عايز **كل** المرور الخارج من Subnet معينة **يعدي إجباريًا على Firewall افتراضي (NVA) الأول** قبل ما يطلع للإنترنت، مش يطلع مباشرة.
+
+ الحل: Route Table
+بتعمل **Route Table** فيها قاعدة زي:
+
+```
+Address prefix: 0.0.0.0/0  (يعني "أي مرور خارج، لأي مكان")
+Next hop type: Virtual appliance
+Next hop IP: 10.0.2.4  (IP بتاع الـ Firewall الافتراضي)
+```
+
+وتربط الـ Route Table دي بالـ Subnet اللي عايز تفرض عليها القاعدة دي.
+
+#### أنواع Next Hop المتاحة
+
+- ال**Virtual network gateway**: يوجه المرور لـ VPN/ExpressRoute Gateway
+- ال**Virtual network**: للمرور الداخلي
+- ال**Internet**: يوجه مباشرة للإنترنت
+- ال**Virtual appliance**: يوجه لجهاز افتراضي معين بـ IP محدد (زي Firewall)
+- ال**None**: **بيمنع** المرور بالكامل (drop)
+
+**ترتيب الأولوية المهم هتتسأل فيه**: لو عندك **UDR صريحة بـ `0.0.0.0/0`**، هي **بتلغي (override)** أي مسار تلقائي افتراضي، **بما فيه حتى NAT Gateway** — يعني لو عملت NAT Gateway وبعدين عملت UDR توجه كل حاجة لـ Virtual Appliance، **الـ UDR هي اللي هتكسب**، مش الـ NAT Gateway.
+
+![[Pasted image 20260912135810.png]]
 # Public and Private Endpoints
 
 ال PaaS علي Azure زي ال **Storage Account**، أو **Azure SQL Database**، أو **App Service** بتبقي بره السبسكريبشن بتاعك و بتبقي باي ديفولت بتاخد عنوان عام تقدر توصلها من النت يعني أي حد في العالم، من أي مكان، يقدر يحاول يوصل لعنوان الخدمة دي (طبعًا هيحتاج مفتاح أو صلاحية عشان يدخل فعليًا، لكن **العنوان نفسه مكشوف ومتاح** للكل).
@@ -561,6 +667,8 @@ Resource (لو حطيت Lock هنا مباشرة)
 
 **السبب الهندسي وراء ده**: الفكرة كلها إن القفل بيضيف **خطوة واعية إضافية (deliberate extra step)** قبل أي عملية خطيرة. الشخص هيضطر يقول لنفسه بوعي "أنا فاتح إنه أشيل الحماية دي عشان أقدر أمسح المورد ده"، بدل ما يحصل الحذف **بالصدفة أو بضغطة زرار سريعة** وسط عمليات تانية كتير.
 
+**إنشاء أو إزالة Lock محتاج صلاحية خاصة**، مش أي حد معاه Contributor. لازم يكون معاك `Microsoft.Authorization/locks/*` — يعني **Owner أو User Access Administrator بس**. **Contributor العادي مش يقدر يعمل أو يشيل Lock خالص**، حتى لو هو نفسه اللي عنده صلاحية كاملة على المورد نفسه. ده منطقي: لو Contributor قدر يشيل الـ Lock، الحماية كانت هتبقى بلا معنى.
+
 # Describe the purpose of tags
 
 ال **Tag** هي **زوج من (اسم = قيمة)** — **Key-Value pair** — بتلزقه على أي ريسورس، Resource Group، أو حتى Subscription كاملة، عشان تضيفله **معلومة وصفية إضافية** مش موجودة أصلاً في بنية الموارد نفسها.
@@ -777,6 +885,8 @@ Tenant (المؤسسة كلها — فيها كل المستخدمين + كل ا
 
 ![[Pasted image 20260904150830.png]]
 
+![[Pasted image 20260909113421.png]]
+
 ## Entra ID Users Types
 
 ### 1. Member (Internal/Cloud-only user)
@@ -818,11 +928,110 @@ for adding bulk of ***Eternal (guest)*** users
 ![[Pasted image 20260909001147.png]]
 
 
+
+## Entra ID Group Types
+
+### 1. Security Group
+مخصصة **بس** لإدارة الصلاحيات والوصول — تدّيها RBAC role على مورد، أو تستخدمها في NSG، أو تدّيها ترخيص (License). **تقدر تحط فيها Users أو Devices**.
+
+### 2. Microsoft 365 Group
+مخصصة للتعاون (collaboration) — بتيجي معاها تلقائيًا صندوق بريد مشترك، تقويم، SharePoint site، Teams. **تقدر تحط فيها Users بس، مش Devices**.
+
+_"Security groups can include either devices or users, but Microsoft 365 groups can include only users."_
+
+## Entra ID Membership Types
+
+### Assigned (Static) Membership
+
+الطريقة التقليدية — **إنت بنفسك** بتضيف أو تشيل الأعضاء يدويًا واحد واحد. بسيطة، لكن محتاجة صيانة مستمرة.
+
+### Dynamic Membership
+
+بدل ما تضيف الأعضاء يدويًا، **بتكتب قاعدة (Rule)** بناءً على خصائص المستخدم أو الجهاز، وEntra ID **بيضيف أو يشيل الأعضاء تلقائيًا** كل ما الخاصية دي تتغير.
+
+**مثال عملي**: تخيل قاعدة زي:
+
+```
+user.department -eq "Sales"
+```
+
+أي موظف جديد قسمه "Sales" (في الـ Entra ID profile بتاعه)، **بينضم للجروب تلقائيًا فورًا**، من غير أي تدخل يدوي. ولو نقل لقسم تاني، **بيتشال تلقائيًا** برضو.
+
+**نقطة تقنية دقيقة هتتسأل فيها**:
+
+- ال**Dynamic User group**: قاعدة على خصائص **مستخدمين**
+- ال**Dynamic Device group**: قاعدة على خصائص **أجهزة**
+- **مينفعش تعمل قاعدة واحدة فيها مستخدمين وأجهزة مع بعض** — لازم تختار نوع واحد بس
+- **مينفعش تضيف أو تشيل عضو يدويًا من جروب Dynamic** — العضوية بالكامل متحكم فيها بالقاعدة بس
+
+### قيد مهم: الترخيص المطلوب
+
+ال **Dynamic Membership groups محتاجة Microsoft Entra ID P1 license على الأقل** (مش متاحة في النسخة المجانية). لكن **مش لازم كل عضو جوه الجروب يكون معاه License نفسه** — الترخيص مطلوب بس للمؤسسة عشان تستخدم الميزة دي أصلاً.
+
+### حد أقصى مهم
+
+**أقصى عدد Dynamic Membership groups في الـ Tenant الواحد هو 15,000**، وباني القاعدة (Rule builder) في البورتال بيدعم لغاية **5 تعبيرات (expressions)** بس عن طريق الواجهة الرسومية — أكتر من كده لازم تكتب القاعدة يدوي في الـ text box.
+
+### Owners مقابل Members - فرق بسيط لكن مهم
+
+- ال**Members**: الأعضاء العاديين جوه الجروب
+- ال**Owners**: عندهم صلاحية **يديروا** الجروب نفسه (يضيفوا/يشيلوا أعضاء، يعدلوا الاسم) **من غير ما يكونوا لازم Admins على مستوى الـ Tenant كله**
+
+**الفايدة العملية**: تقدر تدي موظف عادي (مش IT admin) صلاحية Owner على جروب معين (زي "فريق التسويق")، وهو يدير أعضاء الفريق بنفسه من غير ما يحتاج صلاحيات إدارية أعلى.
+
 ## Creating Groups in Entra ID
 
+**Entra ID** → **Groups** → **+ New group**:
+
+- **Group type**: Security أو Microsoft 365
+- **Group name**
+- **Membership type**: Assigned / Dynamic User / Dynamic Device
+- لو اخترت Dynamic: **Dynamic membership rules** → تكتب القاعدة
+
+### Bulk create للجروبات
+
+زي المستخدمين بالظبط — CSV template تحمله، تملأه، وترفعه، لو محتاج تنشئ عدد كبير من الجروبات دفعة واحدة.
+
+### الربط بـ Group-Based Licensing (استخدام عملي شائع جدًا)
+
+بدل ما تدي **ترخيص Microsoft 365 لكل مستخدم لوحده يدويًا**، تقدر **تدّي الترخيص للجروب نفسه**. أي عضو ينضم للجروب (يدويًا أو Dynamic)، **ياخد الترخيص تلقائيًا**. ده استخدام شائع جدًا في الشركات الكبيرة — بدل إدارة تراخيص آلاف المستخدمين واحد واحد.
+
+### Admin Unit
+زي الرسيورس جروب عندنا حاجه تنظيميه خاصه بالجروبس في Entra ID اسمها Admin unit بتحط فيها الجروبس و اليوزرس
 
 
+## Self-Service Password Reset (SSPR)
+**المشكلة**: لو موظف نسي الباسورد بتاعه الساعه 11 بليل و قسم ال IT مقفول هيعمل ايه؟
+هيستني للصبح و كده يبقي اتعطلنا طبعا
 
+**الحل**:  SSPR 
+ال SSPR بتسمح للمستخدم يعيد ضبط الباسورد بنفسه، في أي وقت، من غير تدخل IT خالص.
+
+
+- **الترخيص**: SSPR بالكامل (مع كل ميزاتها) محتاجة **Microsoft Entra ID P1 أو P2**. النسخة المجانية بتديك SSPR للـ **Global Administrators بس**، مش لكل المستخدمين
+- **لازم تتفعّل على مستوى الـ Tenant** أولًا من **Entra ID → Password reset → Properties**، وتقدر تختار: **None / Selected (جروب معين) / All**
+
+### طرق التحقق (Authentication Methods)
+
+المستخدم لازم يسجل (Register) على الأقل **طريقة أو طريقتين** للتحقق قبل ما يقدر يستخدم SSPR أصلاً:
+
+| الطريقة                                                      | ملاحظة                                             |
+| ------------------------------------------------------------ | -------------------------------------------------- |
+| ال**Mobile phone** (SMS أو مكالمة)                           | الأشيع                                             |
+| ل**Office phone**                                            | بديل للموبايل                                      |
+| ل**Email address** (لازم يكون **مختلف** عن إيميل العمل نفسه) | لو نسي باسورد إيميل العمل، محتاج طريقة تانية توصله |
+| **Security questions**                                       | أضعف طريقة أمنيًا، لكن متاحة                       |
+| **Authenticator app**                                        | الأقوى أمنيًا                                      |
+
+الإدارة بتقدر تحدد **عدد الطرق المطلوبة للتسجيل** (زي "لازم طريقتين على الأقل") **وعدد الطرق المطلوبة وقت إعادة الضبط الفعلي** (ممكن تكون أقل من عدد التسجيل، زي "سجل طريقتين، لكن وقت إعادة الضبط استخدم واحدة بس").
+
+### Password Writeback 
+
+**المشكلة**: لو المستخدم **متزامن (Synced)** من on-prem AD، وعمل SSPR وغيّر الباسورد من السحابة، **الباسورد الجديد ده هيتخزن في Entra ID بس**. الباسورد **الأصلي على الـ on-prem AD هيفضل زي ما هو القديم**، وده تناقض خطير — المستخدم هيقدر يدخل الموارد السحابية بالباسورد الجديد، لكن **مش هيقدر يدخل الموارد الداخلية (on-premises) بيه**.
+
+**الحل: Password Writeback** — ميزة بتخلي التغيير يترجع **من الكلاود لـ on-prem AD نفسه**، بحيث الباسورد يفضل **موحد في المكانين**. دي **الاستثناء الوحيد** اللي بيكسر قاعدة "المزامنة اتجاه واحد بس"
+
+**شرط أساسي**: Password Writeback لازم تتفعّل من جوه **Entra Connect (أو Cloud Sync) نفسها**، مش بس من صفحة SSPR.
 
 # Azure Policy
 
@@ -879,6 +1088,11 @@ for adding bulk of ***Eternal (guest)*** users
 #### Disabled
 
 بتعطل القاعدة مؤقتًا من غير ما تحذفها، مفيد وقت الاختبار.
+
+#### Note
+لو عندك Policy بتأثير **DeployIfNotExists** أو **Modify**، هي **بتتطبق بس على الموارد الجديدة** من لحظة تفعيلها. **الموارد الموجودة بالفعل قبل الـ Policy مش بتتصلح تلقائيًا خالص**، حتى لو غير متوافقة (Non-compliant).
+
+عشان تصلح الموارد القديمة دي، لازم تعمل **Remediation Task** يدويًا (من **Policy → Compliance → اختار الـ Policy → Create remediation task**)، وهو اللي بيروح يطبق التأثير بأثر رجعي على كل مورد قديم غير متوافق.
 
 ### نطاق التطبيق (Scope) - نفس منطق الوراثة اللي شرحناه قبل كده
 
@@ -993,11 +1207,26 @@ for adding bulk of ***Eternal (guest)*** users
 - ال **NotActions**: استثناءات من الـ Actions (زي "يقدر يعمل كل حاجة في Compute إلا المسح")
 - ال **DataActions/NotDataActions**: نفس الفكرة لكن على مستوى **البيانات جوه المورد** (زي القراءة من Blob تحديدًا، مش بس إدارة الـ Storage Account نفسه)
 
-### الربط الحاسم بين RBAC و Entra ID
+### الربط بين RBAC و Entra ID
 
 ال **RBAC معندوش وجود من غير Entra ID**: الـ Security Principal (مين اللي بياخد الصلاحية) **لازم يكون هوية موجودة أصلاً في Entra ID** — مستخدم، مجموعة، أو Service Principal. RBAC هو **طبقة الصلاحيات**، لكن Entra ID هو **مصدر الهويات** اللي RBAC بيدّيها الصلاحيات دي.
 
-### التفرقة النهائية: RBAC مقابل Azure Policy 
+### التفرقة بين RBAC و Azure Policy 
 
 بما إن الفيديو اللي فات كان عن Policy، ده أهم مقارنة هتتسأل فيها في الامتحان:
 ![[Pasted image 20260904211014.png]]
+
+### Privileged Identity Management (PIM)
+
+فاكر لما اتكلمنا عن خطورة إن أي حد يفضل معاه **Owner دايمًا وطول الوقت**؟ PIM بتحل المشكلة دي بمبدأ اسمه **Just-in-Time Access**.
+
+
+| المعني                                                                                                           | النوع    |
+| ---------------------------------------------------------------------------------------------------------------- | -------- |
+| الصلاحية **شغالة فورًا وباستمرار** — زي أي Role Assignment عادي شرحناه                                           | Active   |
+| المستخدم **مؤهل** ياخد الصلاحية دي، **لكنها مش شغالة تلقائيًا**. لازم "يفعّلها" (Activate) وقت ما محتاجها فعليًا | Eligible |
+**مثال عملي**: مهندس عنده **Eligible Owner** على Subscription الإنتاج. في الحالة العادية، **معاهوش أي صلاحية خالص** (زي إنه Reader بس). لو احتاج يعمل تعديل حرج، بيروح PIM ويدوس **Activate**، وممكن الإعداد يطلبله: **MFA check، سبب واضح (business justification)، أو حتى موافقة (approval) من مدير**. بعد فترة زمنية محددة (زي 8 ساعات)، **الصلاحية بترجع تتقفل تلقائيًا**.
+
+**ليه ده أفضل أمنيًا؟** لو حساب المهندس اتخترق، المخترق **مش هيلاقي صلاحية Owner جاهزة** — هيحتاج يعدي MFA ويقدم مبرر، وده بيقلل الـ Attack Surface بشكل كبير جدًا.
+
+**قيد مهم**: PIM محتاجة **Microsoft Entra ID P2 license أو Entra ID Governance**، ومتاحة **بس للـ Users** (مش لـ Service Principals أو Managed Identities، لأنهم مش قادرين "يفعّلوا" الصلاحية بنفسهم زي إنسان).
