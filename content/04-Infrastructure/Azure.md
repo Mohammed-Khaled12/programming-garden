@@ -274,6 +274,60 @@ Host Portion --> بيعرفك انت انهي جهاز في النيتورك
 
 ![[Pasted image 20260912135331.png]]
 
+### كل Peering محتاج طرفين
+
+لما بتعمل Peering، إنت فعليًا **بتنشئ 2 Peering Resources منفصلين**، مش واحد:
+
+```
+VNet A → Peering resource باسم "A-to-B"
+VNet B → Peering resource باسم "B-to-A"
+```
+
+لو عملت واحد بس ونسيت التاني، الـ Peering **مش هيشتغل خالص** — ده أشهر سبب لمشكلة "عملت Peering بس مش شغال".
+
+### Peering Through Different Subscriptions  on the same tenant
+
+
+فاكر لما شرحنا إن الشركات بتقسم أحمالها على Subscriptions مختلفة (Production, Development, Networking)؟ ده معناه إن VNets كتير **هتحتاج Peering عبر Subscriptions مختلفة**، لكن **لسه جوه نفس الـ Tenant**.
+
+**الفرق التقني الوحيد**: لازم يكون معاك **صلاحية كافية على الـ Subscription التانية** (Network Contributor على الأقل)، وبتحدد الـ VNet الهدف بالـ **Resource ID** الكامل بتاعها (مش بس الاسم)، لأن الاسم لوحده مش كفاية للتفرقة لما بتكون في Subscriptions مختلفة.
+
+### Peering Through Different Subscriptions and tenant
+
+شركتك عايزة تعمل Peering مع **VNet بتاعة مورد خارجي (Vendor)** عنده Tenant مختلف تمامًا.
+
+#### الفرق الجوهري عن الـ Subscription العادية
+
+من **البورتال**، فيه خطوة **مصادقة إضافية (authentication step)** لازم تحصل — إنت لازم "تدخل" مؤقتًا على الـ Subscription التانية (بحساب معاه صلاحية فيها) عشان توافق على الـ Peering من الجهتين. من **CLI**، الخطوة دي **مش موجودة تلقائيًا** ولازم تتعامل معاها يدويًا بمصادقة منفصلة لكل طرف (`az login` منفصل لكل Tenant، وتنفذ أمر الـ Peering مرتين، مرة من كل جهة بحساباتها الخاصة).
+
+ال**Address spaces لازم تكون Non-overlapping** — نفس القاعدة اللي شرحناها من الأول، بس هنا **أصعب تتأكد منها** لأنك مش شايف كل VNets الشركة التانية، فلازم تنسق معاهم مسبقًا.
+
+#### نقطة مهمة: Gateway Transit عبر Tenants — مش شغالة أوتوماتيك
+
+فاكر Allow Gateway Transit / Use Remote Gateways اللي شرحناها؟ لو الـ Peering ده **عبر Tenants مختلفة**، البورتال **مش قادر يتأكد** إن فيه Gateway فعلاً موجودة في VNet التانية (لأنه مش عنده رؤية على الـ Tenant التاني)، فبتحصل مشاكل شائعة في تفعيل الخاصية دي عبر Tenants، ومحتاجة تنسيق يدوي دقيق بين الطرفين.
+
+### Peering States
+
+| State        | Meaning                                                                           |
+| ------------ | --------------------------------------------------------------------------------- |
+| Initiated    | إنت عملت الـ Peering من جهتك، لكن **الطرف التاني لسه معملوش الـ Peering المقابل** |
+| Connected    | الاتنين اتعملوا صح، الاتصال شغال بالكامل                                          |
+| Disconnected | كان شغال وبعدين اتقطع (زي لو حد مسح Peering من جهة واحدة)                         |
+
+ ليه ممكن حالة الـ Peering تبقى غير متماثلة (Asymmetric) فجأة
+
+مش بس وقت الإنشاء، ممكن Peering كان شغال Connected من الاتنين، وبعدين يحصل عدم تطابق فجأة، لأسباب زي:
+
+- **نقل الـ VNet لـ Subscription أو Tenant تاني** (فاكر إحنا شرحنا إن نقل Subscription بيكسر RBAC؟ بيكسر الـ Peering كمان بنفس المنطق)
+- ال**Azure Policy جديدة اتفرضت** بتمنع أو بتقيد الـ Peering (زي الـ Policy اللي بتمنع Peering عبر Subscriptions مختلفة تمامًا، مستخدمة في بيئات حساسة أمنيًا)
+
+**خطوة التشخيص العملية**: روح لكل VNet لوحدها من البورتال → **Peerings** → قارن حقل **Status** في الاتنين.
+
+### مين اللي بيعمل طرفين ال Peering ؟
+
+![[Pasted image 20260913135355.png]]
+
+![[Pasted image 20260913135431.png]]
 ## VPN Gateway
 
 عباره عن Site-to-Site VPN بيوصل ال on-Prem بال VNet عن طريق بروتوكول اسمه IPsec بيعدي في الانترنت بس البيانات بتبقي مشفره Encrypted 
@@ -747,13 +801,31 @@ Project = graduation-project
 
 ال **NSG على مستوى Subnet بس، مش بتمنع المرور بين VMs جوه نفس الـ Subnet مع بعض** — لأن المرور ده أصلاً مبيخرجش من حدود الـ Subnet خالص. لو عايز **تعزل VMs عن بعض حتى وهم في نفس الـ Subnet**، لازم تستخدم **NIC-level NSG** على كل VM على حدة.
 
+
+ للمرور الداخل (Inbound)
+
+```
+Internet → NSG (Subnet level) → NSG (NIC level) → VM
+```
+
+ للمرور الخارج (Outbound)
+
+```
+ VM → NSG (NIC level) → NSG (Subnet level)  → Internet
+```
+
+
 ### Application Security Groups (ASG)
 
 بدل ما تكتب قواعد بـ IP addresses محددة بالظبط (اللي بتتغير باستمرار مع كل VM جديدة)، تقدر تجمع مجموعة VMs تحت **مسمى منطقي (زي "WebServers" أو "DatabaseServers")**، وتكتب القاعدة على أساس الاسم ده بدل الـ IP.
 
 **الفايدة**: لو أضفت VM جديدة للمجموعة، **بتاخد نفس قواعد الأمان تلقائيًا** من غير ما تعدل أي قاعدة NSG موجودة.
 
+### Limits
 
+- **أقصى عدد NSGs لكل Subscription**: 5000 (افتراضي، قابل للزيادة بطلب)
+- **أقصى عدد قواعد لكل NSG**: 1000 قاعدة (Inbound + Outbound مع بعض)
+- **أقصى عدد ASGs لكل NIC**: 20
 # Azure Firewall
 
 فاكر لما شرحنا NSG وقلنا إنه بيشتغل بمنطق الـ **5-tuple** (Source, Destination, Port, Protocol, Action)؟ ده معناه إن NSG **بيفهم بس أرقام IP وبورتات**. لكن فيه سيناريوهات كتير محتاجة **فهم أعمق بكتير من مجرد رقم IP**:

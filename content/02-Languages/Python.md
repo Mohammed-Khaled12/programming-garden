@@ -444,6 +444,21 @@ print("All honor students passed?", check == honor_students)
 ! ---> not
 
 input("")  note always return string
+
+if Syntax:
+```python
+if condation :
+	statment
+
+elif condation :
+	statment
+
+else:
+	statment
+	
+statment_if_True if Condation else statment_if_False # Ternary Operator
+```
+
 # Check Points
 
 ال**Checkpoint 1 — حلقات 1 إلى 20 (Syntax أساسي + Data types)**  
