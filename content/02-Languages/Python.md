@@ -459,6 +459,41 @@ else:
 statment_if_True if Condation else statment_if_False # Ternary Operator
 ```
 
+membership Operators "in" & "not in"
+```python
+# --------------------------
+# -- Membership Operators --
+# --------------------------
+# in
+# not in
+# --------------------------
+
+# String
+
+name = "Mohammed"
+print("M" in name)  # True
+print("E" in name)  # False
+
+# With Condation
+
+Cities = ["Cairo", "Aswan", "Giza"]
+user_city = input("What's your City ?\n")
+if user_city in Cities:
+    print(f"Hello to {user_city}")
+else:
+    print("Hello")
+
+```
+
+while Syntax
+
+```python
+while condation:
+	statment
+else:
+	statment
+```
+ال else بتتحق بعد ما يخرج من اللوب , تقدر تشيل ال else عادي
 # Check Points
 
 ال**Checkpoint 1 — حلقات 1 إلى 20 (Syntax أساسي + Data types)**  
