@@ -1483,3 +1483,146 @@ user.department -eq "Sales"
     
 
 > **تحذير حرج:** لو عملت NSG وقفلت Inbound Traffic على البورتات دي، الـ Application Gateway هيدخل في حالة `Failed State` وتتوقف الإدارة تماماً، وده أشهر سبب لعدم عمل الـ Gateway بعد إنشائه.
+
+
+# Azure Public and Private DNS
+
+مفيش حد بيحفظ IP addresses. إنت بتكتب `google.com`، مش `142.250.187.78`. **DNS (Domain Name System)** هو الخدمة اللي بتترجم الاسم للعنوان الفعلي. أزور بيقدملك نوعين مختلفين تمامًا من الخدمة دي، لغرضين مختلفين تمامًا.
+
+## Azure Public DNS - للعالم الخارجي
+
+#### المشكلة اللي بتحلها
+
+تخيل إنك اشتريت دومين باسم `mycompany.com` من شركة زي GoDaddy أو Namecheap. الشركة دي اسمها **Domain Registrar** (مُسجِّل الدومينات).
+لكن إنت مش عايز تدير الـ DNS Records (زي الـ `A Record` أو `CNAME`) من عند GoDaddy؛ عايز تديرها من جوه Azure Portal جنب الـ Virtual Machines والـ Load Balancers بتاعتك.
+#### الآلية
+- بتدخل على Azure وتعمل **Azure Public DNS Zone** باسم `mycompany.com`.
+    
+- ا Azure بيكريتلك الـ Zone وبيديك **4 Name Servers (NS)** خاصين بـ Microsoft (مثل `ns1-01.azure-dns.com`).
+    
+- بترجع لـ GoDaddy وتعمل Update للـ NS Records وتحط الـ 4 Name Servers بتوع Azure.
+    
+- من اللحظة دي، Azure بقيت هي الـ **Authoritative DNS Host** للدومين بتاعك على مستوى كوكب الأرض. أي حد على الإنترنت يكتب `api.mycompany.com` الـ Query هتتحول لـ Azure Public DNS ويديه الـ Public IP.
+
+#### أنواع الـ Records الأساسية
+
+|النوع|الوظيفة|
+|---|---|
+|**A**|اسم → IPv4 address مباشرة|
+|**AAAA**|اسم → IPv6 address|
+|**CNAME**|اسم → اسم تاني (alias) — مثلاً `www` → `mohammedapp.com`|
+|**MX**|تحديد سيرفرات البريد الإلكتروني بتاعت الدومين|
+|**TXT**|بيانات نصية حرة — بتستخدم كتير للتحقق من ملكية الدومين (زي لما شرحنا "custom domain verification" في Entra ID)|
+|**NS**|تحديد الـ Name Servers المسؤولة|
+
+### Azure Private DNS - للعالم الداخلي بس
+
+#### المشكلة اللي بتحلها 
+
+جوه الـ Virtual Network (VNet) بتاعتك في Azure، عندك آلاف الـ Resources:
+
+- `vm-app-01` (`10.0.1.4`)
+    
+- `vm-db-master` (`10.0.2.10`)
+    
+- `internal-lb` (`10.0.1.100`)
+    
+
+مش منطقي تخلي الـ Apps تكلم الـ Databases بالـ IP مباشر (لو الـ IP اتغير السيستم هيقع)، وفي نفس الوقت **ممنوع تكشف الأسماء والـ IPs الداخلية دي للإنترنت** لأسباب أمنية.
+
+وهنا بييجي دور **Azure Private DNS Zone**.
+
+1. ال**The Private :** بتكريت Zone باسم داخلي، زي `corp.internal` أو حتى `mycompany.com`.
+    
+2. ال**Virtual Network Link (VNet Link):** دي الوصلة اللي بين الـ DNS Zone وبين الـ VNet. الـ Private Zone مبتكونش شايفه أي VNet إلا لما تعمل Link بينهما.
+    
+3. ال**Auto-Registration:** ميزة خطيرة! لما تفعّل الـ Auto-Registration على الـ VNet Link، أي VM جيدة تكريتها جوه الـ VNet، Azure أوتوماتيك بيكريتلها `A Record` باسم الـ VM جوه الـ Private DNS Zone. ولو مسحت الـ VM، بيتمسح الـ Record أوتوماتيك.
+#### الفرق الجوهري عن Public DNS
+
+ال**Private DNS Zone مش مرئية من الإنترنت خالص** — بس الـ VNets اللي **ربطتها (Linked) بيها صراحة** تقدر تحلها. فاكر مبدأ **Deny by default** اللي شرحناه في NSG؟ نفس الفلسفة هنا.
+
+#### Virtual Network Links - الخطوة الإلزامية
+
+زي ما NSG لوحدها ملهاش تأثير لحد ما تربطها بـ Subnet، **Private DNS Zone لوحدها ملهاش تأثير لحد ما تربطها (Link) بـ VNet**. وفيه نوعين من الربط:
+
+**1. Registration Virtual Network (مع Autoregistration)**  
+لو فعّلت **Autoregistration** وقت الربط، **أي VM تتعمل جوه الـ VNet دي بتاخد A record تلقائيًا** في الـ Zone، من غير أي تدخل يدوي. لو الـ VM اتقفلت (Deallocated) أو اتمسحت، الـ record بيتشال تلقائيًا كمان.
+
+**2. Resolution Virtual Network (من غير Autoregistration)**  
+الـ VNet دي **تقدر تحل** أي record موجود في الـ Zone، لكن **مش بتسجل** مواردها هي فيها تلقائيًا.
+
+**قيد مهم هتتسأل فيه**: **VNet واحدة تقدر تكون Registration Network لـ Private DNS Zone واحدة بس**. لو حاولت تفعّل Autoregistration لنفس الـ VNet في Zone تانية، هيفشل.
+
+### نقطة عملية: On-premises مش بيشوف Private DNS تلقائيًا
+
+لو عندك on-premises متصل بـ VPN/ExpressRoute (فاكرهم؟)، **الأجهزة on-premises مش بتقدر تحل Private DNS Zone records بشكل طبيعي مباشرة**. لازم تعمل **DNS Forwarder** (VM جوه أزور شغالة كـ DNS proxy) يستقبل الطلبات من on-premises ويوجهها لـ Private DNS Zone.
+
+![[Pasted image 20260916020803.png]]
+#### Ex on Private DNS
+انا لما بربط vnet ب private dns و افعل الاوتو 
+هو اوتوماتيك بياخد ips ال VMs كلها و يعمل كده عنده
+VM1.DNSZoneName --->IP 
+و اي VM جوه ال Vnet تكتب VM1.DNSZoneName ال DNS هيوديها ل VM1 
+و ده اسهل من انك تكتب ال IP الطويل
+
+# Azure App Services
+
+فاكر لما شرحنا **IaaS مقابل PaaS**؟ لو نشرت الـ FastAPI بتاعك على **VM عادية**، إنت مسؤول عن: تثبيت Python، تحديثات الـ OS، تظبيط Nginx كـ reverse proxy، عمل الـ scaling بنفسك، إدارة الشهادات (SSL)... كل ده **قبل** حتى ما تفكر في الكود نفسه.
+
+ال **Azure App Service** هي **أقصى درجة PaaS للتطبيقات الويب**: بترفع الكود بس، والمنصة بتتكفل بكل حاجة تانية — الـ OS، الـ Runtime، التحديثات، الـ Load Balancing الأساسي، شهادات SSL المجانية.
+
+### App Service Plan 
+#### الفكرة الأساسية اللي لازم تترسخ
+
+ال**App Service نفسها مش "بتشتري" هاردوير مستقل**. أي App (تطبيق ويب) لازم يكون **تابع لـ App Service Plan**، والـ Plan هو فعليًا **مجموعة VMs (Workers) بيشتغل عليها تطبيقك**.
+
+**بالتشبيه الهندسي اللي يناسبك**: فكر في الـ Plan زي **process pool** — التطبيقات المختلفة اللي بتحطها جوه نفس الـ Plan **بتشارك نفس الموارد الفيزيقية (نفس الـ VM instances)**، زي إزاي كذا thread بيشارك نفس الـ process.
+
+**لو حطيت أكتر من App جوه نفس الـ Plan، كلهم بيشاركوا نفس الـ VM instances، وبالتالي بيأثروا في بعض.** لو App واحد استهلك كل الـ CPU، الباقي هيتبطأ. لو عايز **عزل كامل** بين تطبيقين، لازم تحطهم في **Plans منفصلة تمامًا**، مش نفس الـ Plan.
+
+#### الـ Tiers
+
+|Tier|استخدام|Scale-out أقصى|Deployment Slots|
+|---|---|---|---|
+|**Free (F1)**|تجربة وتعلم بس|مفيش scale-out خالص|مفيش|
+|**Shared**|مواقع بسيطة جدًا|مفيش scale-out|مفيش|
+|**Basic (B1-B3)**|تطبيقات بسيطة، بيئات تطوير|لغاية 3|مفيش|
+|**Standard (S1-S3)**|تطبيقات إنتاج تجارية|لغاية 10|**لغاية 5**|
+|**Premium (P1v3-P3v3 وأحدث)**|تطبيقات إنتاج عالية الأداء|لغاية 30|**لغاية 20**|
+|**Isolated (App Service Environment)**|عزل شبكي كامل، تطبيقات حساسة جدًا|لغاية 100|لغاية 20|
+
+### Scale Up VS Scale Out 
+#### Scale Up (Vertical) - تكبير الآلة
+
+بتغيّر الـ **Tier** نفسه لحاجة أقوى (زي من B1 لـ S1). **ده بياخد إعادة تشغيل (restart)** للتطبيق
+#### Scale Out (Horizontal) - زيادة عدد الآلات
+
+بتزود **عدد الـ Instances** اللي شغالة (زي من instance واحد لـ 3)، **من غير إعادة تشغيل**، والـ Load Balancing بين الـ Instances دي **بيحصل تلقائيًا من App Service نفسها** — مش محتاج تعمل Load Balancer منفصل
+
+#### Autoscale - الأتمتة الكاملة
+
+بدل ما تراقب وتكبر يدوي، تقدر تظبط **Autoscale Rules** زي: "لو CPU فوق 70% لمدة 10 دقايق، زود Instance واحد"، و"لو تحت 20%، قلل واحد". فاكر مبدأ **Elasticity** اللي شرحناه في AZ-900 (النمو والانكماش التلقائي)؟ ده **التطبيق العملي المباشر** ليه.
+
+### Availability Zones For App Service 
+
+لو الـ Plan بتاعك **Zone-redundant**، أزور بيوزع الـ Instances بتاعتك **تلقائيًا على 3 Availability Zones على الأقل** (فاكر الحد الأدنى اللي شرحناه في AZ-900؟). **الحد الأدنى المطلوب: 3 instances** عشان توزيعهم على الزونز الثلاثة بالتساوي.
+
+### Deployment Slots - أهم ميزة عملية في الموضوع كله
+
+#### المشكلة الأساسية
+
+تخيل عندك تطبيق شغال Production، وعايز تنشر **نسخة جديدة**. لو نشرتها مباشرة على الـ Production، ولو فيها باج، **كل المستخدمين هيتأثروا فورًا**.
+
+#### الحل: Deployment Slots
+
+بتعمل **Slot إضافي** (زي `staging`) — نسخة **منفصلة تمامًا** من التطبيق، بنفس الـ App Service Plan، بس بعنوان مختلف (`myapp-staging.azurewebsites.net`). بترفع الكود الجديد على الـ `staging` **الأول**، تختبره بأمان، وبعد ما تتأكد إنه شغال كويس، تعمل **Swap**.
+
+#### Swap 
+
+لما تعمل **Swap بين staging وproduction**، Azure **مش بينقل الملفات فعليًا** — هو بيبدّل **الـ Routing** بس (مين اللي بيستقبل الترافيك تحت اسم Production). العملية دي **آنية تقريبًا (near-instant)**، **من غير Downtime خالص**، لأن الـ instances التانية **كانت شغالة بالفعل** قبل الـ Swap.
+
+**بالتشبيه الهندسي اللي يناسبك**: فكرها زي **Blue-Green Deployment** الكلاسيكي في هندسة البرمجيات — عندك نسختين شغالتين، وبتبدّل مين "الحية" فورًا، مش بتوقف وتشغل من جديد.
+
+#### نقطة تقنية دقيقة: مفيش تكلفة إضافية للـ Slots نفسها
+
+ال**Deployment Slots مجانية تمامًا** كميزة — التكلفة الوحيدة هي إنها **بتستهلك من نفس موارد الـ Plan** اللي إنت أصلاً بتدفع فيها (لأنها زي ما قلنا فاكرة نفس الـ VM instances). 

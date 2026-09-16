@@ -1,6 +1,9 @@
 
 # Lab 1 CairoStore
 
+تقدر تحله بعد الفيديو رقم 22 في AZ-104
+
+
 You are an Azure Administrator at a company named **CairoStore**. You have an application consisting of:
 
 * Web server
