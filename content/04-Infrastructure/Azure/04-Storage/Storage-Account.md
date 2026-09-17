@@ -9,7 +9,8 @@
 #### 1) Blob Storage 
 
 **Blob** = **Binary Large Object**.
-ده تطبيق Azure ل Object Storage "راجع اول النوت في pdf لو نسيته"
+ده تطبيق Azure ل Object Storage 
+[[General Cloud|Review Storages from here]]
 
 **البنية الداخلية**: Blob Storage بتتكون من **Containers** (زي "المجلدات" الأساسية)، وجوه كل Container بتحط **Blobs** (الملفات الفعلية). تفتكر لما شرحنا Object Storage وقلنا إن الوصول بيتم بـ Key مش مسار هرمي حقيقي؟ نفس المبدأ هنا — الـ "مجلدات" اللي بتشوفها في الـ Portal هي محاكاة بصرية بس، مش هيكل حقيقي زي File Storage.
 
@@ -44,11 +45,14 @@
 دي خدمة **NoSQL key-value store** بسيطة جدًا، مصممة لتخزين **بيانات منظمة لكن 
 تكون non-relational** بكميات ضخمة وبتكلفة منخفضة جدًا. كل "صف" في الجدول عنده **Partition Key** و**Row Key** بيحددوا هويته بشكل فريد.
 
-**متلخبطش بينها وبين Azure SQL Database أو Cosmos DB** — Table Storage أبسط بكتير، مفيهاش علاقات (relations) أو استعلامات معقدة (complex queries)، ومناسبة لبيانات بسيطة زي logs أو metadata خفيفة.
+**متلخبطش بينها وبين Azure SQL Database أو Cosmos DB** — Table Storage 
+هي أبسط بكتير، مفيهاش علاقات (relations) أو استعلامات معقدة (complex queries)، ومناسبة لبيانات بسيطة زي logs أو metadata خفيفة.
 
 ### Access Tiers
 
 ![[Pasted image 20260903105412.png]]
+
+![[Pasted image 20260917232909.png]]
 
 ![[Pasted image 20260903105505.png]]
 
@@ -57,14 +61,18 @@
 
 بيحتفظ بـ **3 نسخ من بياناتك جوه نفس الـ Datacenter الواحد**. أرخص خيار، بيحميك بس من فشل هاردوير محلي (زي ديسك واحد اتعطل)، لكن **لو الداتا سنتر كله وقع، بياناتك ضاعت**.
 
+![[Pasted image 20260917233050.png]]
+
 #### ZRS (Zone-Redundant Storage)
 
 بيوزع النسخ الثلاثة على **3 Availability Zones مختلفة** جوه نفس الـ Region
 لو Zone كاملة وقعت، بياناتك لسه موجودة وآمنة.
 
+![[Pasted image 20260917233129.png]]
 #### GRS (Geo-Redundant Storage)
 
 بينسخ بياناتك بالكامل لـ **Region تانية بعيدة (الـ Region Pair)**. لو الـ Region الأساسية بالكامل وقعت (كارثة إقليمية)، بياناتك لسه موجودة في الـ Region الشريكة.
+
 
 **RA-GRS**
 هو نفس GRS، بس بيديك **صلاحية قراءة مباشرة (Read Access)** من النسخة الاحتياطية في الـ Region التانية حتى في الحالة العادية (مش وقت الكارثة بس)، مفيد لو عايز توزع حمل القراءة جغرافيًا.
