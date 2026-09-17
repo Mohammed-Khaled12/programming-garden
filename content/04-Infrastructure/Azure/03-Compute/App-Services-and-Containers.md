@@ -160,6 +160,7 @@ API_KEY = os.environ.get("API_KEY")
 # VMs, Containers and ACI
 
 ## VM VS Container
+
 ده أشهر سوء فهم، ولازم نصححه من الأساس. فاكر لما شرحنا الـ Hypervisor بالتفصيل [[General Cloud#General Cloud and Pre-Azure|Review From Here]]
 ، وقلنا إن كل **VM** معاها **نسخة كاملة من نظام تشغيل مستقل** (Kernel خاص بيها، بتتوهم إنها شغالة على هاردوير كامل)؟
 

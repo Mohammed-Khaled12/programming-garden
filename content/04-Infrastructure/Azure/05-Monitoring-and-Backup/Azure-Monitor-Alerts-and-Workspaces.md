@@ -66,11 +66,3 @@
 4. الاتنين مربوطين بـ **Action Group** واحدة: تبعتلك SMS فورًا + تفتح تذكرة تلقائية في نظام الـ Incident Management بتاع الشركة
 
 النتيجة: من غير ما تقعد تراقب يدويًا، النظام بيبلغك **قبل ما المستخدمين حتى يلاحظوا فيه مشكلة
-
-
-[[Azure-Policy-Locks-and-Tags]]
-[[Azure-Policy-Locks-and-Tags]]
-
-[[NSG-Azure-Firewall-and-DDoS]]
-[[NSG-Azure-Firewall-and-DDoS]]
-[[NSG-Azure-Firewall-and-DDoS]]

@@ -22,10 +22,3 @@
 
 
 ![[Pasted image 20260902112530.png]]
-
-
-[[VNets-Subnets-and-Peering]]
-
-
-
-[[DNS-and-Endpoints]]

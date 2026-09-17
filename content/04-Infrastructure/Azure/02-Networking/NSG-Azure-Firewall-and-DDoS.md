@@ -144,6 +144,3 @@ Internet → NSG (Subnet level) → NSG (NIC level) → VM
 # Azure DDOS
 
 ![[Pasted image 20260904111714.png]]
-
-
-[[Microsoft-Entra-ID]]

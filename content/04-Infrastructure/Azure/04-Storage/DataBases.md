@@ -65,8 +65,3 @@ SQL on VM (IaaS)  →  SQL Managed Instance  →  SQL Database (Full PaaS)
 **الفكرة الأساسية**: بدل ما تروح كل مرة لقاعدة البيانات الأساسية (اللي على ديسك، أبطأ نسبيًا) عشان تجيب بيانات بتتكرر طلبها كتير (زي نتيجة استعلام شائع، أو session بتاعة مستخدم)، بتحطها في Redis، وبتجيبها من الـ RAM في ميلي ثانية.
 
 ![[Pasted image 20260903141727.png]]
-
-[[Azure-Monitor-Alerts-and-Workspaces]]
-
-[[Azure-Monitor-Alerts-and-Workspaces]]
-[[B2B & B2C]]
