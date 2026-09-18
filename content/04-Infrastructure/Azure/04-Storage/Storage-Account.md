@@ -79,3 +79,9 @@
 
 **GZRS** 
 دمج بين الاتنين (ZRS في الـ Region الأساسية + نسخة في Region تانية بعيدة) — أعلى مستوى حماية متاح، وبالتبعية أغلى خيار.
+
+
+Versioninf
+LifeCycle Mangment
+Storage explorer on pc to copy
+Object
