@@ -1,84 +1,55 @@
 ---
 title: Home
 ---
-# 🌱 My Engineering Notes
+# 🌱 My Engineering Digital Garden
 
-> [!ABSTRACT] 🎓 Current Status: Student
-> **Learning Computer Engineering & Systems.**
-> My personal space to connect dots between theory and code.
-> 
-> "First, solve the problem. Then, write the code." — John Johnson
+> [!info] **Current Status**: Intelligent Systems Engineering Student
+> **Focus Areas**: Backend, DevOps, and Cloud Architecture
+> *"First, solve the problem. Then, write the code." — John Johnson*
 
 ---
 
-## 🗺️ Navigation Hub
+## 🗂️ Navigation Hub
 
-> [!TIP] 🧠 01 Concepts (The Science)
-> *Understanding the "Why" and "What".*
-> - [[01-Concepts/Index|📂 Browse Concepts]]
-> - [[01-Concepts/OOP-Basics|🧬 Object-Oriented]]
-> - [[01-Concepts/Memory|💾 Memory Mgmt]]
+### 🧠 Core Foundation
+> [!abstract]+ Concepts & Workflow
+> - **DSA:** [[Big O]] | [[Binary Search]]
+> - **Networking:** [[Intro]]
+> - **OOP:** [[OOP-Basics]]
+> - **Workflow:** [[Debugging-Strategy]] | [[Git-Flow]] | [[Input-Validation-Strategy]]
 
-> [!EXAMPLE] 💻 02 Languages (The Tools)
-> *Syntax, libraries, and language specifics.*
-> - [[CPP Basics|🔵 C++ (Fundamentals)]]
-> - [[Cpp Formatting|🎨 Formatting (printf/cout)]]  
-> - [[CPP Headers|📚 Libraries & Headers]] 
-> - [[CPP Pointers| Pointers]]
-> - [[JAVA Basics|☕ Java (OOP Focus)]]
-> - [[CPP Dynamic Memory]]
+### 💻 Tech Stack
+> [!code]+ Languages & Syntax
+> - **C++:** [[CPP Basics]] | [[CPP Pointers]] | [[CPP Vectors]] | [[CPP Dynamic Memory]] | [[CPP Exception Handling]] | [[CPP File Handling]] | [[Cpp Formatting]] | [[CPP Headers]] | [[CPP DateTime]]
+> - **Java:** [[JAVA Basics]]
+> - **Python:** [[Python]]
+> - **Shell:** [[CLI Basics]]
 
-> [!INFO] ⚙️ 03 Workflow (The Playbook)
-> *My guides for debugging and tools.*
-> - [[03-Workflow/Debugging-Strategy|🐞 Debugging Strategy]]
-> - [[03-Workflow/Git-Flow|🐙 Git Commands]]
-> - [[Input-Validation-Strategy|🛠️ Input Validation Strategy]]
-
-> [!SUCCESS] 🚀 04 Projects (The Lab)
-> *Where I apply what I learn.*
-> - [[04-Projects/Index|🧪 All Projects]]
-> - [[04-Projects/University|🏫 University Labs]]
-> - [[04-Projects/Ideas|💡 Side Ideas]]
+### ☁️ Infrastructure & Cloud
+> [!example]+ Azure & Linux System Administration
+> - **Core & Pre-Cloud:** [[General Cloud]] | [[Pre-Azure]]
+> - **Identity:** [[Microsoft-Entra-ID]] | [[RBAC-and-Access-Control]] | [[Azure-Policy-Locks-and-Tags]] | [[B2B & B2C]] | [[RG & Subscriptions & ManagementGroups & ...]]
+> - **Networking:** [[VNets-Subnets-and-Peering]] | [[DNS-and-Endpoints]] | [[Load-Balancer-and-App-Gateway]] | [[NSG-Azure-Firewall-and-DDoS]]
+> - **Compute & Storage:** [[App-Services-and-Containers]] | [[Azure-VMs-and-Scale-Sets]] | [[DataBases]] | [[Storage-Account]]
+> - **Monitoring:** [[Azure-Monitor-Alerts-and-Workspaces]] | [[Backup-and-Recovery-Services-Vault]]
+> - **Linux OS:** [[Linux System Administration]]
+> - **Practice:** [[Azure-Labs]] | [[Azure-MOC]] | [[Azure-Quizzes]]
 
 ---
 
-## 🎯 Dashboard
+## 🚀 Active Zones
 
-### ⚡ Study Goals (Current Focus)
-- [ ] Pointers Deep Dive
-- [ ] CPC-Traning
-
-### 📝 Active Notes
-> Notes I am currently working on:
-- [[CPP Pointers]]
-- [[Math-Tricks]]
-
-### 📖 Reading Station
-**Currently Reading:**
-- [ ]  STARTING OUT WITH C++ From Control Structures through Objects
-
-**On The Shelf (Next):**
-- [ ] 📘 **Grokking Algorithms** (Chapter 1)
-- [ ] ☕ **Head First Design Patterns**
----
-
-## 🏗️ Knowledge Pipeline
-
-> [!bug] **Processing (Debugging & Refining)**
-> *نوتس بذاكرها وبنقيها حالياً.*
-> * [[CPP Pointers]]
-> * [[Debugging-Strategy]]
-
-> [!example] **Drafts (Raw Data)**
-> *أفكار ومسودات أولية.*
-> * [[Math-Tricks]] (CPC)
-> * [[Head First Design Patterns]]
-
-> [!success] **Stable (Production Ready)**
-> *نوتس خلصت وبقت مراجع.*
-> * [[CPP Basics]]
-> * [[CPP Vectors]]
+> [!todo]+ Learning Pipeline
+> - 🎯 **Training & Projects:** [[Math-Tricks]] | [[05-Projects]]
+> - 🗺️ **Roadmaps:** [[Focus Area]] | [[Linux Skill Tree]] | [[Networks for SWE]]
+> - 📚 **Library:** [[Digital-Bookshelf]] | [[Tracking Dashboard]]
 
 ---
-*Last updated: `2026-02-10`*
 
+## 🏗️ Knowledge Status
+
+| ⚡ Processing (WIP) | 📝 Drafts (Raw) | 📦 Stable (Reference) |
+| :--- | :--- | :--- |
+| [[CPP Pointers]] | Head First Design Patterns | [[CPP Basics]] |
+| [[Debugging-Strategy]] | Math-Tricks (CPC) | [[CPP Vectors]] |
+| [[Azure-Labs]] | | [[Git-Flow Origin]] |
