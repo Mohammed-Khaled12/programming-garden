@@ -71,6 +71,14 @@
 
 ال**Resource Lock** هو **قفل إضافي بتحطه فوق مورد معين (أو Resource Group كاملة أو Subscription كاملة)**، بيمنع عمليات معينة **بغض النظر عن صلاحيات الشخص** اللي بيحاول ينفذها.
 
+الـ Locks بتطبق على الهرم بتاع الـ Azure من أول مستوى الـ **Subscription** وإنت نازل لتحت:
+1. Subscription (ينفع)
+    
+2. Resource Group (ينفع)
+    
+3. Resource زي الـ VM أو الـ Storage Account نفسه (ينفع)
+الـ **Management Groups** دي معمولة فوق الهرم خالص عشان ننظم بيها الـ Subscriptions ونطبق عليها Policies و RBAC، لكن **معمارياً** في Azure مينفعش تحط عليها Resource Lock.
+
 علشان تعمل لوك لازم تبقي Administrator or Owner 
 ال لوك بيتعمل ب ARM يعني لو عملت لوك ل VM مثلا الداتا اللي جواه مش هتتاثر و عادي هتعدل في الداتا
 ### نوعين من الـ Locks 

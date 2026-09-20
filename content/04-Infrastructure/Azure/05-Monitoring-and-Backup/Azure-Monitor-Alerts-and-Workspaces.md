@@ -122,3 +122,25 @@
 #### الـ Retention (الاحتفاظ)
 
 **أول 31 يوم مجانية**. بعد كده بتدفع تقريبًا **$0.10/GB شهريًا** للاحتفاظ التفاعلي (لغاية سنتين)، أو **$0.02/GB** للأرشفة طويلة المدى (لغاية 12 سنة) — فاكر Archive tier في Storage؟ نفس المبدأ بالظبط.
+
+# Application Insights
+### الفرق عن Azure Monitor العادي
+
+فاكر Azure Monitor بيراقب **الموارد** (CPU, Memory, Network)؟ **Application Insights** (جزء من Azure Monitor فعليًا) بيراقب **التطبيق نفسه من جوه** — كل **Request** جالك، كل **Exception** حصلت، كل **Dependency call** (زي استدعاء database أو API خارجي)، وزمن الاستجابة بالتفصيل.
+
+### إزاي بتشتغل فعليًا
+
+بتضيف **SDK صغير** لكودك (فيه SDK رسمي لـ **Python**، فاكرت إنك بتشتغل بـ FastAPI؟)، وهو اللي بيبعت البيانات دي تلقائيًا لـ Application Insights.
+
+```python
+# مثال توضيحي لمفهوم الفكرة
+from opencensus.ext.azure.trace_exporter import AzureExporter
+# كل request للـ FastAPI بيتسجل تلقائيًا مع تفاصيله
+```
+
+### الميزات الأساسية هتتسأل فيها
+
+- **Application Map**: خريطة بصرية بتوضح إزاي أجزاء تطبيقك بتتكلم مع بعض (API → Database → Cache)، ومين بطيء
+- **Live Metrics**: مراقبة لحظية فعلية للتطبيق شغال
+- **Failures**: كل الـ Exceptions المسجلة، بالـ stack trace كامل
+- **Availability Tests**: بيبعتلك طلبات دورية من مواقع مختلفة حول العالم للتأكد إن تطبيقك متاح

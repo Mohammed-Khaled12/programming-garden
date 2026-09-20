@@ -19,6 +19,10 @@
 **كل مورد لازم يكون تابع لـ Resource Group واحدة بس، مش أكتر**. مفيش مورد ممكن يكون موجود في مجموعتين في نفس الوقت.
 لكن **الموارد المختلفة جوه نفس الـ Resource Group ممكن تكون في Regions مختلفة تمامًا**. يعني مثلاً VM بتاعتك في "West Europe" وStorage Account بتاعتك في "East US"، والاتنين ممكن يكونوا تابعين لنفس الـ Resource Group من غير أي مشكلة
 
+## Deployments Blade - أداة التتبع
+
+كل Resource Group عندها تاب اسمه **"Deployments"**، بيسجل **تاريخ وتفاصيل كل عملية نشر** حصلت عليها (زي Git history، لكن للـ deployments). فاكر Activity Log اللي شرحناه في Azure Monitor؟ ده **مختلف عنه** — Deployments blade مخصص **بس** لعمليات النشر عبر ARM/Bicep، مش كل عملية إدارية عامة.
+
 # Management Groups & Subscriptions
 
 ```
@@ -157,3 +161,42 @@ Resource Provider المناسب (زي Microsoft.Compute)
 Infrastructure as a code (IaC)
 ملف json بتكتب فيه وصف كامل لل Infrastructure اللي عايزها و هو بيعملهالك كذا مره اوتوماتيك حسب ما تحب 
 نفس الحوار بس لغه ابسط من مايكرو اسمها Bicep
+
+### ازاي تشغل ال ARM Template و تخليه يعمل الانفرا ؟
+
+الأمر بيختلف اسمه بس المنطق واحد — **فين الملف** (لوكال، ريموت، أو محفوظ كـ Template Spec)؟ ده اللي بيحدد الـ parameter:
+
+|فين الملف؟|الـ Parameter|
+|---|---|
+|على جهازك/الـ Cloud Shell (لوكال)|`-TemplateFile` (PowerShell) أو `--template-file` (CLI)|
+|على الإنترنت (GitHub, Blob Storage)|`-TemplateUri`|
+|محفوظ كـ Template Spec جوه أزور نفسه|`-TemplateSpecId`|
+
+#### PowerShell
+```powershell
+New-AzResourceGroupDeployment -TemplateFile "deploy.json" ...
+New-AzDeployment -TemplateUri "https://..." ...
+```
+
+#### CLI
+```bash
+az deployment group create --template-file deploy.json ...
+```
+
+### `copy` element
+ال **`copy` element هو الـ for-loop بتاع ARM Templates**:
+
+```json
+"resources": [
+  {
+    "type": "Microsoft.Compute/virtualMachines",
+    "copy": {
+      "name": "vmLoop",
+      "count": 2
+    },
+    ...
+  }
+]
+```
+
+بدل ما تكرر نفس الـ resource block مرتين يدوي جوه الملف، بتحط `copy` وبتقوله "كرر المورد ده مرتين". **ده تطبيق مباشر لمبدأ Idempotency وإعادة الاستخدام اللي شرحناه من الأول**.
