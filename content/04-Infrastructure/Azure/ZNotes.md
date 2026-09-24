@@ -77,20 +77,66 @@
 
 هنا نرجع لشرط السؤال: **The solution must use the principle of least privilege** (مبدأ أقل صلاحية). بما إن اليوزر محتاج يدير الـ Containers ويشوف الـ Keys، هل هو محتاج يدي صلاحيات لغيره؟ لأ. يبقى لو إديتله Owner إنت كده كسرّت مبدأ "أقل صلاحية"، وفتحت باب خطر إنه يعين ناس تانية. عشان كده الـ Owner **غلط**.
 ### Trick 4
+![[Pasted image 20260922130743.png]]
+
+في السؤال، هو بنى لك سيناريو كامل متكامل:
+
+1. عندك شبكة داخلية (On-prem) فيها **Active Directory (AD DS)**.
+    
+2. الـ AD ده مربوط (Synced) مع **Microsoft Entra ID** في أزور.
+    
+3. عندك **Server1** موجود في الشبكة دي، وعايزه يفتح الـ Azure File Share (كأنه فولدر متشير عادي جداً على الشبكة الداخلية).
+    
+
+**المشكلة:** الـ Storage Account بطبيعته كائن "غبي" ميعرفش أي حاجة عن موظفين الشركة أو سيرفراتها ولا يفهم يعني إيه Active Directory. هو بيفهم بس الـ Access Keys بتاعته.
+
+عشان تخلي الـ Storage Account يفهم يوزرات الشركة ويسمح لـ Server1 إنه يدخل عليه بصلاحيات الويندوز العادية (Domain Credentials)، لازم الأول تعرّف الـ Storage Account على الـ Active Directory.
+
+الخطوة دي اسمها: **Configure identity-based access** (تفعيل الوصول القائم على الهوية). دي بتعتبر بمثابة إنك "بتعمل Join" للـ Storage Account جوه الدومين بتاعك.
+
+ 1. الاختيار الصح: From File share settings, configure identity-based access for storage1
+
+زي ما شرحنا، دي **الخطوة الأولى والأساسية (First Step)**. من غير ما تفعل الأوبشن ده، الـ Storage Account مش هيقدر يقرأ اليوزرات من الـ Active Directory، وبالتالي Server1 مش هيقدر يستخدم صلاحيات الدومين عشان يدخل على الملفات.
+ الاختيار اللي إنت اخترته: From storage1, enable a shared access signature (SAS)
+
+الـ **SAS** هو عبارة عن رابط (URL) أو توكين بتعمله عشان تدي لواحد من برة الشركة أو لتطبيق معين صلاحية مؤقتة يدخل بيها على Storage.
+
+- **ليه غلط هنا؟** لأن الـ SAS ملوش أي علاقة بالـ Active Directory! هو مش بيستخدم هويات اليوزرات (Identities). لو استخدمت SAS، إنت كده بتلغي ميزة إنك في بيئة "Domain" وكل يوزر ليه صلاحيات NTFS خاصة بيه. زائد إن إدارة الـ SAS لعدد كبير من السيرفرات والموظفين كابوس إداري.
 
 ### Trick 5
-
+![[Pasted image 20260922131147.png]]
 
 ### Trick 6
+![[Pasted image 20260922131339.png]]
 
-
+**Guest users (User3) are not supported for SSPR in the resource tenant (they manage passwords in their home tenant)**
 ### Trick 7
+![[Pasted image 20260922132927.png]]
 
+لما إنت نزلت برنامج الـ P2S VPN client أول مرة على جهازك (Device1)، البرنامج ده نزل معاه "خريطة" (Routing Table) بتقوله إزاي يوصل للشبكات المتاحة. وقتها، الخريطة دي كان فيها مسار لـ `VNet1` بس. بعد كده، إنت رحت عملت Peering (ربط) بين `VNet1` و `VNet2`. كده أزور من جوه فاهم الخريطة الجديدة، بس البرنامج اللي متسطب على جهازك لسه شغال بالخريطة القديمة ومش عارف إن في حاجة جديدة اسمها `VNet2` اتضافت!
 
+عشان كده، الحل الوحيد عشان تخلي جهازك يسحب الخريطة الجديدة اللي فيها مسار لـ `VNet2`، هو إنك **تحمل برنامج الـ P2S VPN client وتسطبه من تاني**.
 ### Trick 8
+![[Pasted image 20260922145116.png]]
+في عالم أزور، كلمة "Container" بتُستخدم في حاجتين ملهمش أي علاقة ببعض:
 
+1. **Azure Container Instance (الـ Docker Container):** ده عبارة عن سيرفر صغير جداً أو بيئة تشغيل بتشغل كود أو أبلكيشن.
+    
+2. **Blob Container:** ده مجرد "فولدر وهمي" جوه الـ Storage Account بنرمي فيه ملفات وصور (Object Storage)، ومبيفهمش نظام الملفات العادي بتاع الويندوز أو اللينكس.
+    
 
+**المشكلة اللي في السؤال:** إنت عامل Docker Container، والكونتينر ده بطبيعته لو اتقفل أو حصله ريستارت، أي داتا جواه بتتمسح وتطير. عشان كده السؤال بيقولك إحنا محتاجين نعمله **Persistent Storage** (تخزين دائم يعيش حتى لو الكونتينر اتقفل).
+
+عشان نظام التشغيل اللي جوه الكونتينر يقدر يقرأ ويكتب ملفات بشكل دائم، لازم توصله بـ "هارد ديسك" أو "فولدر متشير" بيفهم لغة أنظمة التشغيل (زي بروتوكول SMB).
+
+- يمكن لـ Azure container instance (اللي هو Docker container) إنه يعمل mount (تركيب) لـ Azure File Storage shares على إنها directories (مجلدات) عشان يستخدمها كـ persistent storage. الكونتينر بيشوفها كأنها مجلد عادي جداً بيحفظ فيه الداتا بتاعته.
+    
+- **الاختيار اللي إنت اخترته: a blob container** على الناحية التانية، الـ Azure container instance مبيقدرش يعمل mount ويستخدم الـ blob containers أو الـ queues أو الـ tables كـ persistent storage. الـ Blob مبيفهمش لغة المجلدات والملفات المترابطة، ده مجرد مخزن بنكلمه عن طريق الـ API، فمستحيل الكونتينر يركبه (Mount) كأنه درايف أو فولدر جواه
 ### Trick 9
-
-
+![[Pasted image 20260922145525.png]]
+- لو لقيت الكلمات دي: **Azure Service Bus, Messages, Queues, Event Hubs** ⬅️ اختار **event-driven**.
+    
+- لو لقيت الكلمات دي: **Web requests, Concurrent HTTP requests** ⬅️ اختار **HTTP traffic**.
+    
+- لو لقيت الكلمات دي: **Resource pressure, % utilization** ⬅️ اختار **CPU usage** أو **Memory usage**.
 ### Trick 10

@@ -194,3 +194,4 @@
 ### AzCopy - النقل الجماعي من سطر الأوامر
 
 أداة CLI متخصصة لنقل كميات ضخمة من البيانات بسرعة عالية (بتستخدم parallel transfers)، غالبًا لنقل بيانات من on-premises لـ Azure أو بين Storage Accounts. أسرع بكتير من رفع الملفات يدوي من البورتال لأحجام كبيرة.
+Both storage types, blob and file, are supported in AzCopy.

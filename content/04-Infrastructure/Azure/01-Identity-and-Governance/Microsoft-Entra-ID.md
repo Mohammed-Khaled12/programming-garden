@@ -55,6 +55,8 @@ Tenant (المؤسسة كلها — فيها كل المستخدمين + كل ا
 ### 2. Guest (External user)
 فاكر **B2B Collaboration** ؟ [[B2B & B2C#1. B2B Collaboration - التعاون بين الشركات| بص عليه من هنا لو نسيته]]
 ده بالظبط تطبيقها العملي — مستخدم من مؤسسة تانية، بيتسجل بحساب مؤسسته الأصلية (Federated)، مش بحساب جديد كامل.
+Note:
+follow the principle of least privilege, You Should have Guest Inviter role to Invite
 
 ### 3. Synced user (Hybrid)
 مستخدم جاي من **Active Directory تقليدي on-premises** عن طريق **Entra Connect**، ومتزامن تلقائيًا. **مينفعش تنشئه أو تعدله يدويًا من Entra ID مباشرة** — لازم التعديل يحصل من الـ on-premises AD نفسه، وبعدين يتزامن.

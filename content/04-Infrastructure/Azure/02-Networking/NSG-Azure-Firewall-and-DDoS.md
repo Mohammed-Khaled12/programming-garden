@@ -60,6 +60,8 @@ Internet → NSG (Subnet level) → NSG (NIC level) → VM
 - **أقصى عدد NSGs لكل Subscription**: 5000 (افتراضي، قابل للزيادة بطلب)
 - **أقصى عدد قواعد لكل NSG**: 1000 قاعدة (Inbound + Outbound مع بعض)
 - **أقصى عدد ASGs لكل NIC**: 20
+- في أزور، القاعدة الذهبية للنتورك بتقول: **الحدود الحقيقية لأي Network Resource هي المكان الجغرافي (Region) مش الصندوق التنظيمي (Resource Group).**
+- عشان تربط NSG بـ Subnet جوه VNet معينة، لازم الاتنين يكونوا مبنيين في **نفس المنطقة الجغرافية (Same Region)**! أزور ملوش دعوة هما في نفس الـ Resource Group ولا لأ. الـ Resource Group دي بتاعتك إنت عشان تنظم فواتيرك، بس فيزيائياً السيرفرات لازم تكون في نفس البلد عشان تتربط ببعض
 
 # Azure Firewall
 

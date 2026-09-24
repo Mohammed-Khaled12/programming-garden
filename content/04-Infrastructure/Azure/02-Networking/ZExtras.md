@@ -2,6 +2,12 @@
 # Network Watcher
 دي **أداة تشخيص شبكات مركزية**، بتتفعل تلقائيًا أول ما تعمل أي مورد شبكي.
 
+Azure Network Watcher is a ***regional service*** that allows you to monitor and diagnose conditions at a network scenario level in, to, and from Azure. When you create or update a virtual network in a subscription, Network Watcher will be enabled automatically in the virtual network's region. There is no impact on resources or associated charges for automatically enabling Network Watcher.
+
+يعني أزور بيعمل "مراقب واحد بس" لكل منطقة جغرافية (Region) بالكامل جوه الـ Subscription بتاعك. المراقب ده بيبقى مسؤول عن أي شبكة (VNet) تترمي جوه المنطقة دي.
+
+القاعدة في أزور بتقول: **بمجرد ما تكريت أول VNet في منطقة معينة، أزور أوتوماتيك بيكريتلك Network Watcher واحد للمنطقة دي**. ولو عملت 100 شبكة تانية في نفس المنطقة، هيستخدموا نفس المراقب ده.
+
 #### الأدوات الفعلية جواها:
 
 **1. IP Flow Verify**  
