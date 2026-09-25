@@ -79,6 +79,8 @@
 3. Resource زي الـ VM أو الـ Storage Account نفسه (ينفع)
 الـ **Management Groups** دي معمولة فوق الهرم خالص عشان ننظم بيها الـ Subscriptions ونطبق عليها Policies و RBAC، لكن **معمارياً** في Azure مينفعش تحط عليها Resource Lock.
 
+configure a lock on RG1 from the Azure portal, because a Delete lock prevents accidental deletion of resources within the resource group while ***still allowing the resource group itself to be deleted once it is empty***
+
 علشان تعمل لوك لازم تبقي Administrator or Owner 
 ال لوك بيتعمل ب ARM يعني لو عملت لوك ل VM مثلا الداتا اللي جواه مش هتتاثر و عادي هتعدل في الداتا
 ### نوعين من الـ Locks 

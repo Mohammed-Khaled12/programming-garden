@@ -140,3 +140,48 @@
     
 - لو لقيت الكلمات دي: **Resource pressure, % utilization** ⬅️ اختار **CPU usage** أو **Memory usage**.
 ### Trick 10
+
+![[Pasted image 20260924134422.png]]
+الـ **Data Lake Storage Gen2** هو في الأساس عبارة عن **Blob Storage** بس متركب عليه حاجة اسمها "Hierarchical Namespace" (يعني نظام فولدرات حقيقي بدل ما الملفات كلها مرمية فوق بعض). بما إن الـ Data Lake مبني على الـ Blob Storage، يبقى عشان تشغله لازم تختار نوع Storage Account بيدعم الـ Blobs أصلاً.
+**الاختيار الصح الأول: standard general-purpose v2** ده الـ Storage Account الجوكر اللي بنعمله في 90% من الحالات. بيدعم كل حاجة (Blobs, Files, Queues, Tables) وبسعر رخيص. وبما إنه بيدعم الـ Blob storage، يبقى تقدر تشغل عليه الـ Data Lake Gen2 عادي جداً.
+**الاختيار الصح التاني: premium block blobs** ده النوع السريع جداً (SSD) المخصص تحديداً للـ Block Blobs. وبما إن الـ Data Lake Gen2 بيحتاج يعالج داتا ضخمة جداً بسرعة، فالنوع ده يعتبر البيئة المثالية ليه لو معاك بادجت وعايز أداء عالي.
+
+### Trick 11
+![[Pasted image 20260924134821.png]]
+
+السر كله يكمن في الكلمة المكلكعة دي: **POSIX-compliant ACLs**. نظام الـ POSIX ده هو نظام الصلاحيات المتبع في أنظمة اللينكس (الـ Read, Write, Execute على كل ملف وفولدر). الـ Blob Storage العادي مبيفهمش النظام ده لأنه ببساطة مفيش جواه "فولدرات حقيقية"، هو بيرمي الملفات كلها في مساحة واحدة مسطحة.
+عشان تخلي الـ Storage Account يفهم نظام الفولدرات الحقيقية ويدي صلاحيات POSIX لكل فولدر وملف لوحده، لازم تفعل خاصية الـ **Hierarchical namespace**. الخاصية دي هي اللي بتحول الـ Blob العادي لـ Data Lake Storage Gen2 وتفتحلك ميزة الـ POSIX ACLs.
+
+الـ Access Tier ده ملوش أي علاقة بالصلاحيات أو السيكيوريتي. ده مجرد إعداد مالي بيحدد إنت هتدفع كام بناءً على سرعة وصولك للداتا (Hot, Cool, Archive). الخيار ده صالح للـ Storage Account بشكل عام، لكنه مش بيوفر ميزة الـ POSIX
+
+
+### Trick 12
+
+
+
+
+### Trick 13
+
+
+### Trick 14
+
+
+
+### Trick 15
+
+
+
+### Trick 16
+
+
+### Trick 17
+
+
+### Trick 18
+
+
+### Trick 19
+
+
+### Trick 20
+

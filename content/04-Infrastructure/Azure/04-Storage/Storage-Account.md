@@ -185,6 +185,10 @@
 ```
 
 **تطبيق مباشر ومهم ليك**: ده بالظبط اللي بيوفر فلوس فعليًا في الإنتاج، بدل ما تدفع سعر Hot على بيانات محدش بيلمسها من شهور.
+
+the immutability policy:
+A timed-based retention policy or legal hold policies can be applied to block deletion. Immutability policies can be scoped to a blob version or to a container.
+أزور مستحيل يسمحلك تنزل الـ Lock لمستوى البيانات الداخلية (Data Plane) زي صورة جوه Blob Container. لحماية البيانات نفسها، بنستخدم تقنيات تانية زي الـ Immutability Policies.
 ## Copy, Move and Explore
 
 ### Azure Storage Explorer - الأداة العملية
@@ -195,3 +199,7 @@
 
 أداة CLI متخصصة لنقل كميات ضخمة من البيانات بسرعة عالية (بتستخدم parallel transfers)، غالبًا لنقل بيانات من on-premises لـ Azure أو بين Storage Accounts. أسرع بكتير من رفع الملفات يدوي من البورتال لأحجام كبيرة.
 Both storage types, blob and file, are supported in AzCopy.
+
+## Notes
+
+if Secure transfer required is Enabled, which means every request to the storage service must use HTTPS, so a request made to the Blob service endpoint over HTTP is rejected
