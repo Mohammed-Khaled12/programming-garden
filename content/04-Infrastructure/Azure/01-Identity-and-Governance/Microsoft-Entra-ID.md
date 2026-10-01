@@ -102,6 +102,8 @@ for adding bulk of ***Eternal (guest)*** users
 
 _"Security groups can include either devices or users, but Microsoft 365 groups can include only users."_
 
+_"You can set expiration policy only for Office 365 groups in a Microsoft Entra ID"_
+
 ## Entra ID Membership Types
 
 ### Assigned (Static) Membership
@@ -195,3 +197,22 @@ user.department -eq "Sales"
 **الحل: Password Writeback** — ميزة بتخلي التغيير يترجع **من الكلاود لـ on-prem AD نفسه**، بحيث الباسورد يفضل **موحد في المكانين**. دي **الاستثناء الوحيد** اللي بيكسر قاعدة "المزامنة اتجاه واحد بس"
 
 **شرط أساسي**: Password Writeback لازم تتفعّل من جوه **Entra Connect (أو Cloud Sync) نفسها**، مش بس من صفحة SSPR.
+
+
+# Notes
+
+## 1) 
+في أزور، عالم الـ Entra ID (صلاحيات اليوزرات) مفصول تماماً عن عالم الـ Azure Resources (صلاحيات الموارد والـ Subscriptions والـ Management Groups).
+
+**الـ Tenant Root Management Group** ده قمة الهرم في الموارد. افتراضياً، **مفيش أي حد** بيبقى ليه أكسس عليه، ولا حتى الـ Global Admin نفسه!
+
+بس الـ Global Admin بيتميز عن أي يوزر تاني إن عنده "مفتاح طوارئ" اسمه **Access management for Azure resources** (وبيتسمى أحياناً Elevate Access). لما الـ Global Admin بيفعل المفتاح ده، بيحصل الآتي:
+
+1. أزور بيديله صلاحية استثنائية اسمها **User Access Administrator** على مستوى قمة الهرم (الـ Root `/`).
+    
+2. بالصلاحية دي، يقدر يدي لنفسه (أو لغيره) صلاحية Owner أو يطبق Policies على الـ Root Management Group.
+    
+3. بعد ما يخلص شغله، بيرجع يقفل المفتاح ده تاني كإجراء أمني.
+
+## 2) 
+![[Pasted image 20261001171056.png]]
