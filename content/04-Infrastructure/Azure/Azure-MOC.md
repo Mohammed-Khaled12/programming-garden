@@ -16,6 +16,7 @@
 - [[NSG-Azure-Firewall-and-DDoS]]
 - [[DNS-and-Endpoints]]
 - [[Load-Balancer-and-App-Gateway]]
+- [[ZExtras]]
 
 ## 03-Compute
 - [[Azure-VMs-and-Scale-Sets]]
@@ -28,6 +29,9 @@
 ## 05-Monitoring-and-Backup
 - [[Azure-Monitor-Alerts-and-Workspaces]]
 - [[Backup-and-Recovery-Services-Vault]]
+## 06-Subscriptions
+- [[Subscription Types & Support Plans]]
+
 
 ## Labs
 - [[Azure-Labs]]

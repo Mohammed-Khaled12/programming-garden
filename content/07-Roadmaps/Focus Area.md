@@ -23,7 +23,7 @@
 - [x] Linux
 - [x] Git/GitHub
 - [x] Networks
-- [ ] Cloud Basics
+- [x] Cloud Basics
 - [ ] Python or Go
 - [ ] Docker
 - [ ] Web Servers (Nginx)
@@ -38,5 +38,5 @@
 
 - [x] Networks
 - [x] Cloud Essentials            (Partially)
-- [ ] AZ-900
-- [ ] AZ-104
+- [x] AZ-900
+- [x] AZ-104
