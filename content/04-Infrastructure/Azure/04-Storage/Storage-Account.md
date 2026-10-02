@@ -200,6 +200,7 @@ A timed-based retention policy or legal hold policies can be applied to block de
 أداة CLI متخصصة لنقل كميات ضخمة من البيانات بسرعة عالية (بتستخدم parallel transfers)، غالبًا لنقل بيانات من on-premises لـ Azure أو بين Storage Accounts. أسرع بكتير من رفع الملفات يدوي من البورتال لأحجام كبيرة.
 Both storage types, blob and file, are supported in AzCopy.
 
+[[ZNotes#Trick 28 | Important Trick ]]
 ## Notes
 
 if Secure transfer required is Enabled, which means every request to the storage service must use HTTPS, so a request made to the Blob service endpoint over HTTP is rejected

@@ -166,13 +166,14 @@ Infrastructure as a code (IaC)
 
 الأمر بيختلف اسمه بس المنطق واحد — **فين الملف** (لوكال، ريموت، أو محفوظ كـ Template Spec)؟ ده اللي بيحدد الـ parameter:
 
-|فين الملف؟|الـ Parameter|
-|---|---|
-|على جهازك/الـ Cloud Shell (لوكال)|`-TemplateFile` (PowerShell) أو `--template-file` (CLI)|
-|على الإنترنت (GitHub, Blob Storage)|`-TemplateUri`|
-|محفوظ كـ Template Spec جوه أزور نفسه|`-TemplateSpecId`|
+| فين الملف؟                           | الـ Parameter                                           |
+| ------------------------------------ | ------------------------------------------------------- |
+| على جهازك/الـ Cloud Shell (لوكال)    | `-TemplateFile` (PowerShell) أو `--template-file` (CLI) |
+| على الإنترنت (GitHub, Blob Storage)  | `-TemplateUri`                                          |
+| محفوظ كـ Template Spec جوه أزور نفسه | `-TemplateSpecId`                                       |
 
 #### PowerShell
+
 ```powershell
 New-AzResourceGroupDeployment -TemplateFile "deploy.json" ...
 New-AzDeployment -TemplateUri "https://..." ...

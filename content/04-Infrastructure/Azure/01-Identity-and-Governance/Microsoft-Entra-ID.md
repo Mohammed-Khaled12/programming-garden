@@ -82,6 +82,7 @@ for adding bulk of ***Member*** users
 - **Download** template CSV فاضي من أزور نفسه
 - تملأ الأعمدة المطلوبة إلزاميًا: **Name, User principal name, Initial password, Block sign in (Yes/No)**
 - ترفع الملف (**Upload your CSV file**) → **Submit**
+خلي بالك اذا كان في ال Create or Invite ازور مبتقبلش ال XML هو CSV بس
 
 **تفصيلة دقيقة لازم تاخد بالك منها**: لو بتضيف صف واحد بس (مستخدم واحد) في الملف، **لازم تسيب الصف التالت (row 3) زي ما هو وتحط بياناتك في الصف الرابع (row 4)** — لأن الصف التالت فيه رقم نسخة القالب (`version:v1.0`) وده إلزامي في أي رفع.
 
