@@ -1,6 +1,6 @@
 > [!info] الوضع صعب
 > الشات ده هخصصه للنوتس و انا بحل اسئله
-
+az
 # Microsoft Practice Assessment 
 ### Trick 1
 
@@ -177,6 +177,8 @@
 
 
 # Dump Questions
+
+## Entra ID
 ### Trick 13
 ![[Pasted image 20260927130358.png]]
 
@@ -700,6 +702,7 @@ D
 
 "أي يوزر معاه دور فيه كلمة (Administrator)، أزور بيقفل عليه استخدام أسئلة الأمان (Security Questions) في الـ SSPR أوتوماتيك مهما كانت إعدادات الشركة."
 
+## Storage
 ### Trick 36
 
 ![[Pasted image 20261003114101.png]]

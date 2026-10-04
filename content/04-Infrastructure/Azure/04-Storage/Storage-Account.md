@@ -198,8 +198,15 @@ A timed-based retention policy or legal hold policies can be applied to block de
 ### AzCopy - النقل الجماعي من سطر الأوامر
 
 أداة CLI متخصصة لنقل كميات ضخمة من البيانات بسرعة عالية (بتستخدم parallel transfers)، غالبًا لنقل بيانات من on-premises لـ Azure أو بين Storage Accounts. أسرع بكتير من رفع الملفات يدوي من البورتال لأحجام كبيرة.
-Both storage types, blob and file, are supported in AzCopy.
+Works With Blob and File Share Only
 
+| نوع التخزين            | Authentication method             |
+| ---------------------- | --------------------------------- |
+| **Blob storage**       | **Microsoft Entra ID / OAuth**    |
+| **Azure File storage** | **Shared access signature (SAS)** |
+
+
+## Blob Storage
 [[ZNotes#Trick 28 | Important Trick ]]
 ## Notes
 
