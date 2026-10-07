@@ -76,4 +76,4 @@
 
 - ال **Azure Container Instances (ACI):** **تصحيح هام:** عمل (Volume mount) لـ Azure Files مدعوم على حاويات **Linux و Windows** معاً (ليس Linux فقط كما ذكرت).
 
-- ال **Deny Assignments & Blueprints:** أقفال الموارد (Resource Locks) لا تمنع الـ Owner من حذفها إذا قام بفك القفل. الطريقة الوحيدة لفرض (Deny Assignment) يمنع حتى الـ Owner من التعديل هي عبر **Azure Blueprints**، وتُطبق فقط عند إنشاء المورد الجديد (وليس الموارد الحالية).
+- ال **Deny Assignments & Blueprints:** أقفال الموارد (Resource Locks) لا تمنع الـ Owner من حذفها إذا قام بفك القفل. الطريقة الوحيدة لفرض (Deny Assignment) يمنع حتى الـ Owner من التعديل هي عبر **Azure Blueprints**، وتُطبق فقط عند إنشاء المورد الجديد (وليس الموارد الحالية).ئئ

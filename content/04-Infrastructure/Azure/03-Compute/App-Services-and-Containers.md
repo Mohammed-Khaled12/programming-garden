@@ -201,3 +201,78 @@ Hardware                           Hardware
 - **مهامّ غير مستمرة**: مش تطبيق ويب شغال 24/7
 
 **مش مناسبة لـ**: تطبيقات ويب إنتاجية مستمرة (App Service أفضل)، أو أنظمة معقدة محتاجة orchestration بين عشرات الـ Containers (AKS أفضل).
+
+
+# Azure Containers & Kubernetes (AKS) Ultimate Review
+
+## 1. Azure Container Registry (ACR) - مستودع الصور
+
+هو المكان اللي بنخزن فيه الـ Images الخاصة بالتطبيقات بتاعتنا.
+### فئات الأسعار (SKUs) وتريكات الامتحان:
+أزور بيقدم 3 فئات (Basic, Standard, Premium). الامتحان دايماً بيركز على فئة الـ **Premium** لأن فيها مميزات حصرية:
+1. ال **Geo-replication:** الميزة الوحيدة اللي بتسمحلك تنسخ الـ Images بتاعتك في أكتر من قارة أوتوماتيك (بتيجي كتير جداً في الأسئلة).
+2. ال **Private Link / Private Endpoint:** لو عايز تقفل الـ ACR وماتخليهوش يكلم الإنترنت، وتخليه يكلم الـ VNET داخلياً بس.
+3. ال **Content Trust:** ميزة أمنية لعمل توقيع رقمي (Signing) للـ Images عشان تضمن إن محدش عدل عليها.
+
+> [!warning] ACR SKU Rule
+> إذا ذكر السؤال احتياجك لـ Geo-replication أو Private IP للـ Registry، الإجابة الإجبارية هي **Premium SKU**.
+
+### أوامر الـ ACR الهامة:
+- ال `az acr build`: بياخد الـ Source Code من جهازك أو من GitHub، ويبني الـ Image **على سيرفرات أزور** ويسجلها في الـ Registry مباشرة. (بيوفر استهلاك موارد جهازك).
+- ال `docker build`: بيبني الـ Image **على جهازك أنت** (Locally).
+- ال `docker push`: بيرفع الـ Image الجاهزة من جهازك إلى الـ ACR.
+
+---
+
+## 2. Azure Container Instances (ACI) - الحاويات السريعة
+دي خدمة (Serverless) لتشغيل Containers بسرعة من غير ما تبني كلاستر ولا تدير سيرفرات.
+
+### تريكات الـ ACI في الامتحان:
+- **الاستخدام الأمثل:** الـ ACI ممتاز للـ Batch jobs، الـ Testing، أو الـ Task اللي بتشتغل وتفصل (Short-lived).
+- **مشاركة التخزين (Volume Mount):** الخدمة الوحيدة المدعومة بشكل مباشر لعمل Persistent Storage مع الـ ACI هي **Azure Files** (ومدعومة للـ Windows والـ Linux containers زي ما صححنا قبل كده).
+- ال **Restart Policies:**
+  - ال `Always`: لو الكونتينر قفل لأي سبب، هيشتغل تاني (مناسب للـ Web servers).
+  - ال `OnFailure`: هيشتغل تاني **فقط** لو قفل بسبب مشكلة (Error/Crash).
+  - ال `Never`: لو قفل، مش هيشتغل تاني (مناسب للـ Batch jobs اللي بتعمل حسبة وتخلص).
+- ال **Container Groups:** تقدر تحط أكتر من Container في نفس الـ ACI ويشيروا نفس الـ Network والـ Storage (زي فكرة الـ Sidecar pattern).
+
+---
+
+## 3. Azure Kubernetes Service (AKS) - وحش الأوركستريشن
+هو الكلاستر الكامل لإدارة آلاف الـ Containers.
+
+### معمارية الكلاستر (Control Plane vs Nodes):
+- ال **Control Plane:** الجزء المسؤول عن الإدارة (API Server, Scheduler). في أزور، الجزء ده **مجاني بالكامل وManaged by Microsoft**.
+- ال **Nodes (Worker Nodes):** دي السيرفرات (VMs) اللي بتشيل التطبيقات بتاعتك. أنت بتدفع ثمن السيرفرات دي بس.
+
+### تريكات الشبكات (Networking) - بتيجي في الامتحان بنسبة 100%:
+أزور بيخيرك بين نوعين من الشبكات وإنت بتكريت الـ AKS:
+1. **Kubenet (Basic):** 
+   - السيرفرات (Nodes) بتاخد IP من الـ VNET.
+   - الحاويات (Pods) بتاخد IP من شبكة وهمية داخلية منفصلة تماماً، وبتطلع للـ VNET عن طريق (NAT).
+   - **الميزة:** بيوفر جداً في استهلاك الآيبيهات (IP Exhaustion).
+2. **Azure CNI (Advanced):**
+   - السيرفرات (Nodes) **والحاويات (Pods)** بياخدوا IP حقيقي من الـ VNET بتاعتك.
+   - **الميزة:** الـ Pods تقدر تكلم أي مورد في أزور (زي VM تانية) مباشرة بدون NAT.
+   - **العيب/الفخ:** بيسحب كمية IPs مرعبة. لو الـ VNET بتاعتك صغيرة (مثلاً /24)، الكلاستر ممكن يرفض يتكريت أو يقع لأنه مش لاقي IPs يوزعها على الـ Pods.
+
+### تريكات التوسع (Autoscaling) - راجعناها فوق بس نأكد عليها:
+- ال **Cluster Autoscaler:** بيزود/يقلل عدد الـ **Nodes (VMs)**. يُدار من الـ Azure Portal أو أمر `az aks`.
+- ال **Horizontal Pod Autoscaler (HPA):** بيزود/يقلل عدد الـ **Pods (Containers)**. يُدار من أداة `kubectl` بتاعة كوبرنيتيز.
+
+> [!tip] AKS Bursting (Virtual Nodes)
+> لو الكلاستر اتزحم فجأة ومفيش وقت نكريت سيرفرات (VMs) جديدة لأنها بتاخد دقايق عشان تقوم.. الـ AKS يقدر يرمي الـ Pods الزيادة على **(ACI)** في ثواني! الخاصية دي اسمها **Virtual Nodes** وبتستخدم للـ (Bursting).
+
+### تريكات التخزين (Storage) في كوبرنيتيز:
+- لو محتاج تخزين سريع جداً والكونتينر الواحد بس هو اللي يكتب فيه (ReadWriteOnce) -> استخدم **Azure Disks**.
+- لو محتاج تخزين مشترك أكتر من كونتينر يقرأ ويكتب فيه في نفس اللحظة (ReadWriteMany) -> استخدم **Azure Files**.
+
+---
+
+## 4. دورة حياة التطبيق (The CI/CD Flow) - سؤال الترتيب الشهير:
+سؤال الـ Drag and Drop بييجي كتير عشان يرتب الخطوات المنطقية لنشر تطبيق:
+1. ال `az acr login`: بنعمل مصادقة (Auth) مع الـ Registry الأول.
+2. ال `docker build` (or `az acr build`): بنبني الـ Image.
+3. ال `docker tag`: بنحط اسم الـ ACR على الـ Image عشان دوكر يعرف هيرفعها فين.
+4. ال  `docker push`: بنرفع الـ Image للـ ACR.
+5. ال `kubectl apply -f deployment.yaml`: بنأمر الـ AKS إنه يسحب الـ Image من الـ ACR ويشغلها.
