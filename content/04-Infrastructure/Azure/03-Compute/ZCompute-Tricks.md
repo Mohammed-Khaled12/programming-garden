@@ -25,3 +25,26 @@ While resizing the VM it must be in a stopped state.
 The Linux Diagnostic Extension should be used which downloads the Diagnostic Extension (LAD) agent on Linux server.
 
 **DSC extension:** دي أداة بتعدل في إعدادات نظام التشغيل الداخلي (زي إنها تسطب برنامج أو تظبط ريجستري)، ملهاش أي علاقة بتكبير الهاردوير بتاع المكنة من بره.
+
+منصة Azure لا تدعم صيغة الأقراص `.vhdx` نهائياً؛ هي تدعم فقط صيغة **`.vhd`** (وأن تكون من نوع Fixed Size). لكي تتمكن من رفع هذا القرص واستخدامه كـ Template لإنشاء أجهزة وهمية جديدة في أزور، الخُطوة الإجبارية الأولى هي تعديل القرص وتحويله من VHDX إلى VHD (يتم ذلك عادةً باستخدام أمر PowerShell `Convert-VHD` أو من خلال واجهة Hyper-V Manager).
+
+
+ - **File Recovery (Item-level):** يتم عن طريق تحميل سكريبت (Executable) يقوم بتركيب النسخة الاحتياطية كقرص محلي (iSCSI Mount). يمكن تشغيل هذا السكريبت على **أي جهاز متصل بالإنترنت** يحمل نظام تشغيل متوافق.
+ - **Full VM Restore:** عند استرجاع آلة افتراضية بالكامل، يتيح أزور خيارين فقط: استبدال الآلة الأصلية (Replace existing VM) أو إنشاء آلة جديدة (Create new VM). لا يمكن الكتابة فوق آلة افتراضية (مثل VM2).
+
+You plan to back up an Azure virtual machine named VM1.
+You discover that the Backup Pre-Check status displays a status of Warning.
+What is a possible cause of the Warning status?
+
+The Warning state indicates one or more issues in VM’s configuration that might lead to backup failures and
+provides recommended steps to ensure successful backups. Not having the latest VM Agent installed, for
+example, can cause backups to fail intermittently and falls in this class of issues.
+
+لضمان أقصى توافرية (Maximum Availability) للأجهزة الوهمية داخل Availability Set، يجب دائماً اختيار الحدود القصوى التي يدعمها أزور لتوزيع الأحمال:
+**الحد الأقصى لـ Fault Domains (نطاقات الأعطال):** هو **3**.
+**الحد الأقصى لـ Update Domains (نطاقات التحديث):** هو **20**.
+
+To deploy a YAML file, the command is:
+kubectl apply -f <file_name>.yaml
+
+خلي بالك من الفرق: Microsoft Monitoring Agent on VM1, and not the Microsoft Monitoring Agent VM extension.
