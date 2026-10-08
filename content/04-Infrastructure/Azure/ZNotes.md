@@ -1394,7 +1394,6 @@ It takes a man with real heart to make beauty out of the stuff that makes us wee
     
 - **المربع الثاني:** **imageReference**
     
-
 **الشرح المعماري للسيناريو (كتابة ARM Templates صحيحة):**
 
 السؤال ده بيختبر معرفتك بأساسيات كتابة الـ ARM Templates للمكن الوهمي (VMs)، وتحديداً إزاي بتعرف أزور على الموارد المرتبطة بالمكنة.
@@ -1530,10 +1529,154 @@ It takes a man with real heart to make beauty out of the stuff that makes us wee
 ### Trick 66
 ![[Pasted image 20261008130607.png]]
 
+بص يعم 
+Azure FW Supports Standard SKU not Basic
+![[Pasted image 20261008133231.png]]
+
+Azure FW Supports Static Only
+Azure FW Supports IPv4 Only
+![[Pasted image 20261008134315.png]]
+Azure FW Supports Regional, Global for LB only
+![[Pasted image 20261008133741.png]]
+
+Sources:
+https://learn.microsoft.com/en-us/azure/firewall/firewall-faq
+https://learn.microsoft.com/en-us/azure/virtual-network/ip-services/public-ip-addresses#at-a-glance
+https://learn.microsoft.com/en-us/azure/virtual-network/ip-services/public-ip-addresses
 
 ### Trick 67
+
+![[Pasted image 20261008135616.png]]
+الإجابة الصحيحة هي: **A. an Azure Key Vault and an access policy**.
+
+**الشرح المعماري للسيناريو (حماية الأسرار في الـ ARM Templates):**
+
+عشان تنشر 100 مكنة من غير ما تكتب الباسورد في الـ Template كـ (Plain text) ويبقى مكشوف لأي حد بيقرأ الكود، أزور عامل خدمة مخصصة لحفظ الأسرار وهي الـ **Azure Key Vault**.
+
+**إزاي العملية دي بتتم هندسياً؟**
+
+1. **Azure Key Vault:** بتكريت الخزنة دي وتحط فيها الباسورد كـ (Secret).
+    
+2. **Access Policy:** عشان محرك أزور (Azure Resource Manager) يقدر يسحب الباسورد ده أوتوماتيك وقت ما بيعمل Deploy للمكن، لازم تفتحله الصلاحية جوه الخزنة. بتعمل ده عن طريق تفعيل إعداد محدد في الـ Access Policy اسمه (Enable access to Azure Resource Manager for template deployment).
+    
+3. **ARM Template:** جوه ملف الـ Parameters، بدل ما تكتب الباسورد نفسه، بتكتب كود بيشاور على الـ ID بتاع الـ Secret جوه الـ Key Vault.
+    
+
+**ليه استبعدنا الفخاخ التانية؟**
+
+- **B. Storage account:** ده مكان لتخزين الملفات العادية والبيانات، مش مصمم هندسياً لتشفير أو حماية كلمات المرور (Secrets).
+    
+- **C. Recovery Services vault:** دي الخزنة الخاصة بالنسخ الاحتياطي (Backup)، ملهاش أي علاقة بإدارة الباسوردات.
+    
+- **D. Entra Identity Protection:** دي خدمة أمنية ذكية بتراقب سلوك المستخدمين عشان تكتشف لو الحساب اتسرق أو فيه خطر (Risky Sign-ins)، مش داتابيز لتخزين الأسرار.
+
+
 ### Trick 68
+
+![[Pasted image 20261008140519.png]]
+
+راجع ال Pricing Plan من هنا ---> [[App-Services-and-Containers#الـ Tiers | Review from HERE]]
+الاجابه الاولي Standard 
+الإجابة التانية الصحيحة هي: **TXT**.
+
+عاش جداً إنك لقطت الأولى صح! تعال أشرحلك ليه التانية TXT وليه استبعدنا الباقي هندسياً:
+
+**الشرح المعماري للسيناريو (إثبات ملكية الدومين):**
+
+لما بتيجي تربط دومين خاص بيك (زي `app.contoso.com`) بخدمة Azure App Service، أزور مابيثقش فيك فوراً. لازم تثبتله إنك "المالك الحقيقي" للدومين ده عشان ميجيش حد تاني يربط دومين مش بتاعه على موقعه.
+
+عشان تعمل عملية **التحقق (Verification)** دي بأقل مجهود ومن غير ما تبوظ الترافيك بتاع الموقع لو شغال، أزور بيطلب منك تكريت ريكورد من نوع **TXT** في إعدادات الـ DNS بتاعتك. الـ TXT ده مجرد ملف نصي بتحط فيه كود تعريفي (Verification ID) أزور بيديهولك. أزور بيروح يقرأ الـ TXT ده، يتأكد إنك المالك، ويوافق على الربط.
+
+**ليه استبعدنا الباقي؟**
+
+- **A record:** ده بنستخدمه عشان نوجه الترافيك الفعلي (IPv4) للموقع، لكن أزور بيشترط وجود TXT معاه للتحقق من الملكية. لوحده مش كفاية للإثبات.
+    
+- **AAAA record:** ده بيوجه ترافيك الجيل السادس (IPv6)، ملوش علاقة بالتحقق.
+    
+- **PTR record:** ده بتاع الـ (Reverse DNS) اللي بيحول الـ IP لاسم دومين، وده قصة تانية خالص في الشبكات.
+    
+
+**وتأكيداً على حلك الصح في النقطة الأولى:** إنت اخترت **Standard** لأن ده أرخص خطة بتدعم خاصية التوسع التلقائي (Autoscale) وتسمحلك توصل لـ 8 مكنات (الستاندرد بتدعم لحد 10). خطة الـ Basic بتدعم 3 مكنات بس والتوسع بتاعها يدوي (Manual).
+
+**زتونة الـ App Service Domains:**
+
+- للتحقق من ملكية دومين (Domain Verification) في أزور بدون التأثير على حركة المرور، نستخدم دائماً سجل **TXT**.
+    
+- لتفعيل التوسع التلقائي (Auto-scale)، أقل خطة مدعومة هي الـ **Standard**.
+
 ### Trick 69
+
+![[Pasted image 20261008143803.png]]
+
+- (ASP.NET V3.5 / V4.8) يتطلب دائماً **Windows**.
+    
+- (PHP 8+ / Python / Ruby) تتطلب دائماً **Linux**.
+    
+- (.NET 6+ / Java / Node.js) تعمل على كلا النظامين (Cross-platform).
+
+**القاعدة الأولى: عائلة مايكروسوفت (.NET)**
+
+- لو لقيت كلمة **ASP.NET** متبوعة بـ (V3.5 أو V4.8) أو كلمة **.NET Framework** ⬅️ إجباري **Windows فقط**.
+    
+- لو لقيت كلمة **.NET Core** أو أرقام صحيحة مباشرة زي (.NET 6, 7, 8) ⬅️ بيشتغل على الاتنين (**Windows & Linux**).
+    
+
+**القاعدة الثانية: عائلة الـ PHP**
+
+- إصدارات **PHP 7.4 وما أقدم** (زي 7.3 اللي سألت عليه) ⬅️ بيشتغل على الاتنين (**Windows & Linux**).
+    
+- إصدارات **PHP 8.0 وما أحدث** ⬅️ إجباري **Linux فقط**.
+    
+
+**القاعدة الثالثة: أصدقاء اللينكس (Python & Ruby)**
+
+- أي إصدار **Python** (سواء 3.8, 3.9, 3.11) ⬅️ إجباري **Linux فقط** (مايكروسوفت أوقفت دعم بايثون على ويندوز من زمان جداً).
+    
+- أي إصدار **Ruby** ⬅️ إجباري **Linux فقط**.
+    
+
+**القاعدة الرابعة: الجوكر (Java & Node.js)**
+
+- أي إصدار من **Java** (سواء Tomcat, JBoss, Java SE).
+    
+- أي إصدار من **Node.js**. ⬅️ الاتنين دول جوكر، بيشتغلوا براحتك على (**Windows & Linux**).
 ### Trick 70
+![[Pasted image 20261008152521.png]]
+الإجابات الصحيحة بناءً على الصورة `image_c343fc.png` هي:
+
+- **المربع الأول (Image1):** **Azure Container Instances and App Services only**
+    
+- **المربع الثاني (Image2):** **Azure Container Instances, Azure Container Apps, and App Services**
+    
+
+**الشرح المعماري للسيناريو (دعم أنظمة التشغيل للحاويات في أزور):**
+
+السؤال ده بيلعب على نقطة جوهرية جداً في الفروق بين خدمات استضافة الحاويات (Containers) في أزور، وتحديداً الفخ الموجود في خدمة **Azure Container Apps**.
+
+تعال نحلل دعم أنظمة التشغيل لكل خدمة:
+
+**1. خدمة Azure Container Instances (ACI):**
+
+دي الخدمة الأساسية لتشغيل حاوية بسرعة من غير ما تبني بنية تحتية. الخدمة دي بتدعم تشغيل حاويات الويندوز وحاويات اللينكس بدون أي مشاكل.
+
+**2. خدمة Azure App Service:**
+
+الخدمة دي فيها ميزة اسمها (Web App for Containers)، وبتسمحلك تجيب صورتك المخصصة (Custom Image) وتشغلها. الخدمة دي بتدعم استضافة حاويات الويندوز واللينكس بشكل كامل.
+
+**3. خدمة Azure Container Apps (السبب في حل السؤال):**
+
+الخدمة دي مبنية في الأساس على بيئة (Kubernetes) المدارة من أزور لتشغيل تطبيقات المايكروسيرفسز (Microservices). القيد المعماري الصارم هنا هو أن **Azure Container Apps تدعم حصرياً حاويات Linux فقط**، ولا تدعم تشغيل حاويات Windows إطلاقاً.
+
+**تطبيق القواعد على الجدول:**
+
+- **Image1 (Windows Server):** بما إنها ويندوز، فهتشتغل عادي جداً على (ACI) و (App Service)، لكن مستحيل تشتغل على (Container Apps). عشان كده اخترنا الاتنين دول فقط.
+    
+- **Image2 (Linux):** بما إنها لينكس، فهتشتغل على التلات خدمات بدون أي قيود، لأن اللينكس مدعوم في بيئة الكلاود بشكل كامل في كل خدمات الحاويات.
+    
+
+**زتونة دعم الحاويات (Containers) في الامتحان:**
+
+أي سؤال يطلب منك تشغيل حاويات ويندوز (Windows Containers)، قم فوراً باستبعاد خدمة (Azure Container Apps) من اختياراتك. هذه الخدمة مخصصة وبيئتها مبنية للينكس فقط. أما (ACI) و (App Service) و (AKS) فيدعمون كلا النظامين.
+
 ### Trick 71
 ### Trick 72
