@@ -1767,6 +1767,40 @@ https://learn.microsoft.com/en-us/azure/virtual-network/ip-services/public-ip-ad
 - بما إن `ContReg1` هو الـ Registry الوحيد في الجدول اللي على خطة Premium، إذن هو الوحيد اللي يقدر يستخدم الـ Private Endpoints.
 
 ### Trick 74
+![[Pasted image 20261009010758.png]]
+- **المربع الأول (Rule-based scale out):** **ASP2, ASP3, and ASP4 only**.
+    
+- **المربع الثاني (Zone redundancy):** **ASP4 only**.
+    
+
+**الشرح المعماري للسيناريو (فخ وقت الإنشاء في أزور):**
+
+السؤال ده مليان تفاصيل دقيقة وبيختبرك في الفرق بين إمكانيات الخطط (Tiers) والقيود الهندسية اللي بتتفرض بعد الإنشاء (Post-creation constraints).
+
+**1. تحليل Rule-based scale out (التوسع التلقائي بالقواعد):**
+
+- **القاعدة الهندسية:** خاصية التوسع التلقائي (Autoscale) بناءً على مقاييس زي الـ CPU أو الذاكرة بتكون متاحة ابتداءً من خطة **Standard** فما فوق (Standard, Premium, Isolated).
+    
+- خطة **Basic** (زي ASP1) بتدعم التوسع اليدوي (Manual Scale) فقط.
+    
+- لذلك، `ASP2` (Standard) و `ASP3` (Premium) و `ASP4` (Premium) هم اللي بيدعموا الميزة دي.
+    
+
+**2. تحليل Zone redundancy (فخ الامتحان الأكبر):**
+
+هنا مايكروسوفت بتلعب على أعصابك.
+
+- **القاعدة الهندسية الأولى (مستوى الخطة):** ميزة التوافر عبر المناطق (Zone Redundancy) مدعومة حصرياً في خطط **Premium v2 و Premium v3** (أو Isolated v2). بناءً على ده، `ASP1` و `ASP2` بره الحسبة تماماً.
+    
+- يتبقى عندنا `ASP3` (Premium v3) و `ASP4` (Premium v3). ليه الاختيارات مفيهاش (ASP3 and ASP4)؟
+    
+- **القاعدة الهندسية الصارمة (وقت التفعيل):** في معمارية الـ App Service، ميزة الـ Zone Redundancy **لا يمكن تفعيلها إلا أثناء إنشاء الـ App Service Plan فقط**. بمجرد ما الـ Plan يتكريت، مستحيل تضيفله الميزة دي بأثر رجعي.
+    
+- بما إن الجدول بيقول إن `ASP3` **موجود بالفعل** (You have an Azure subscription that contains...)، إذن هندسياً فقدنا فرصة تفعيل الميزة عليه.
+    
+- أما `ASP4` فهو عبارة عن **خطة مستقبلية** لسه هتكريتها (You plan to deploy an additional...)، وبالتالي هو المورد الوحيد اللي تقدر تضبط إعدادات الـ Zone Redundancy بتاعته أثناء بنائه.
+
+
 ### Trick 75
 ### Trick 76
 ### Trick 77
