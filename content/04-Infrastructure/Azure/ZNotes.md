@@ -1679,4 +1679,104 @@ https://learn.microsoft.com/en-us/azure/virtual-network/ip-services/public-ip-ad
 أي سؤال يطلب منك تشغيل حاويات ويندوز (Windows Containers)، قم فوراً باستبعاد خدمة (Azure Container Apps) من اختياراتك. هذه الخدمة مخصصة وبيئتها مبنية للينكس فقط. أما (ACI) و (App Service) و (AKS) فيدعمون كلا النظامين.
 
 ### Trick 71
+
+![[Pasted image 20261008173751.png]]
+الإجابة الصحيحة هي: **A. New-AzSubscriptionDeployment**.
+
+السؤال ده بيختبر فهمك المعماري لمفهوم "نطاق النشر" (Deployment Scope) في أزور، وبيوقع مهندسين كتير بيجروا يختاروا `New-AzResourceGroupDeployment` بمجرد ما يشوفوا كلمة Resource Group في الكود.
+
+**الشرح المعماري للسيناريو (الفصل بين المورد والوعاء):**
+
+لو ركزت في كود الـ ARM Template الموجود في الصورة `image_2.png`، هتلاقي إن المورد (`resources`) اللي الكود بيحاول يجهزه هو نفسه مجموعة موارد (Resource Group) جديدة اسمها `Marketing` ومكانها `eastus`.
+
+القاعدة الهندسية الصارمة في أزور بتقول: **لإنشاء أي مورد، يجب تنفيذ أمر النشر على النطاق (Scope) الأكبر منه مباشرة (الـ Parent).**
+
+- بما إننا بنكريت Resource Group جديدة من الصفر، إذن الوعاء الأكبر اللي هيستضيفها جواه هو الـ **Subscription**. عشان كده الأمر الوحيد الصحيح والمنطقي لازم يتنفذ على مستوى الاشتراك وهو `New-AzSubscriptionDeployment`.
+    
+- ليه استبعدنا الفخ **C. New-AzResourceGroupDeployment**؟ الأمر ده بنستخدمه حصرياً لما نكون عايزين ننشر موارد داخلية (زي مكنة وهمية أو كارت شبكة أو Storage) **جوه** Resource Group موجودة بالفعل. مستحيل هندسياً أستخدم الأمر ده عشان أكريت الـ Resource Group نفسها، لأن الباورشيل هيسألني فوراً: "فين الـ Resource Group اللي أنفذ جواها الكود ده؟" وهو لسه متكريتش أصلاً.
+    
+
+**زتونة مستويات النشر (Deployment Scopes) لأسئلة الـ CLI والـ PowerShell:**
+
+- لإنشاء موارد بنية تحتية (VMs, VNets, Key Vaults) ⬅️ النشر يكون على مستوى المجموعة: `New-AzResourceGroupDeployment`.
+    
+- لإنشاء مجموعات الموارد نفسها (Resource Groups) أو إعطاء صلاحيات RBAC على مستوى الاشتراك ⬅️ النشر يكون على مستوى الاشتراك: `New-AzSubscriptionDeployment`.
+    
+- لإنشاء سياسات عامة (Azure Policies) تطبق على عدة اشتراكات ⬅️ النشر يكون على مستوى مجموعة الإدارة: `New-AzManagementGroupDeployment`.
+
 ### Trick 72
+
+![[Pasted image 20261008175326.png]]
+
+- **العبارة الأولى (WebApp1 can communicate with VM2):** **Yes**
+    
+- **العبارة الثانية (NSG1 controls inbound traffic to WebApp1):** **No**
+    
+- **العبارة الثالثة (WebApp2 can communicate with VM1):** **Yes**
+
+
+**الشرح المعماري للسيناريو (ربط الـ App Services بالشبكات - VNet Integration vs. ASE):**
+
+السؤال ده بيختبر فهمك العميق للفرق المعماري بين طريقتين لدخول الـ App Service جوه الشبكات الخاصة (Virtual Networks) في أزور. تعال نفككها عبارة عبارة:
+
+**1. تحليل العبارة الأولى (ربط WebApp1 بـ VM2 عبر الـ Peering):**
+
+- التطبيق `WebApp1` بيستخدم خطة `Premium` ومربوط بـ `VNet1` عن طريق خاصية (VNet Integration).
+    
+- **القاعدة الهندسية:** خاصية VNet Integration بتسمح للتطبيق إنه يبعت ترافيك (Outbound) جوه الشبكة المربوط بيها. والميزة الأقوى إنها بتدعم العبور من خلال الـ (Peering).
+    
+- بما إن `VNet1` معمولة Peering مع `VNet2`، الترافيك هيطلع من `WebApp1`، يدخل `VNet1`، يعبر الكوبري لـ `VNet2`، ويوصل بنجاح لـ `VM2`. (إذن العبارة صحيحة).
+    
+
+**2. تحليل العبارة الثانية (فخ التحكم في الترافيك الداخلي NSG1):**
+
+- العبارة بتقول إن `NSG1` (المربوط بـ Subnet1) بيتحكم في الترافيك اللي _داخل_ (Inbound) لـ `WebApp1`.
+    
+- **القاعدة الهندسية الصارمة:** خاصية VNet Integration مخصصة حصرياً للترافيك **الخارج (Outbound)** من التطبيق للشبكة. هي لا تضع واجهة التطبيق (Inbound IP) داخل الـ Subnet. الترافيك اللي داخل لـ WebApp1 من بره بييجي عن طريق الـ Load Balancer العام بتاع أزور ومش بيمر أصلاً على Subnet1.
+    
+- بما إن الترافيك الداخلي مش بيمر على الـ Subnet، إذن `NSG1` ملوش أي سلطة عليه. (إذن العبارة خاطئة).
+    
+
+**3. تحليل العبارة الثالثة (بيئة الـ ASE المنعزلة WebApp2):**
+
+- التطبيق `WebApp2` بيستخدم خطة `Isolated` ومزروع فعلياً جوه `Subnet2`.
+    
+- خطة Isolated معناها إن أزور بنالك بيئة مخصصة (App Service Environment - ASE). البيئة دي بتنزل كأنها مكنة (VM) بالظبط جوه الـ Subnet وبتاخد IP داخلي منها.
+    
+- بما إن `WebApp2` أصبح مورد طبيعي جداً جوه `VNet2`، يقدر ببساطة يستخدم الـ Peering عشان يكلم `VM1` اللي موجود في `VNet1`. (إذن العبارة صحيحة).
+### Trick 73
+
+![[Pasted image 20261008180848.png]]
+
+- **المربع الأول (ACR Tasks):** **ContReg1, ContReg2, and ContReg3**
+    
+- **المربع الثاني (Private endpoints):** **ContReg1 only**
+
+**الشرح المعماري للسيناريو (الفروق بين خطط Azure Container Registry):**
+
+السؤال ده بيختبر حفظك وفهمك للمميزات اللي بتفتحها كل خطة (SKU) في خدمة الـ ACR، وخصوصاً الفاصل بين المميزات العامة والمميزات الأمنية.
+
+**1. تحليل ACR Tasks:** خاصية الـ ACR Tasks بتسمحلك تبني (Build) وتختبر صور الحاويات (Container Images) أوتوماتيكياً في الكلاود. مايكروسوفت بتعتبر دي ميزة أساسية للـ CI/CD، وعشان كده وفرتها في **كل الخطط** بلا استثناء (Basic, Standard, Premium). إذن، التلاتة بيدعموها.
+
+**2. تحليل Private Endpoints:**
+
+الـ Private Endpoints (أو Azure Private Link) هي ميزة شبكات متقدمة جداً، بتخلي الـ Registry بتاعك ياخد IP داخلي من الـ VNet وتقفل عليه الوصول من الإنترنت العام (Public Internet).
+
+- **القاعدة الهندسية الصارمة:** في خدمة ACR، أي مميزات تخص "الشبكات الخاصة" أو "الأمان المتقدم" أو "التوافر العالي" تكون **حصرية فقط لخطة الـ Premium**.
+    
+- بما إن `ContReg1` هو الـ Registry الوحيد في الجدول اللي على خطة Premium، إذن هو الوحيد اللي يقدر يستخدم الـ Private Endpoints.
+
+### Trick 74
+### Trick 75
+### Trick 76
+### Trick 77
+### Trick 78
+### Trick 79
+### Trick 80
+### Trick 81
+### Trick 82
+### Trick 83
+### Trick 84
+### Trick 85
+### Trick 86
+### Trick 87 
