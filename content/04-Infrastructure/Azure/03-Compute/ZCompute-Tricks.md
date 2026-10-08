@@ -48,3 +48,39 @@ To deploy a YAML file, the command is:
 kubectl apply -f <file_name>.yaml
 
 خلي بالك من الفرق: Microsoft Monitoring Agent on VM1, and not the Microsoft Monitoring Agent VM extension.
+
+
+القاعدة الحديدية في شبكات أزور بتقول إن كارت الشبكة بتاع المكنة (NIC) والشبكة الافتراضية (VNet) اللي هيتربط بيها **لازم يكونوا في نفس المنطقة الجغرافية (Region) بالظبط**.
+
+- المكان الوحيد المدعوم لتخزين النسخ الاحتياطية للـ App Service هو (Azure Storage Account)، ولا يتم استخدام أي نوع من الـ Vaults.
+    
+- لاستثناء ملفات أو مجلدات معينة من النسخة الاحتياطية، بننشئ ملف نصي باسم `_backup.filter` في مسار التطبيق.
+
+عند استخدام صورة نظام تشغيل جاهزة من أزور (زي Windows Server أو Ubuntu)، يتم وضع معلومات الناشر (publisher) والنسخة (sku) داخل بلوك يسمى `imageReference`.
+
+
+
+- **Windows Node Pools:** تتطلب دائماً وأبداً تغيير إعداد الشبكة إلى **Azure CNI**. (لا تدعم Kubenet).
+    
+- **ACR Integration:** أسهل وأأمن طريقة لربط الـ AKS بمستودع الـ ACR هي استخدام **Managed Identity**، ويتم ذلك عن طريق تغيير إعداد الـ **Authentication method**.
+
+**"Max surge controls how many additional nodes AKS creates during an upgrade, beyond the current node count."**
+
+
+
+كوماند **Kubectl:** يُستخدم لإدارة كائنات كوبرنيتيز الداخلية (تطبيق ونشر ملفات YAML، إنشاء الـ Pods، إعداد الـ HPA، قراءة الـ Logs).
+
+Remove all the existing resources from RG1 before deploying the new resources.
+-Mode
+Specifies the deployment mode. The acceptable values for this parameter are:
+* Complete: In complete mode, Resource Manager deletes resources that exist in the resource group but are
+not specified in the template.
+* Incremental: In incremental mode, Resource Manager leaves unchanged resources that exist in the resource
+group but are not specified in the template.
+Incorrect:
+* All
+No mode named all.
+
+
+ **المجموعات متعددة الحاويات (Multi-container groups) تدعم نظام تشغيل Linux فقط.**
+ 
