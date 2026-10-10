@@ -2410,3 +2410,100 @@ _(ملاحظة: خطوة "On Device1, run mstsc.exe" مستبعدة لأنك م�
 
 
 بناءً على التحليل ده، المكان الوحيد اللي يقدر يستضيف الخدمة هو **VNet3**، والـ Subnet mask المناسب كحد أدنى حسب الخيارات المتاحة في القائمة هو **`/23`**.
+
+### Trick 101
+
+![[Pasted image 20261010204241.png]]
+
+الإجابات بالترتيب هي: **نعم (Yes)**، ثم **لا (No)**، ثم **لا (No)**.
+
+  
+
+عشان تفهم السؤال ده، لازم نفرق بين مفهومين في أزور بيعملوا لخبطة دايماً:
+
+  
+
+1. **Service Endpoint:** ده مجرد "طريق سريع ومباشر وأمن" من شبكتك لخدمات أزور (زي الـ Storage). هو **مش بيمنع** الوصول لأي حاجة، هو بس بيحسن مسار الترافيك عشان ميمشيش على الإنترنت العام.
+    
+      
+    
+2. **Service Endpoint Policy:** ده "الحارس" اللي بيقف على الطريق السريع. لو طبقته، هيمنعك توصل لأي Storage Account مش متوافق مع القواعد اللي جواه.
+    
+      
+    
+
+تعالى نطبق القواعد دي على العبارات:
+
+  
+
+**العبارة الأولى: Policy1 can be applied to Subnet3 (الإجابة: Yes)**
+
+عشان أزور يسمحلك تطبق سياسة (Policy) على Subnet، فيه شرطين هندسيين:
+
+  
+
+- الشرط الأول: لازم الـ Subnet تكون مفعلة الـ Service Endpoint للخدمة دي. وبالفعل `Subnet3` مفعلة الـ `Microsoft.Storage`.
+    
+      
+    
+- الشرط التاني: لازم السياسة والشبكة الوهمية يكونوا في نفس المنطقة الجغرافية (Region). السياسة `Policy1` تم إنشاؤها في منطقة `South Central US`. وشبكة `VNet3` (اللي جواها Subnet3) موجودة برضه في `South Central US`. إذن معمارياً، ينفع نطبق السياسة دي عليها.
+    
+      
+    
+
+**العبارة الثانية: Only storage1 and storage2 can be accessed from VNet2 (الإجابة: No)** شبكة `VNet2` (وتحديداً Subnet2 اللي جواها) متفعل عليها الـ Service Endpoint الخاص بالـ Storage. لكن، لم يتم تطبيق أي سياسة (Policy) عليها عشان تقيد حركتها (السياسة الوحيدة اللي اتكريتت موجودة في منطقة تانية خالص). وزي ما اتفقنا، الـ Endpoint لوحده مش بيقفل الاتصال. ده معناه إن المكن اللي جوه VNet2 يقدر يوصل لـ storage1 و storage2 و storage3 بكل حرية. بالتالي، تقييد الجملة بكلمة "فقط" (Only) يخليها عبارة خاطئة.
+
+  
+
+**العبارة الثالثة: Only storage2 can be accessed from VNet3 (الإجابة: No)** الفخ هنا هو إنه بيحاول يوهمك إن السياسة اتطبقت، لكن المعطيات بتقول إنك "أنشأت" السياسة بس (You create a service endpoint policy)، ولم يتم تطبيقها فعلياً على Subnet3 حتى الآن (بدليل إن العبارة الأولى لسه بتختبر هل ينفع نطبقها ولا لأ). طالما السياسة لسه متطبقتش (Not assigned)، شبكة `VNet3` تقدر توصل لكل الـ Storage accounts الموجودة بدون أي قيود. وحتى لو افترضنا جدلاً إنك طبقتها، السياسة نفسها متصممة عشان تسمح بالاتصال بكل مساحات التخزين (allow connectivity to all the storage accounts). في كلتا الحالتين، تقييد الوصول لـ storage2 "فقط" عبارة خاطئة.
+### Trick 102
+
+![[Pasted image 20261010204508.png]]
+
+الإجابة الصحيحة: B. the public networking type ✅
+
+## ليه B؟
+
+في Azure Container Instances (ACI)، الـ DNS name label scope reuse بتحدد نطاق إعادة استخدام اسم الـ DNS عند إنشاء Container Instance جديدة، مثلًا داخل نفس الـ Resource Group أو الـ Subscription.
+
+الميزة دي مرتبطة بالـ Public networking؛ لأن الـ DNS name label بيُستخدم لإنشاء عنوان FQDN يمكن الوصول إليه عبر الإنترنت، بالشكل ده:
+
+`<dns-label>.<region>.azurecontainer.io`
+
+وبالتالي لازم تختار Public networking type علشان تقدر تضبط DNS name label scope reuse.
+### Trick 103
+![[Pasted image 20261010205035.png]]
+
+
+### Trick 104
+
+![[Pasted image 20261010210041.png]]
+
+Correct answer: C. Deploy an Open Virtualization Application (OVA) template to vSphere.
+Azure Site Recovery uses a configuration server/appliance to discover and replicate VMware virtual machines to Azure. For VMware-to-Azure migration, you need to set up the replication appliance before enabling replication for the 50 VMs.
+Microsoft’s migration guidance confirms that the OVA template is the recommended way to deploy the replication appliance. 
+
+Why not the others?
+- A. An extended network is not required to begin VMware migration.
+- B. A recovery plan is used to orchestrate failover and recovery, not to set up migration.
+- D. A virtual network is needed for the destination VMs, but it is not the next step specifically for preparing VMware replication.
+
+### Trick 105
+
+![[Pasted image 20261010210725.png]]
+
+In Azure Container Instances (ACI), deploying a container into a virtual network (which is what selecting the "Private" networking type does) is supported for Linux containers, but it is generally restricted or unsupported for Windows containers.   Because the current configuration has the OS type set to Windows, the Azure portal will grey out or hide the "Private" networking option. To make the Private networking setting available, you must change the OS type to Linux. The other settings (Memory, CPU, and SKU) do not block the networking type selection.
+
+### Trick 106
+
+![[Pasted image 20261010210944.png]]
+In Azure, a route table (which contains user-defined routes) can only be associated with a subnet.   You cannot associate a route table directly to an entire Virtual Network (VNet1), nor can you attach it directly to an individual Network Interface (NIC1). Once a route table is associated with a subnet, the routing rules defined within it automatically apply to all network interfaces and resources connected to that specific subnet.
+
+### Trick 107
+
+### Trick 108
+### Trick 109
+### Trick 110
+### Trick 111
+### Trick 112
+### Trick 113
