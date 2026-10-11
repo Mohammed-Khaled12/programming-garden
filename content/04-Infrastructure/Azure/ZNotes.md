@@ -3119,10 +3119,51 @@ In Azure, a route table (which contains user-defined routes) can only be associa
 - **A. SQL:** لغة قواعد البيانات العلاقية، ملهاش أي علاقة بسجلات الويندوز أو أزور مونيتور هنا.
 
 ### Trick 122
+![[Pasted image 20261011223338.png]]
 
-### Trick 123
 
-### Trick 124
+الإجابات الصحيحة هي **A. a Log Analytics workspace** و **C. a storage account**.
 
-### Trick 125
+  
 
+**الشرح المعماري للحل:**
+
+  
+
+عشان تشغل ميزة **Traffic Analytics** (اللي هي بتديك رسومات وتحليلات ذكية للترافيك)، الخدمة دي بتعتمد في الأساس على حاجة اسمها **NSG Flow Logs** (سجلات الترافيك الخام اللي بتطلع من الـ NSG).
+
+  
+
+الدورة الهندسية بتتم على خطوتين إجباريتين:
+
+  
+
+1. **الخطوة الأولى (التخزين):** الـ NSG Flow Logs بتحتاج مكان ترمي فيه الداتا الخام بتاعتها أول بأول، والمكان الوحيد المدعوم لده هو **Storage account** (الخيار C).
+    
+      
+    
+2. **الخطوة الثانية (التحليل):** الـ Traffic Analytics بتاخد الداتا الخام دي من الـ Storage Account، وتعملها معالجة (تحليل ومقارنة بقاعدة بيانات التهديدات)، وبعدين تحفظ النتيجة النهائية وتعرضها ليك. عشان تعمل كده، بتحتاج **Log Analytics workspace** (الخيار A).
+    
+      
+    
+
+**ليه باقي الاختيارات غلط؟**
+
+  
+
+- **B. Azure Monitor workbook:** دي مجرد أداة لعمل تقارير (Dashboards) مخصصة، مش متطلب أساسي عشان تشغل الخدمة.
+    
+      
+    
+- **D. Microsoft Sentinel:** ده نظام SIEM متقدم للأمان، ملوش علاقة بتشغيل الـ Traffic Analytics الأساسية.
+    
+      
+    
+- **E. Data Collection Rule (DCR):** دي بنستخدمها مع الـ Azure Monitor Agent عشان نلم سجلات من جوه نظام التشغيل نفسه (زي ما شرحنا في سؤال الـ XPath)، لكن الـ NSG Flow Logs بتطلع من مستوى الشبكة (Network level) ومش بتستخدم DCR.
+
+###
+
+خلصنا 
+warning: May spontaneously start talking about VNets, NSGs, and Service Endpoints in normal conversations."
+
+**"There are two hard things in Computer Science: cache invalidation, naming things, and off-by-one errors... and surviving 500 Azure questions!"**
