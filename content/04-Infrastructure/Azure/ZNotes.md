@@ -380,6 +380,7 @@ edit, and update a logic app.
 لإعطاء أي صلاحيات مخصصة (RBAC Roles زي SMB Contributor) لمستخدم أو جروب عشان يأكسس File Share عبر بروتوكول SMB ⬅️ **الخطوة الصفرية والإلزامية هي تفعيل نظام المصادقة (Identity-based Authentication زي AD DS) على مستوى الـ Storage Account نفسه أولاً.** بدون الخطوة دي، المورد مش هيفهم أي صلاحيات اتوزعت في الـ IAM
 
 ### Trick 23
+![[Pasted image 20261012145559.png]]
 
 ![[Pasted image 20261002085634.png]]
 
@@ -3161,7 +3162,7 @@ In Azure, a route table (which contains user-defined routes) can only be associa
     
 - **E. Data Collection Rule (DCR):** دي بنستخدمها مع الـ Azure Monitor Agent عشان نلم سجلات من جوه نظام التشغيل نفسه (زي ما شرحنا في سؤال الـ XPath)، لكن الـ NSG Flow Logs بتطلع من مستوى الشبكة (Network level) ومش بتستخدم DCR.
 
-###
+### Last Words
 
 خلصنا 
 warning: May spontaneously start talking about VNets, NSGs, and Service Endpoints in normal conversations."
