@@ -65,7 +65,7 @@ follow the principle of least privilege, You Should have Guest Inviter role to I
 
 ## Creating Users in Entra ID
 
-اولا **لازم يكون معاك دور User Administrator على الأقل** (Role من Entra ID، مش RBAC العادي بتاع الموارد
+اولا **لازم يكون معاك دور User Administrator على الأقل** (Role من Entra ID، مش RBAC العادي بتاع الموارد)
 
 ### Create  Single User
 

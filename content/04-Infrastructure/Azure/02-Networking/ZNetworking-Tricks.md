@@ -190,7 +190,8 @@
 
 ### 9. الحاويات (Containers) و AKS
 
-- **Azure Container Instances (ACI):** ميزة الـ Private Networking (نشر الحاوية جوه VNet) مدعومة حاويات **Linux فقط**. في الـ Windows بتكون مخفية أو غير مدعومة.
+- **Azure Container Instances (ACI):**
+- ميزة الـ Private Networking (نشر الحاوية جوه VNet) مدعومة حاويات **Linux فقط**. في الـ Windows بتكون مخفية أو غير مدعومة.
     
       
     
