@@ -4,18 +4,22 @@
 - [x] OOP
 - [x] DSA           (Partially)
 - [x] Networks
-- [ ] C# Basics
-- [ ] OOP In C#
+- [x] Git/GitHub
+- [ ] Java Core
+- [ ] OOP In Java
 - [ ] OOD
 - [ ] SOLID
-- [ ] Advanced C#
 - [ ] SQL
-- [ ] LINQ
-- [ ] ADO
-- [ ] EF Core
-- [ ] MVC
+- [ ] Spring Boot Core
+- [ ] Spring Data JPA & Hibernate
+- [ ] Spring Security
+- [ ] Testing: JUnit, Integration tests
 - [ ] APIs
 - [ ] Design Patterns
+- [ ] Redis
+- [ ] Distributed Systems
+- [ ] RabbitMQ
+- [ ] Kafka
 
 ---
 # DevOps
@@ -37,6 +41,6 @@
 # Cloud
 
 - [x] Networks
-- [x] Cloud Essentials            (Partially)
+- [x] Cloud Essentials
 - [x] AZ-900
 - [x] AZ-104
