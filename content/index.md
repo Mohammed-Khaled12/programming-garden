@@ -22,7 +22,7 @@ title: Home
 > [!code]+ Languages & Syntax
 > - **C++:** [[CPP Basics]] | [[CPP Pointers]] | [[CPP Vectors]] | [[CPP Dynamic Memory]] | [[CPP Exception Handling]] | [[CPP File Handling]] | [[Cpp Formatting]] | [[CPP Headers]] | [[CPP DateTime]]
 > - **Java:** [[JAVA Basics]]
-> - **Python:** [[Python]]
+> - **Python:** [[Temp-Python]]
 > - **Shell:** [[CLI Basics]]
 
 ### ☁️ Infrastructure & Cloud
