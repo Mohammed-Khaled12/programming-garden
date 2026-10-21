@@ -5,8 +5,8 @@
 - [x] DSA           (Partially)
 - [x] Networks
 - [x] Git/GitHub
-- [ ] Java Core
-- [ ] OOP In Java
+- [x] Java Core
+- [x] OOP In Java
 - [ ] OOD
 - [ ] SOLID
 - [ ] SQL
