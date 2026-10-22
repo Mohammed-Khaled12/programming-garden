@@ -1,4 +1,7 @@
 
+> [!info] Scope of this note
+> This note focuses on **Python's OOP syntax** (how Python writes classes, inheritance, properties, and so on), and compares it with C++ where that helps.
+> If you want to understand the OOP **concepts** themselves (encapsulation, inheritance, polymorphism, abstraction), see [[OOP-Basics]].
 
 ## Classes & Objects
 
