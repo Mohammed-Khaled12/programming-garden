@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>Algorithm Visualizer & Debugger</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--tx:#1b1f24;--mut:#667085;--bd:#d9dde3;--hl:#fff3bf;--cmp:#f59f00;--swp:#e03131;--srt:#2f9e44;--fnd:#7048e8;--bar:#4c8bf5;--dim:#c5ccd6;--code:#f1f3f5;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14161a;--card:#1d2026;--tx:#e8eaed;--mut:#9aa3af;--bd:#333943;--hl:#4a4217;--dim:#454c58;--code:#171a1f}}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:14px system-ui,sans-serif}
+.w{max-width:1100px;margin:0 auto;padding:12px}h1{font-size:18px;margin:4px 0 10px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:10px;margin-bottom:10px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+button,select,input{font:inherit;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:6px;padding:5px 9px}
+button{cursor:pointer}button:hover{border-color:var(--bar)}button:disabled{opacity:.4;cursor:default}
+button.p{background:var(--bar);color:#fff;border-color:var(--bar)}
+input.t{flex:1;min-width:180px}input.n{width:70px}
+.g{display:grid;grid-template-columns:1.2fr 1fr;gap:10px}@media(max-width:760px){.g{grid-template-columns:1fr}}
+.code{font:12.5px ui-monospace,Menlo,monospace;background:var(--code);border-radius:6px;overflow-x:auto;padding:4px 0}
+.ln{display:flex;white-space:pre;padding:1px 8px}.ln.on{background:var(--hl);font-weight:600}
+.ln b{width:24px;color:var(--mut);font-weight:400;flex:none}
+.arr{display:flex;gap:6px;align-items:flex-end;min-height:190px;overflow-x:auto;padding:6px 2px}
+.col{display:flex;flex-direction:column;align-items:center;min-width:42px}
+.bar{width:38px;border-radius:5px 5px 0 0;color:#fff;text-align:center;font-weight:700;padding-top:3px;transition:height .2s,background .2s}
+.idx{font-size:11px;color:var(--mut)}.pt{font-size:11px;font-weight:700;color:var(--fnd);min-height:30px;text-align:center}
+.lg{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--mut)}.lg i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:4px;vertical-align:-1px}
+table{width:100%;border-collapse:collapse}td{padding:4px 6px;border-bottom:1px solid var(--bd);vertical-align:top}
+td.v{font:700 13px ui-monospace,monospace;color:var(--bar)}td.m{color:var(--mut);font-size:12px}
+.chip{border:1px solid var(--bd);border-radius:12px;padding:2px 9px;font-size:12px}
+.note{background:var(--hl);border-radius:6px;padding:7px 9px;margin-top:8px}.warn{background:#ffe3e3;color:#a61e1e;border-radius:6px;padding:7px 9px;margin-top:8px}
+</style></head><body><div class="w"><div id="root"></div></div>
+<script src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/htm@3.1.1/dist/htm.umd.js"></script>
+<script>
+const {useState,useMemo,useEffect}=React;const html=htm.bind(React.createElement);
+const CODE={
+linear:`public int linearSearch(int[] arr, int target) {
+    for (int i = 0; i < arr.length; i++) {
+        if (arr[i] == target) {
+            return i;
+        }
+    }
+    return -1;
+}`,
+binary:`public int binarySearch(int[] arr, int target) {
+    int left = 0;
+    int right = arr.length - 1;
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        if (arr[mid] == target) {
+            return mid;
+        } else if (arr[mid] < target) {
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+    }
+    return -1;
+}`,
+bubble:`public void bubbleSort(int[] arr) {
+    int n = arr.length;
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                int temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+            }
+        }
+    }
+}`,
+insertion:`public void insertionSort(int[] arr) {
+    int n = arr.length;
+    for (int i = 1; i < n; i++) {
+        int key = arr[i];
+        int j = i - 1;
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        arr[j + 1] = key;
+    }
+}`,
+selection:`public void selectionSort(int[] arr) {
+    int n = arr.length;
+    for (int i = 0; i < n - 1; i++) {
+        int minIndex = i;
+        for (int j = i + 1; j < n; j++) {
+            if (arr[j] < arr[minIndex]) {
+                minIndex = j;
+            }
+        }
+        int temp = arr[minIndex];
+        arr[minIndex] = arr[i];
+        arr[i] = temp;
+    }
+}`};
+const NAMES={linear:'Linear Search',binary:'Binary Search',bubble:'Bubble Sort',insertion:'Insertion Sort',selection:'Selection Sort',quick:'Quick Sort',heap:'Heap Sort',counting:'Counting Sort'};
+CODE.binary_bug=CODE.binary.replace('left <= right','left < right');
+CODE.bubble_bug=CODE.bubble.replace('n - i - 1; j++','n - i; j++');
+CODE.bubble_opt=`public void bubbleSort(int[] arr) {
+    int n = arr.length;
+    for (int i = 0; i < n - 1; i++) {
+        boolean swapped = false;
+        for (int j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                int temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+                swapped = true;
+            }
+        }
+        if (!swapped) break;
+    }
+}`;
+CODE.quick=`public void quickSort(int[] array, int first, int last) {
+    if (first < last) {
+        int i = first + 1;
+        int j = last;
+        int pivot = first;
+        while (i < j) {
+            while (i < last && array[i] <= array[pivot]) i++;
+            while (j > first && array[j] > array[pivot]) j--;
+            if (i < j) {
+                int temp = array[i];
+                array[i] = array[j];
+                array[j] = temp;
+            }
+        }
+        if (array[pivot] > array[j]) {
+            int temp = array[pivot];
+            array[pivot] = array[j];
+            array[j] = temp;
+        }
+        quickSort(array, first, j - 1);
+        quickSort(array, j + 1, last);
+    }
+}`;
+CODE.heap=`public void heapify(int[] arr, int n, int root) {
+    int largest = root;
+    int l = 2 * root + 1;
+    int r = 2 * root + 2;
+    if (l < n && arr[l] > arr[largest]) largest = l;
+    if (r < n && arr[r] > arr[largest]) largest = r;
+    if (largest != root) {
+        int temp = arr[root];
+        arr[root] = arr[largest];
+        arr[largest] = temp;
+        heapify(arr, n, largest);
+    }
+}
+
+public void heapSort(int[] arr, int n) {
+    for (int i = (n / 2) - 1; i >= 0; i--) {
+        heapify(arr, n, i);
+    }
+    for (int i = n - 1; i > 0; i--) {
+        int temp = arr[0];
+        arr[0] = arr[i];
+        arr[i] = temp;
+        heapify(arr, i, 0);
+    }
+}`;
+CODE.counting=`public void countingSort(int[] arr) {
+    if (arr == null || arr.length <= 1) return;
+    int n = arr.length;
+    int max = arr[0];
+    for (int i = 1; i < n; i++) {
+        if (arr[i] > max) max = arr[i];
+    }
+    int[] count = new int[max + 1];
+    for (int i = 0; i < n; i++) {
+        count[arr[i]]++;
+    }
+    for (int i = 1; i <= max; i++) {
+        count[i] += count[i - 1];
+    }
+    int[] output = new int[n];
+    for (int i = n - 1; i >= 0; i--) {
+        int currentNumber = arr[i];
+        int position = count[currentNumber] - 1;
+        output[position] = currentNumber;
+        count[currentNumber]--;
+    }
+    for (int i = 0; i < n; i++) {
+        arr[i] = output[i];
+    }
+}`;
+const VARS={binary:[['normal','Normal'],['bug','Bug: left < right']],bubble:[['normal','Normal'],['opt','Optimized: swapped flag'],['bug','Bug: j < n - i']]};
+const WL={bubble:7,bubble_bug:7,bubble_opt:8,selection:11,insertion:6,quick:[11,17],heap:[9,21],counting:[18]};
+const INFO={linear:['O(1)','O(n)','O(n)','O(1)','n/a','Works on any array, sorted or not.'],binary:['O(1)','O(log n)','O(log n)','O(1)','n/a','Needs SORTED input; every step halves the window. left + (right-left)/2 avoids the int overflow that (left+right)/2 can cause.'],bubble:['O(n²) plain / O(n) optimized','O(n²)','O(n²)','O(1)','Yes','Plain version does every comparison even on sorted input. Try Optimized + Already Sorted.'],insertion:['O(n)','O(n²)','O(n²)','O(1)','Yes','Shifts instead of swapping; excellent on nearly-sorted data.'],selection:['O(n²)','O(n²)','O(n²)','O(1)','No','Always ~n²/2 comparisons, but at most n-1 swaps.']};
+Object.assign(INFO,{quick:['O(n log n)','O(n log n)','O(n²) (already sorted: pivot is always the smallest)','O(log n) call stack','No','Pivot = first element, so sorted/reversed input is the worst case. Watch the call stack grow deep.'],heap:['O(n log n)','O(n log n)','O(n log n)','O(1)','No','Build a max-heap, then repeatedly swap the root (max) to the end. The tree view shows the heap shrinking.'],counting:['O(n + k)','O(n + k)','O(n + k)','O(n + k)','Yes (backwards fill)','No comparisons between elements: values are used as indexes. k = max value, so huge values waste memory; negatives crash.']});
+const NAMES2={bubble:'Bubble',bubble_opt:'Bubble (optimized)',insertion:'Insertion',selection:'Selection',quick:'Quick',heap:'Heap',counting:'Counting'};
+const MEAN={first:'Start index of the current sub-array',last:'End index of the current sub-array',pivot:'Index of the pivot element',largest:'Index of the largest among root, l, r',l:'Left child = 2*root + 1',r:'Right child = 2*root + 2',root:'Parent node being fixed',max:'Largest value; decides the count array size',currentNumber:'Value being placed into output',position:'Final index of that value in output',swapped:'Did this pass swap anything? If not, the array is already sorted.',i:'Outer loop counter / current index',j:'Inner index being examined',left:'Low end of the search window',right:'High end of the search window',mid:'Middle of the window (overflow-safe formula)',key:'Value being inserted into the sorted prefix',minIndex:'Index of the smallest value seen so far',n:'arr.length',temp:'Temporary holder so a swap does not lose a value',target:'Value we are looking for','arr[i]':'Element at i','arr[j]':'Element at j','arr[j + 1]':'Right neighbour of j','arr[mid]':'Element at mid','arr[minIndex]':'Current minimum value'};
+const rng=(x,y)=>Array.from({length:Math.max(0,y-x)},(_,k)=>x+k);
+function gen(algo,arr,target){
+const a=[...arr],n=a.length,S=[],stk=[];let srt=[],hsz=0,cnt=null,out=null;
+const P=(line,v,o={})=>S.push({line,v:{...v},arr:[...a],ptr:{},cmp:[],swap:[],found:-1,sorted:[...srt],win:null,note:'',stk:[...stk],heap:hsz,aux:cnt?{c:[...cnt],o:out?[...out]:null}:null,ah:{},...o});
+if(algo==='linear'){
+P(0,{target,'arr.length':n},{note:'Method called.'});
+for(let i=0;i<n;i++){
+P(1,{i,target},{ptr:{i},note:`i = ${i}, and ${i} < ${n} is true, so enter the loop body.`});
+P(2,{i,target,'arr[i]':a[i]},{ptr:{i},cmp:[i],note:`Is ${a[i]} == ${target}? ${a[i]===target}`});
+if(a[i]===target){P(3,{i},{ptr:{i},found:i,note:`Match! return ${i}.`});return S}}
+P(1,{i:n,target},{note:`i = ${n}, and ${n} < ${n} is false, so the loop ends.`});
+P(6,{},{note:'Never matched, so return -1.'});return S}
+if(algo==='binary'||algo==='binary_bug'){const bug=algo==='binary_bug';
+P(0,{target,'arr.length':n},{note:'Method called. Binary search ONLY works if arr is sorted.'});
+let left=0;P(1,{left},{ptr:{left},note:'left starts at the first index.'});
+let right=n-1;P(2,{left,right},{ptr:{left,right},win:[left,right],note:'right starts at the last index.'});
+while(true){
+P(3,{left,right},{ptr:{left,right},win:[left,right],note:bug?`left < right? ${left<right}`:`left <= right? ${left<=right}${left<=right?'':' (window is empty, so loop ends)'}`});
+if(bug?left>=right:left>right){if(bug&&left===right)P(3,{left,right},{ptr:{left,right},win:[left,right],exc:true,note:`BUG: the loop exits but index ${left} was NEVER checked (arr[${left}] = ${a[left]}). Target ${target} could be hiding there.`});break}
+const mid=left+Math.floor((right-left)/2);
+P(4,{left,right,mid},{ptr:{left,right,mid},win:[left,right],note:`mid = ${left} + (${right} - ${left}) / 2 = ${mid} (integer division)`});
+P(5,{mid,'arr[mid]':a[mid],target},{ptr:{left,right,mid},win:[left,right],cmp:[mid],note:`Is ${a[mid]} == ${target}? ${a[mid]===target}`});
+if(a[mid]===target){P(6,{mid},{ptr:{left,right,mid},win:[left,right],found:mid,note:`Found at index ${mid}.`});return S}
+P(7,{mid,'arr[mid]':a[mid],target},{ptr:{left,right,mid},win:[left,right],cmp:[mid],note:`Is ${a[mid]} < ${target}? ${a[mid]<target}`});
+if(a[mid]<target){left=mid+1;P(8,{left,right,mid},{ptr:{left,right,mid},win:[left,right],note:`Target is bigger, so discard the left half: left = ${left}.`})}
+else{right=mid-1;P(10,{left,right,mid},{ptr:{left,right,mid},win:[left,right],note:`Target is smaller, so discard the right half: right = ${right}.`})}}
+P(13,{left,right},{note:'Window is empty, so return -1.'});return S}
+if(algo==='quick'){
+P(0,{first:0,last:n-1},{note:'Initial call: quickSort(arr, 0, arr.length - 1).'});
+const qs=(first,last)=>{stk.push(`quickSort(${first}, ${last})`);const win=[first,last];
+P(1,{first,last},{win,note:`first < last? ${first<last}${first<last?'':' → base case (0 or 1 element), return.'}`});
+if(first<last){let i=first+1;P(2,{first,last,i},{win,ptr:{i},note:'Left pointer starts right after the pivot.'});
+let j=last;P(3,{first,last,i,j},{win,ptr:{i,j},note:'Right pointer starts at the end.'});
+const pivot=first;const V=()=>({first,last,i,j,pivot}),pt=()=>({i,j,pivot});P(4,V(),{win,ptr:pt(),note:`Pivot = ${a[pivot]} (value at index ${pivot}).`});
+while(true){P(5,V(),{win,ptr:pt(),note:`i < j? ${i<j}`});if(!(i<j))break;
+while(true){const c=i<last&&a[i]<=a[pivot];P(6,{...V(),'array[i]':a[i],'array[pivot]':a[pivot]},{win,ptr:pt(),cmp:[i,pivot],note:c?`${a[i]} <= ${a[pivot]}: i keeps moving right.`:'i stops: found an element larger than the pivot (or reached last).'});if(!c)break;i++}
+while(true){const c=j>first&&a[j]>a[pivot];P(7,{...V(),'array[j]':a[j],'array[pivot]':a[pivot]},{win,ptr:pt(),cmp:[j,pivot],note:c?`${a[j]} > ${a[pivot]}: j keeps moving left.`:'j stops: found an element not larger than the pivot (or reached first).'});if(!c)break;j--}
+P(8,V(),{win,ptr:pt(),note:`i < j? ${i<j}${i<j?': both are misplaced, swap them.':': pointers crossed, partition done.'}`});
+if(i<j){const t=a[i];P(9,{...V(),temp:t},{win,ptr:pt(),swap:[i,j],note:`Save ${t}.`});a[i]=a[j];P(10,{...V(),temp:t},{win,ptr:pt(),swap:[i,j]});a[j]=t;P(11,{...V(),temp:t},{win,ptr:pt(),swap:[i,j],note:'Swapped.'})}}
+P(14,V(),{win,ptr:pt(),cmp:[pivot,j],note:`array[pivot] > array[j]? ${a[pivot]} > ${a[j]} = ${a[pivot]>a[j]}`});
+if(a[pivot]>a[j]){const t=a[pivot];P(15,{...V(),temp:t},{win,ptr:pt(),swap:[pivot,j]});a[pivot]=a[j];P(16,{...V(),temp:t},{win,ptr:pt(),swap:[pivot,j]});a[j]=t;P(17,{...V(),temp:t},{win,ptr:pt(),swap:[pivot,j],note:`Pivot ${t} moved to its final index ${j}.`})}
+srt.push(j);P(19,{first,last,j},{win,ptr:{j},note:`Index ${j} is final. Recurse on the LEFT part: quickSort(${first}, ${j-1}).`});qs(first,j-1);
+P(20,{first,last,j},{win,ptr:{j},note:`Left part done. Recurse on the RIGHT part: quickSort(${j+1}, ${last}).`});qs(j+1,last)}
+stk.pop()};
+qs(0,n-1);srt=rng(0,n);P(22,{},{note:'Sorted.'});return S}
+if(algo==='heap'){
+const hp=(m,root)=>{stk.push(`heapify(arr, ${m}, ${root})`);
+let largest=root;P(1,{n:m,root,largest},{ptr:{root,largest},note:`Assume the parent (index ${root}) is the largest.`});
+const l=2*root+1;P(2,{n:m,root,largest,l},{ptr:{root,largest,l},note:`Left child = 2*${root}+1 = ${l}${l<m?'':' (outside the heap)'}`});
+const r=2*root+2;P(3,{n:m,root,largest,l,r},{ptr:{root,largest,l,r},note:`Right child = 2*${root}+2 = ${r}${r<m?'':' (outside the heap)'}`});
+let c=l<m&&a[l]>a[largest];P(4,{n:m,root,largest,l,...(l<m?{'arr[l]':a[l],'arr[largest]':a[largest]}:{})},{ptr:{root,largest,l},cmp:l<m?[l,largest]:[],note:`l < n && arr[l] > arr[largest]? ${c}${c?` → largest = ${l}`:''}`});if(c)largest=l;
+c=r<m&&a[r]>a[largest];P(5,{n:m,root,largest,r,...(r<m?{'arr[r]':a[r],'arr[largest]':a[largest]}:{})},{ptr:{root,largest,r},cmp:r<m?[r,largest]:[],note:`r < n && arr[r] > arr[largest]? ${c}${c?` → largest = ${r}`:''}`});if(c)largest=r;
+P(6,{n:m,root,largest},{ptr:{root,largest},note:`largest != root? ${largest!==root}${largest!==root?': a child is bigger, swap down.':': heap property holds here, recursion stops.'}`});
+if(largest!==root){const t=a[root];P(7,{n:m,root,largest,temp:t},{ptr:{root,largest},swap:[root,largest]});a[root]=a[largest];P(8,{n:m,root,largest,temp:t},{ptr:{root,largest},swap:[root,largest]});a[largest]=t;P(9,{n:m,root,largest,temp:t},{ptr:{root,largest},swap:[root,largest],note:'Swapped.'});
+P(10,{n:m,root:largest},{ptr:{root:largest},note:'Recurse: the value pushed down may violate the heap below it.'});hp(m,largest)}
+stk.pop()};
+P(14,{n},{note:'Phase 1: build a max-heap bottom-up.'});hsz=n;
+for(let i=Math.floor(n/2)-1;i>=0;i--){P(15,{n,i},{ptr:{i},note:`Last parent first: heapify the subtree rooted at ${i}.`});P(16,{n,i},{ptr:{i}});hp(n,i)}
+P(15,{n,i:-1},{note:'Max-heap built: the maximum is at index 0.'});
+for(let i=n-1;i>0;i--){P(18,{n,i},{ptr:{i},note:`Phase 2: move the max to index ${i}.`});const t=a[0];P(19,{n,i,temp:t},{ptr:{i},swap:[0,i]});a[0]=a[i];P(20,{n,i,temp:t},{ptr:{i},swap:[0,i]});a[i]=t;srt=rng(i,n);hsz=i;P(21,{n,i,temp:t},{ptr:{i},swap:[0,i],note:`${t} is final at index ${i}. Heap shrinks to size ${i}.`});P(22,{n:i,i},{note:'Restore the heap property from the root.'});hp(i,0)}
+srt=rng(0,n);hsz=0;P(24,{n},{note:'Sorted.'});return S}
+if(algo==='counting'){
+P(0,{'arr.length':n},{note:'Method called.'});
+if(n<=1){P(1,{'arr.length':n},{note:'Guard clause: nothing to sort, return.'});return S}
+P(1,{'arr.length':n},{note:'Guard passes.'});P(2,{n},{note:`n = ${n}`});
+let max=a[0];P(3,{n,max},{ptr:{max:0},note:'Assume the first element is the max.'});
+for(let i=1;i<n;i++){P(4,{n,i,max},{ptr:{i}});P(5,{i,max,'arr[i]':a[i]},{ptr:{i},cmp:[i],note:`${a[i]} > ${max}? ${a[i]>max}`});if(a[i]>max)max=a[i]}
+P(4,{n,i:n,max},{note:`Loop ends. max = ${max}.`});
+if(max>200){P(7,{max},{exc:true,note:`count needs ${max+1} slots. Counting sort costs O(n + k) memory and time where k = max value, so it is too big to animate here.`});return S}
+if(max+1<0){P(7,{max},{exc:true,note:`NegativeArraySizeException: new int[${max+1}].`});return S}
+cnt=Array(max+1).fill(0);P(7,{max,'count.length':max+1},{note:`count has one slot per possible value 0..${max}.`});
+for(let i=0;i<n;i++){P(8,{i},{ptr:{i}});
+if(a[i]<0){P(9,{i,'arr[i]':a[i]},{ptr:{i},exc:true,note:`ArrayIndexOutOfBoundsException: Index ${a[i]}. Counting sort uses the value as an index, so it needs non-negative integers.`});return S}
+cnt[a[i]]++;P(9,{i,'arr[i]':a[i]},{ptr:{i},ah:{c:[a[i]]},note:`count[${a[i]}]++ → ${cnt[a[i]]}`})}
+for(let i=1;i<=max;i++){P(11,{i,max},{ah:{c:[i,i-1]}});cnt[i]+=cnt[i-1];P(12,{i,max},{ah:{c:[i]},note:`count[${i}] += count[${i-1}] → ${cnt[i]} = how many elements are <= ${i}.`})}
+out=Array(n).fill(null);P(14,{n},{note:'Empty output array of the same size.'});
+for(let i=n-1;i>=0;i--){P(15,{i},{ptr:{i},note:'Walk backwards so equal values keep their original order (stable).'});const cur=a[i];P(16,{i,currentNumber:cur},{ptr:{i}});const pos=cnt[cur]-1;P(17,{i,currentNumber:cur,position:pos},{ptr:{i},ah:{c:[cur]},note:`position = count[${cur}] - 1 = ${pos}`});out[pos]=cur;P(18,{i,currentNumber:cur,position:pos},{ptr:{i},ah:{o:[pos]},note:`output[${pos}] = ${cur}`});cnt[cur]--;P(19,{i,currentNumber:cur,position:pos},{ptr:{i},ah:{c:[cur]},note:'Decrement so a duplicate lands one slot to the left.'})}
+for(let i=0;i<n;i++){P(21,{i},{ptr:{i},ah:{o:[i]}});a[i]=out[i];P(22,{i},{ptr:{i},sorted:rng(0,i+1),ah:{o:[i]},note:`arr[${i}] = output[${i}]`})}
+P(24,{n},{sorted:rng(0,n),note:'Sorted.'});return S}
+if(algo==='bubble_opt'){
+P(0,{'arr.length':n},{note:'Method called.'});P(1,{n},{note:`n = ${n}`});
+for(let i=0;i<n-1;i++){const sorted=rng(n-i,n);
+P(2,{n,i},{sorted,note:`Pass ${i+1}`});
+let sw=false;P(3,{n,i,swapped:false},{sorted,note:'Reset the flag: assume this pass needs no swaps.'});
+for(let j=0;j<n-i-1;j++){const V={n,i,j,swapped:sw};
+P(4,V,{ptr:{j},sorted,note:`j = ${j}`});
+P(5,{...V,'arr[j]':a[j],'arr[j + 1]':a[j+1]},{ptr:{j},cmp:[j,j+1],sorted,note:`Is ${a[j]} > ${a[j+1]}? ${a[j]>a[j+1]}`});
+if(a[j]>a[j+1]){const t=a[j];
+P(6,{...V,temp:t},{ptr:{j},swap:[j,j+1],sorted,note:`Save ${t} in temp.`});
+a[j]=a[j+1];P(7,{...V,temp:t},{ptr:{j},swap:[j,j+1],sorted,note:`arr[${j}] gets ${a[j]}.`});
+a[j+1]=t;P(8,{...V,temp:t},{ptr:{j},swap:[j,j+1],sorted,note:'Swap done.'});
+sw=true;P(9,{...V,swapped:true},{ptr:{j},sorted,note:'swapped = true: this pass did real work.'})}}
+P(12,{n,i,swapped:sw},{sorted:sw?sorted:rng(0,n),note:sw?'Swaps happened, so continue to the next pass.':'A full pass with NO swaps means already sorted: break early!'});
+if(!sw)break}
+P(14,{n},{sorted:rng(0,n),note:'Sorted.'});return S}
+if(algo==='bubble'||algo==='bubble_bug'){const bug=algo==='bubble_bug';
+P(0,{'arr.length':n},{note:'Method called.'});P(1,{n},{note:`n = ${n}`});
+for(let i=0;i<n-1;i++){const sorted=rng(n-i,n);
+P(2,{n,i},{sorted,note:`Pass ${i+1}: the last ${i} element(s) are already in final position.`});
+for(let j=0;j<n-i-(bug?0:1);j++){const V={n,i,j};
+P(3,V,{ptr:{j},sorted,note:`j = ${j}, and ${j} < ${n-i-(bug?0:1)} is true.`});
+if(j+1>=n){P(4,V,{ptr:{j},sorted,exc:true,note:`ArrayIndexOutOfBoundsException: arr[${j+1}] but length is ${n} (valid indices 0..${n-1}). The correct bound n - i - 1 keeps j + 1 inside the array.`});return S}P(4,{...V,'arr[j]':a[j],'arr[j + 1]':a[j+1]},{ptr:{j},cmp:[j,j+1],sorted,note:`Is ${a[j]} > ${a[j+1]}? ${a[j]>a[j+1]}`});
+if(a[j]>a[j+1]){const t=a[j];
+P(5,{...V,temp:t},{ptr:{j},swap:[j,j+1],sorted,note:`Save ${t} in temp.`});
+a[j]=a[j+1];P(6,{...V,temp:t},{ptr:{j},swap:[j,j+1],sorted,note:`arr[${j}] gets ${a[j]}.`});
+a[j+1]=t;P(7,{...V,temp:t},{ptr:{j},swap:[j,j+1],sorted,note:`arr[${j+1}] gets temp (${t}). Swap done.`})}}}
+P(11,{n},{sorted:rng(0,n),note:'Sorted.'});return S}
+if(algo==='insertion'){
+P(0,{'arr.length':n},{note:'Method called.'});P(1,{n},{note:`n = ${n}`});
+for(let i=1;i<n;i++){const sorted=rng(0,i);
+P(2,{n,i},{ptr:{i},sorted,note:`i = ${i}: arr[0..${i-1}] is the sorted prefix.`});
+const key=a[i];P(3,{n,i,key},{ptr:{i},sorted,note:`key = ${key} is lifted out to be inserted.`});
+let j=i-1;P(4,{i,key,j},{ptr:{i,j},sorted,note:`j starts just left of i.`});
+while(true){const c=j>=0&&a[j]>key;
+P(5,{i,key,j,...(j>=0?{'arr[j]':a[j]}:{})},{ptr:{i,j},sorted,cmp:j>=0?[j]:[],note:j<0?'j < 0, so we ran off the left edge. The && short-circuits, so arr[-1] is never read.':`j >= 0 and ${a[j]} > ${key}? ${c}`});
+if(!c)break;
+P(6,{i,key,j,'arr[j]':a[j]},{ptr:{i,j},sorted,swap:[j,j+1],note:`Shift ${a[j]} one slot right.`});
+a[j+1]=a[j];j--;
+P(7,{i,key,j},{ptr:{i,j},sorted,note:`j-- gives j = ${j}.`})}
+a[j+1]=key;P(9,{i,key,j},{ptr:{i,j},sorted:rng(0,i+1),found:j+1,note:`Place key = ${key} at index ${j+1}.`})}
+P(11,{n},{sorted:rng(0,n),note:'Sorted.'});return S}
+P(0,{'arr.length':n},{note:'Method called.'});P(1,{n},{note:`n = ${n}`});
+for(let i=0;i<n-1;i++){const sorted=rng(0,i);
+P(2,{n,i},{ptr:{i},sorted,note:`i = ${i}: find the smallest in arr[${i}..${n-1}].`});
+let minIndex=i;P(3,{i,minIndex},{ptr:{i,minIndex},sorted,note:`Assume arr[${i}] is the minimum.`});
+for(let j=i+1;j<n;j++){
+P(4,{i,j,minIndex},{ptr:{i,j,minIndex},sorted,note:`j = ${j}`});
+P(5,{i,j,minIndex,'arr[j]':a[j],'arr[minIndex]':a[minIndex]},{ptr:{i,j,minIndex},sorted,cmp:[j,minIndex],note:`Is ${a[j]} < ${a[minIndex]}? ${a[j]<a[minIndex]}`});
+if(a[j]<a[minIndex]){minIndex=j;P(6,{i,j,minIndex},{ptr:{i,j,minIndex},sorted,note:`New minimum at index ${minIndex}.`})}}
+const t=a[minIndex];
+P(9,{i,minIndex,temp:t},{ptr:{i,minIndex},sorted,swap:[minIndex,i],note:`Save the minimum (${t}) in temp.`});
+a[minIndex]=a[i];P(10,{i,minIndex,temp:t},{ptr:{i,minIndex},sorted,swap:[minIndex,i],note:`arr[${minIndex}] gets ${a[minIndex]}.`});
+a[i]=t;P(11,{i,minIndex,temp:t},{ptr:{i,minIndex},sorted:rng(0,i+1),swap:[minIndex,i],note:`arr[${i}] gets temp. Index ${i} is final.`})}
+P(13,{n},{sorted:rng(0,n),note:'Sorted.'});return S}
+
+function App(){
+const [algo,setAlgo]=useState('binary'),[text,setText]=useState('2, 5, 8, 12, 16, 23, 38, 56'),[tt,setTt]=useState('23');
+const [variant,setVariant]=useState('normal'),[step,setStep]=useState(0),[play,setPlay]=useState(false),[speed,setSpeed]=useState(600);
+const arr=useMemo(()=>text.split(',').map(s=>s.trim()).filter(s=>s!=='').map(Number).filter(Number.isInteger).slice(0,16),[text]);
+const target=parseInt(tt,10)||0;const isS=algo==='linear'||algo==='binary';
+const vr=(VARS[algo]||[]).some(v=>v[0]===variant)?variant:'normal';const key=vr==='normal'?algo:algo+'_'+vr;const steps=useMemo(()=>gen(key,arr,target),[key,arr,target]);
+const cmpRows=useMemo(()=>isS?[]:Object.keys(NAMES2).map(k=>{const s=gen(k,arr,target),w=[].concat(WL[k]||[]);return{k,c:s.filter(x=>x.cmp.length>0).length,w:s.filter(x=>w.includes(x.line)).length,ex:!!s[s.length-1].exc}}),[arr,isS]);
+useEffect(()=>{setStep(0);setPlay(false)},[steps]);
+useEffect(()=>{const f=e=>{if(['INPUT','SELECT'].includes(e.target.tagName))return;if(e.key==='ArrowRight')setStep(s=>Math.min(s+1,steps.length-1));if(e.key==='ArrowLeft')setStep(s=>Math.max(s-1,0));if(e.key===' '){e.preventDefault();setPlay(p=>!p)}};window.addEventListener('keydown',f);return()=>window.removeEventListener('keydown',f)},[steps]);
+useEffect(()=>{if(!play)return;if(step>=steps.length-1){setPlay(false);return}const t=setTimeout(()=>setStep(s=>s+1),speed);return()=>clearTimeout(t)},[play,step,speed,steps]);
+const st=steps[Math.min(step,steps.length-1)],lines=CODE[key].split('\n');
+const sorted=arr.every((v,k)=>k===0||arr[k-1]<=v);
+const upto=steps.slice(0,step+1),cmpOf=l=>l.filter(s=>s.cmp.length>0).length,wl=WL[key],wOf=l=>l.filter(s=>[].concat(wl).includes(s.line)).length,info=INFO[algo];
+const mn=Math.min(...st.arr),mx=Math.max(...st.arr);
+const ptrAt={};Object.entries(st.ptr).forEach(([k,v])=>{if(v>=0&&v<st.arr.length)(ptrAt[v]=ptrAt[v]||[]).push(k)});
+const color=k=>{if(st.found===k)return'var(--fnd)';if(st.swap.includes(k))return'var(--swp)';if(st.cmp.includes(k))return'var(--cmp)';
+if(st.sorted.includes(k))return'var(--srt)';if(st.win&&(k<st.win[0]||k>st.win[1]))return'var(--dim)';return'var(--bar)'};
+const edge=t=>{const base=arr.length?arr:[5,3,8,1,9,2];const s=[...base].sort((x,y)=>x-y);
+if(t==='rand')setText(Array.from({length:8},()=>Math.floor(Math.random()*50)).join(', '));
+if(t==='sorted')setText(s.join(', '));if(t==='rev')setText([...s].reverse().join(', '));
+if(t==='dup')setText('4, 2, 4, 2, 4, 1, 1');if(t==='single')setText('7');if(t==='neg')setText('3, -2, 5, 1');if(t==='empty')setText('');
+if(t==='nf')setTt(String(Math.max(...base)+1));if(t==='last'&&arr.length)setTt(String(arr[arr.length-1]));if(t==='first'&&arr.length)setTt(String(arr[0]))};
+const vars=Object.entries(st.v);
+return html`<div>
+<h1>Algorithm Visualizer & Debugger (Java)</h1>
+<div class="card"><div class="row">
+<select value=${algo} onChange=${e=>setAlgo(e.target.value)}>${Object.entries(NAMES).map(([k,v])=>html`<option key=${k} value=${k}>${v}</option>`)}</select>
+<input class="t" value=${text} onInput=${e=>setText(e.target.value)} placeholder="e.g. 5, 3, 8, 1 (max 16 ints)"/>
+${(VARS[algo]||[]).length>0&&html`<select value=${vr} onChange=${e=>setVariant(e.target.value)}>${VARS[algo].map(v=>html`<option key=${v[0]} value=${v[0]}>${v[1]}</option>`)}</select>`}
+${isS&&html`<span>target <input class="n" value=${tt} onInput=${e=>setTt(e.target.value)}/></span>`}</div>
+<div class="row" style=${{marginTop:8}}>
+<button onClick=${()=>edge('rand')}>Random</button><button onClick=${()=>edge('sorted')}>Already Sorted</button><button onClick=${()=>edge('rev')}>Reversed / Worst Case</button>
+<button onClick=${()=>edge('dup')}>Duplicates</button><button onClick=${()=>edge('single')}>Single</button><button onClick=${()=>edge('empty')}>Empty</button>
+${algo==='counting'&&html`<button onClick=${()=>edge('neg')}>Negative number (bug)</button>`}${isS&&html`<button onClick=${()=>edge('nf')}>Target Not Found</button><button onClick=${()=>edge('first')}>Target = First</button><button onClick=${()=>edge('last')}>Target = Last</button>`}</div>
+${algo==='binary'&&!sorted&&html`<div class="warn"><b>Bug demo:</b> this array is NOT sorted. Binary search assumes sorted input, so it can discard the half that contains the target and return -1 even though the value exists.</div>`}
+</div>
+<div class="card"><div class="row">
+<button onClick=${()=>{setPlay(false);setStep(0)}}>⏮ Reset</button>
+<button disabled=${step<=0} onClick=${()=>{setPlay(false);setStep(s=>s-1)}}>◀ Prev line</button>
+<button class="p" onClick=${()=>{if(step>=steps.length-1)setStep(0);setPlay(!play)}}>${play?'⏸ Pause':'▶ Play'}</button>
+<button disabled=${step>=steps.length-1} onClick=${()=>{setPlay(false);setStep(s=>s+1)}}>Next line ▶</button>
+<span>Speed <input type="range" min="100" max="1500" step="100" value=${1600-speed} onInput=${e=>setSpeed(1600-e.target.value)}/></span>
+<span style=${{color:'var(--mut)'}}>Step ${step+1} / ${steps.length}</span></div>
+<div class="arr">${st.arr.length===0?html`<div style=${{color:'var(--mut)'}}>Empty array: arr.length is 0, so loops never run.</div>`:st.arr.map((v,k)=>html`<div class="col" key=${k}>
+<div class="pt">${(ptrAt[k]||[]).map(p=>html`<div key=${p}>${p}<br/>↓</div>`)}</div>
+<div class="bar" style=${{height:24+((v-mn)/((mx-mn)||1))*120,background:color(k)}}>${v}</div><div class="idx">[${k}]</div></div>`)}</div>
+${st.aux&&[['count[]',st.aux.c,'c'],['output[]',st.aux.o,'o']].filter(r=>r[1]).map(r=>html`<div key=${r[2]} class="row" style=${{gap:3,margin:'4px 0',flexWrap:'nowrap',overflowX:'auto'}}><span class="idx" style=${{width:56,flex:'none'}}>${r[0]}</span>${r[1].slice(0,40).map((v,k)=>{const on=(st.ah[r[2]]||[]).includes(k);return html`<div key=${k} style=${{minWidth:30,textAlign:'center',border:'1px solid var(--bd)',borderRadius:4,padding:'2px 0',background:on?'var(--cmp)':'transparent',color:on?'#fff':'var(--tx)'}}><div style=${{fontWeight:700}}>${v===null?'·':v}</div><div class="idx">${k}</div></div>`})}</div>`)}
+${st.heap>0&&html`<svg viewBox=${'0 0 600 '+(Math.floor(Math.log2(st.heap))+1)*50} style=${{width:'100%',maxHeight:260}}>${st.arr.slice(0,st.heap).map((v,k)=>{const L=Math.floor(Math.log2(k+1)),x=(k-(2**L-1)+.5)/2**L*600,y=L*50+24,pa=k?(k-1)>>1:-1,PL=pa>=0?Math.floor(Math.log2(pa+1)):0;return html`<g key=${k}>${pa>=0&&html`<line x1=${(pa-(2**PL-1)+.5)/2**PL*600} y1=${PL*50+40} x2=${x} y2=${y-16} stroke="var(--mut)" stroke-width="2"/>`}<circle cx=${x} cy=${y} r="16" fill=${color(k)}/><text x=${x} y=${y+4} text-anchor="middle" fill="#fff" font-size="12" font-weight="700">${v}</text></g>`})}</svg>`}
+<div class="lg"><span><i style=${{background:'var(--bar)'}}></i>Unsorted / active</span><span><i style=${{background:'var(--srt)'}}></i>Sorted</span><span><i style=${{background:'var(--cmp)'}}></i>Comparing</span><span><i style=${{background:'var(--swp)'}}></i>Swapping / shifting</span><span><i style=${{background:'var(--fnd)'}}></i>Found / placed</span>${algo==='binary'&&html`<span><i style=${{background:'var(--dim)'}}></i>Eliminated</span>`}</div>
+<input type="range" style=${{width:'100%',marginTop:6}} min="0" max=${steps.length-1} value=${step} onInput=${e=>{setPlay(false);setStep(+e.target.value)}}/>
+<div class="row" style=${{marginTop:4}}><span class="chip">Comparisons: <b>${cmpOf(upto)}</b> / ${cmpOf(steps)}</span>${wl!==undefined&&html`<span class="chip">${({insertion:'Shifts',counting:'Writes'})[algo]||'Swaps'}: <b>${wOf(upto)}</b> / ${wOf(steps)}</span>`}<span class="chip" style=${{color:'var(--mut)'}}>Keys: ← → step, Space play/pause</span></div>
+<div class=${st.exc?'warn':'note'}>${st.note}</div></div>
+<div class="g">
+<div class="card"><div class="code">${lines.map((l,k)=>html`<div key=${k} class=${'ln'+(k===st.line?' on':'')}><b>${k+1}</b>${(k===st.line?'▶ ':'  ')+l}</div>`)}</div></div>
+<div class="card"><b>Variable inspector</b><table><tbody>${vars.length?vars.map(([k,v])=>html`<tr key=${k}><td class="v">${k}</td><td class="v">${String(v)}</td><td class="m">${MEAN[k]||''}</td></tr>`):html`<tr><td class="m">No local variables yet.</td></tr>`}</tbody></table>${st.stk.length>0&&html`<div style=${{marginTop:8}}><b>Call stack</b> <span class="idx">(top first)</span>${[...st.stk].reverse().map((s,k)=>html`<div key=${k} class="chip" style=${{fontFamily:'monospace',marginTop:3,background:k===0?'var(--hl)':'transparent'}}>${s}</div>`)}</div>`}${info&&html`<div style=${{marginTop:8,fontSize:12,color:'var(--mut)'}}><b style=${{color:'var(--tx)'}}>Complexity</b><br/>Best ${info[0]} · Avg ${info[1]} · Worst ${info[2]}<br/>Space ${info[3]} · Stable: ${info[4]}<br/>${info[5]}</div>`}</div>
+</div>${!isS&&html`<div class="card"><b>Compare all sorts on this input</b><table><tbody>${cmpRows.map(r=>html`<tr key=${r.k}><td>${NAMES2[r.k]}</td><td class="v">${r.c} cmp</td><td class="v">${r.w} writes</td><td style=${{width:'35%'}}><div style=${{height:8,borderRadius:4,background:r.k===key?'var(--fnd)':'var(--bar)',width:(r.c/Math.max(1,...cmpRows.map(x=>x.c))*100)+'%'}}></div></td><td class="m">${r.ex?'crashes':''}</td></tr>`)}</tbody></table><div style=${{fontSize:12,color:'var(--mut)',marginTop:6}}>Counting sort barely compares: it uses values as indexes. Try Already Sorted vs Reversed to see best and worst cases.</div></div>`}</div>`}
+ReactDOM.createRoot(document.getElementById('root')).render(html`<${App}/>`);
+</script></body></html>
