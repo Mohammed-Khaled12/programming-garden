@@ -61,10 +61,10 @@ You know C++, so only learn what is *different* in C.
 **Videos (1):** D1 (project intro, optional)
 
 ### Checklist
-- [ ] Ubuntu ready (WSL2 or VM)
-- [ ] Installed: `gcc`, `gdb`, `make`, `valgrind`, `git`, `python3`, `qemu`
-- [ ] Cloned `ostep-homework` and `ostep-projects`
-- [ ] Created your own `ostep/` Git repo with `notes/`, `homework/`, `projects/`
+- [x] Ubuntu ready (WSL2 or VM)
+- [x] Installed: `gcc`, `gdb`, `make`, `valgrind`, `git`, `python3`, `qemu`
+- [x] Cloned `ostep-homework` and `ostep-projects`
+- [x] Created your own `ostep/` Git repo with `notes/`, `homework/`, `projects/`
 - [ ] C: pointers, arrays, `char *` vs `char[]`
 - [ ] C: null-terminated strings (`strlen`, `strcpy`, `strncpy`, `strcmp`)
 - [ ] C: `malloc` / `calloc` / `realloc` / `free`, and checking `NULL`
